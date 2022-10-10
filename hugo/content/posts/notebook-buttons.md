@@ -1,5 +1,6 @@
 ---
 title: "Code Notebook Buttons in Hugo"
+description: "My current approach to providing Colab and GitHub link buttons on my published notebooks in Hugo is crude but effective."
 date: 2022-10-07T12:25:48-05:00
 draft: true
 ---
@@ -7,6 +8,7 @@ draft: true
 My current approach to providing Colab and GitHub link buttons on my published notebooks
 in Hugo is crude but effective. I have the following template snippet defined for Hugo at
 `layouts/shortcodes/notebook-buttons.html`:
+
 
 ```
 {{ $path := .Get 0 }}

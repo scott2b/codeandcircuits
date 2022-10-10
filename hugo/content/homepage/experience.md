@@ -2,29 +2,30 @@
 title: Experience
 draft: false
 experiences:
-  - title: Example Role 1
+  - title: Senior Engineer
     organization:
-      name: Example Organization 1
-      url: https://example.org
-    dates: "2019 - Present"
-    location: Country
+      name: Northwestern University Knight Lab
+      url: https://knightlab.northwestern.edu
+    dates: "2012 - Present"
+    location: Evanston, IL
     writeup: >
-      Donec scelerisque egestas augue at tempor. Fusce faucibus magna in.
+      Senior engineer of software, circuits, and systems in the Knight Lab at the Medill school of Journalism
 
-      - Suspendisse lacinia mauris a laoreet vehicula.
+      - Wrote software
+      - Design circuits
+      - Built systems
 
-      - Aenean tincidunt enim vitae ante blandit tempor.
-
-      - Nam tincidunt diam quis lorem rutrum ullamcorper.
-
-  - title: Example Role 2
+  - title: CTO
     organization:
-      name: Example Organization 2
-      url: https://example.org
-    dates: "2017 - 2019"
-    location: Country
-    writeup: >
-      **Aliquam** at **rutrum** ante. In sed quam faucibus.
+      name: socialcontext.ai
+      url: https://socialcontext.ai
+    dates: "Present"
+
+  - title: Software Engineer
+    organization:
+      name: Narrative Science
+    location: Chicago, IL
+
 
 weight: 3
 widget:
