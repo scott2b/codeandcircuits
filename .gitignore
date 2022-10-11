@@ -1,1 +1,3 @@
 .hugo_build.lock
+.jekyll-cache/
+site/_site/
