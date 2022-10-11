@@ -22,7 +22,7 @@ title: code&circuits
 #email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
   An engineer's notes and code notebooks
-baseurl: "/codeandcircuits" # the subpath of your site, e.g. /blog
+baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 github_username:  scott2b
