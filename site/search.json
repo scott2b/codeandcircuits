@@ -5,6 +5,7 @@
     {
 
       "title"    : "{{ post.title | escape }}",
+      "content"  : "{{ post.content | strip_html | cgi_escape }}",
       "url"      : "{{ site.baseurl }}{{ post.url }}",
       "category" : "{{ post.category }}",
       "tags"     : "{{ post.tags | join: ', ' }}",
