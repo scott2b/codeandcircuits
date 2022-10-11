@@ -17,5 +17,5 @@ can easily change the prefix without breaking your site.
 E.g., an image location in a Markdown post might look like this:
 
 ```
-![My Image]({{ site.baseurl }}/assets/images/my-image.png)
+{% raw %}![My Image]({{ site.baseurl }}/assets/images/my-image.png){% endraw %}
 ```

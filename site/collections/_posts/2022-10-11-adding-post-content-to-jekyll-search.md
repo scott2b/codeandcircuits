@@ -25,9 +25,7 @@ entirely (although I am not sure why):
 ⚠️ Probably don't do this:
 
 ```
-{% raw %}
-      "content"  : "{{ post.content | strip_html | strip_newlines }}"
-{% endraw %}
+{% raw %}"content"  : "{{ post.content | strip_html | strip_newlines }}"{% endraw %}
 ```
 
 Instead, I've found that using cgi_escape, which replaces spaces with `+` signs, instead
@@ -36,8 +34,6 @@ of `strip_newlines` seems to do the trick without breaking the search:
 ✅ Do this instead:
 
 ```
-{% raw %}
-      "content"  : "{{ post.content | strip_html | cgi_escape }}"
-{% endraw %}
+{% raw %}"content"  : "{{ post.content | strip_html | cgi_escape }}"{% endraw %}
 ```
 
