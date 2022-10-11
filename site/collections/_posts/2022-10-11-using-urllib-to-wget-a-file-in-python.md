@@ -7,7 +7,7 @@ categories:
   - io
 ---
 
-I used to use [python3-wget](https://github.com/jamiejackherer/python3-wget) to fetch
+I used to use [python3-wget](https://github.com/jamiejackherer/python3-wget){:target="_blank"} to fetch
 remote files if I needed to save them to my filesystem from Python code.
 
 Anymore, I am finding that urllib and shutil used together will do the trick:
