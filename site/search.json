@@ -10,6 +10,17 @@
       "category" : "{{ post.category }}",
       "tags"     : "{{ post.tags | join: ', ' }}",
       "date"     : "{{ post.date }}"
+    },
+  {% endfor %}
+  {% for notebook in site.nlp_notebooks %}
+    {
+
+      "title"    : "{{ notebook.title | escape }}",
+      "content"  : "{{ notebook.content | strip_html | cgi_escape }}",
+      "url"      : "{{ site.baseurl }}{{ notebook.url }}",
+      "category" : "{{ notebook.category }}",
+      "tags"     : "{{ notebook.tags | join: ', ' }}",
+      "date"     : "{{ notebook.date }}"
 
     } {% unless forloop.last %},{% endunless %}
   {% endfor %}
