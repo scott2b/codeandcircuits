@@ -1,0 +1,621 @@
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Fetching-the-latest-batch-of-articles-from-the-GDELT-GKG.">Fetching the latest batch of articles from the GDELT GKG.<a class="anchor-link" href="#Fetching-the-latest-batch-of-articles-from-the-GDELT-GKG.">&#128279;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="https://www.gdeltproject.org/">The GDELT Project</a> which is dubbed &quot;A Global Database of Society&quot; is an excellent, freely available resource of world news.</p>
+<h3 id="The-GKG">The GKG<a class="anchor-link" href="#The-GKG">&#128279;</a></h3><p>In particular, I make regular use of the GDELT Knowledge Graph (GKG) raw data files for getting a snapshot of the current news. The GKG is updated every 15 minutes, and is essentially a dump of all the latest news, including URLs as well as a bunch of useful metadata.</p>
+<h3 id="Some-caveats">Some caveats<a class="anchor-link" href="#Some-caveats">&#128279;</a></h3><p>This notebook demonstrates the use of the GKG for obtaining a list of URLs representing the latest news snapshot, and downloading the content of those news article where available. In some cases, such as paywall situations, or attempts at bot thwarting, you may not get everything with this approach, but I've been able to obtain quite a representative bit of the news this way.</p>
+<h3 id="Project-ideas">Project ideas<a class="anchor-link" href="#Project-ideas">&#128279;</a></h3><p>The resulting text dumps from this notebook can be used for any number of news-related projects. Try building a classifier using the metadata provided, or build a topic model using <a href="https://maartengr.github.io/BERTopic/index.html">BERTopic</a>. In the future, I will publish examples of these ideas and more.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Imports">Imports<a class="anchor-link" href="#Imports">&#128279;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">goose3</span>
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+    <span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">goose3</span> <span class="o">--</span><span class="n">quiet</span>
+    <span class="kn">import</span> <span class="nn">goose3</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Fetch-the-latest-GKG-batch-of-news-URLs">Fetch the latest GKG batch of news URLs<a class="anchor-link" href="#Fetch-the-latest-GKG-batch-of-news-URLs">&#128279;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">GKG_URL</span> <span class="o">=</span> <span class="s2">&quot;http://data.gdeltproject.org/gdeltv2/</span><span class="si">%s</span><span class="s2">&quot;</span>
+<span class="n">DT_FORMAT</span> <span class="o">=</span> <span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H%M%S&quot;</span>
+<span class="n">GKG_DATA_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;gkg-data&quot;</span><span class="p">)</span>
+<span class="n">GKG_HEADER</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;GKGRECORDID&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DATE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SourceCollectionIdentifier&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SourceCommonName&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DocumentIdentifier&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Counts&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;V2Counts&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Themes&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;V2Themes&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Locations&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;V2Locations&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Persons&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;V2Persons&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Organizations&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;V2Organizations&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;V2Tone&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Dates&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;GCAM&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SharingImage&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RelatedImages&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SocialImageEmbeds&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SocialVideoEmbeds&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Quotations&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AllNames&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Amounts&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TranslationInfo&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Extras&quot;</span>
+<span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Utilities">Utilities<a class="anchor-link" href="#Utilities">&#128279;</a></h2><p>Resources for fetching GKG data and extracting the URLs.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">tofile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fetch a file from `url` and save it to `tofile`.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">tofile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">tofile</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tofile</span>
+
+
+<span class="k">def</span> <span class="nf">gkg_filename</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the filename of the csv.zip GKG file associated with the latest</span>
+<span class="sd">    15 minute period before dt, or the current time if dt is None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+    <span class="n">minute</span> <span class="o">=</span> <span class="mi">15</span> <span class="o">*</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">minute</span><span class="o">//</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">minute</span><span class="o">=</span><span class="n">minute</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dt_str</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">DT_FORMAT</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dt_str</span><span class="si">}</span><span class="s2">.gkg.csv.zip&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">fetch_gkg_urls</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Yields an iterable of URLs fetched from the latest GKG or None if the most</span>
+<span class="sd">    recent GKG file has already been processed.</span>
+
+<span class="sd">    Optionally pass in a historical datetime to be used rather than the</span>
+<span class="sd">    current time for determining the latest 15-minute batch to fetch.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="n">gkg_filename</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+    <span class="n">download_file</span> <span class="o">=</span> <span class="n">GKG_DATA_DIR</span> <span class="o">/</span> <span class="n">fn</span> 
+    <span class="n">csv_file</span> <span class="o">=</span> <span class="n">GKG_DATA_DIR</span> <span class="o">/</span> <span class="n">fn</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;.zip&quot;</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">download_file</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Skipping file for previously processed period:&quot;</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">GKG_URL</span> <span class="o">%</span> <span class="n">fn</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fetching gkg file:&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">tofile</span><span class="o">=</span><span class="n">download_file</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to download GKG file:&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">download_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ref</span><span class="p">:</span>
+        <span class="n">ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">GKG_DATA_DIR</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;surrogateescape&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">GKG_DATA_DIR</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">urls</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fetch_gkg_urls</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fetching gkg file: http://data.gdeltproject.org/gdeltv2/20221011233000.gkg.csv.zip
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Take-a-peek-at-the-URLs">Take a peek at the URLs<a class="anchor-link" href="#Take-a-peek-at-the-URLs">&#128279;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">urls</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#39;https://www.newsy.com/stories/ohio-senate-debate-with-ryan-vance-descends-into-attacks/&#39;,
+ &#39;https://www.russiaherald.com/news/272905643/elon-musk-spoke-to-putin-before-presenting-ukraine-peace-proposal-report&#39;,
+ &#39;https://www.forbes.com/sites/forbes-personal-shopper/2022/10/11/best-espresso-machines/&#39;,
+ &#39;https://www.kvor.com/news/pfizer-exec-admits-covid-vaccine-never-tested-to-prevent-transmission/&#39;,
+ &#39;https://www.kvor.com/news/fetterman-stroke-recovery-wont-have-an-impact-if-elected/&#39;,
+ &#39;https://www.montrosepress.com/free_access/hospital-recognizes-leadership-at-annual-fall-clinics/article_c7364b94-4994-11ed-985b-1f9ddec93453.html&#39;,
+ &#39;https://www.nbcconnecticut.com/tag/well-water/&#39;,
+ &#39;https://www.sbstatesman.com/2022/10/11/dont-worry-darling-continues-to-romanticize-bad-men/&#39;,
+ &#39;https://news.yahoo.com/obamas-praise-iranian-women-girls-200453660.html&#39;,
+ &#39;https://wild104.iheart.com/content/2022-10-11-khloe-kardashian-gets-rare-tumor-removed-from-face-take-this-seriously/&#39;]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Fetch-the-article-pages-and-extract-their-texts">Fetch the article pages and extract their texts<a class="anchor-link" href="#Fetch-the-article-pages-and-extract-their-texts">&#128279;</a></h2><p><a href="https://github.com/goose3/goose3">Goose3</a> is used here to fetch the texts of the articles from our list of URLs.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Log-level-ERROR">Log level ERROR<a class="anchor-link" href="#Log-level-ERROR">&#128279;</a></h3><p>Goose3 tends to log out a lot of warnings about not being able to resolve
+article publication dates to UTC. We are just looking at text, so setting
+log level to ERROR to squelch those warnings.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Skipping-failures">Skipping failures<a class="anchor-link" href="#Skipping-failures">&#128279;</a></h3><p>The code below does that bad thing of burying the general Exception, and just skips any URLs it cannot fetch. If you require squeezing out as many of these URLs as possible, you might want to dig into the specific errors.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Alternative-article-extractors">Alternative article extractors<a class="anchor-link" href="#Alternative-article-extractors">&#128279;</a></h3><p>There are a number of good libraries available for article text extraction. Experiment to see what works best for your needs. Some options include:</p>
+<ul>
+<li><a href="https://github.com/goose3/goose3">goose3</a> (used here)</li>
+<li><a href="https://github.com/jmriebold/BoilerPy3">BoilerPy3</a></li>
+<li><a href="https://github.com/TeamHG-Memex/html-text">html-text</a> (extracts all the text, not just the primary article)</li>
+<li><a href="https://github.com/codelucas/newspaper/">Newspaper3k</a></li>
+<li><a href="https://trafilatura.readthedocs.io/en/latest/">trafilatura</a></li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Be-prepared-to-wait">Be prepared to wait<a class="anchor-link" href="#Be-prepared-to-wait">&#128279;</a></h3><p>It takes a while to fetch the whole batch of web pages. There is a crude dotted status indicator just to make things appear alive. In a production scenario, you will probably want to use an approach that spawns multiple threads or processes for fetching.</p>
+<blockquote>
+<p>🔥 Pro tip:
+If you are trying to get an end-to-end run of the notebook just to see how things work, iterate just a slice of the urls (e.g.: <code>urls[:10]</code>) and carry on.</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">goose</span> <span class="o">=</span> <span class="n">goose3</span><span class="o">.</span><span class="n">Goose</span><span class="p">()</span>
+<span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<span class="n">crawler_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;goose3.crawler&quot;</span><span class="p">)</span>
+<span class="n">crawler_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+<span class="n">MIN_TEXT_LENGTH</span> <span class="o">=</span> <span class="mi">200</span> <span class="c1"># Sometimes the extracted text just isn&#39;t worth keeping</span>
+
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">url</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">urls</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="c1"># just trying to look alive</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">article</span> <span class="o">=</span> <span class="n">goose</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Warning: buried general Exception is considered bad practice.</span>
+<span class="sd">        </span>
+<span class="sd">        There are various reasons a fetch might not succeed. If you are getting</span>
+<span class="sd">        a lot of skipped URLs, you may want to dig into this and handle each</span>
+<span class="sd">        error specifically.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error. Skipping URL:&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">title</span>
+    <span class="n">descr</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">meta_description</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">cleaned_text</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">MIN_TEXT_LENGTH</span><span class="p">:</span>
+        <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done!&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>. . . . . Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=432255
+. . . . . . . . . . . . . . . . Error. Skipping URL: https://www.npr.org/2022/10/11/1128197781/the-supreme-court-hears-the-pork-industrys-case-against-an-animal-welfare-law
+. . Error. Skipping URL: https://www.npr.org/2022/10/11/1128208223/supreme-court-pork-producers-sue-california
+. . . . . . . . . Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=430541&amp;whichpage=2
+. . Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=432256
+. . . . . . . . . . . . . . . . . Error. Skipping URL: https://www.stuff.co.nz/environment/130146301/government-announces-new-measures-to-protect-south-island-hectors-dolphins
+. . Error. Skipping URL: https://www.stuff.co.nz/life-style/homed/nz-house-garden/300671006/pappardelle-with-duck-ragout-recipe
+. . . . . . . . . . Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=432050&amp;whichpage=2
+. . . . . . . . . . </pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>ERROR:urllib3.connection:Certificate did not match expected hostname: markets.buffalonews.com. Certificate: {&#39;subject&#39;: (((&#39;commonName&#39;, &#39;*.financialcontent.com&#39;),),), &#39;issuer&#39;: (((&#39;countryName&#39;, &#39;GB&#39;),), ((&#39;stateOrProvinceName&#39;, &#39;Greater Manchester&#39;),), ((&#39;localityName&#39;, &#39;Salford&#39;),), ((&#39;organizationName&#39;, &#39;Sectigo Limited&#39;),), ((&#39;commonName&#39;, &#39;Sectigo RSA Domain Validation Secure Server CA&#39;),)), &#39;version&#39;: 3, &#39;serialNumber&#39;: &#39;E7612383D9F0E303A71AD943BDD22F23&#39;, &#39;notBefore&#39;: &#39;Apr 22 00:00:00 2022 GMT&#39;, &#39;notAfter&#39;: &#39;May 23 23:59:59 2023 GMT&#39;, &#39;subjectAltName&#39;: ((&#39;DNS&#39;, &#39;*.financialcontent.com&#39;), (&#39;DNS&#39;, &#39;financialcontent.com&#39;)), &#39;OCSP&#39;: (&#39;http://ocsp.sectigo.com&#39;,), &#39;caIssuers&#39;: (&#39;http://crt.sectigo.com/SectigoRSADomainValidationSecureServerCA.crt&#39;,)}
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Error. Skipping URL: https://markets.buffalonews.com/buffnews/article/etrendy-2022-10-11-a-closer-look-at-hong-kongs-fugitives-in-the-us
+. . . Error. Skipping URL: https://www.npr.org/transcripts/1128032407
+. Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=350667&amp;whichpage=1304
+. . Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=432257
+. Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=432254
+. . Error. Skipping URL: https://www.npr.org/transcripts/1127995338
+. . . Error. Skipping URL: https://www.tap.info.tn/en/Portal-Politics/15632206-president-saied
+. . . . </pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>ERROR:urllib3.connection:Certificate did not match expected hostname: markets.buffalonews.com. Certificate: {&#39;subject&#39;: (((&#39;commonName&#39;, &#39;*.financialcontent.com&#39;),),), &#39;issuer&#39;: (((&#39;countryName&#39;, &#39;GB&#39;),), ((&#39;stateOrProvinceName&#39;, &#39;Greater Manchester&#39;),), ((&#39;localityName&#39;, &#39;Salford&#39;),), ((&#39;organizationName&#39;, &#39;Sectigo Limited&#39;),), ((&#39;commonName&#39;, &#39;Sectigo RSA Domain Validation Secure Server CA&#39;),)), &#39;version&#39;: 3, &#39;serialNumber&#39;: &#39;E7612383D9F0E303A71AD943BDD22F23&#39;, &#39;notBefore&#39;: &#39;Apr 22 00:00:00 2022 GMT&#39;, &#39;notAfter&#39;: &#39;May 23 23:59:59 2023 GMT&#39;, &#39;subjectAltName&#39;: ((&#39;DNS&#39;, &#39;*.financialcontent.com&#39;), (&#39;DNS&#39;, &#39;financialcontent.com&#39;)), &#39;OCSP&#39;: (&#39;http://ocsp.sectigo.com&#39;,), &#39;caIssuers&#39;: (&#39;http://crt.sectigo.com/SectigoRSADomainValidationSecureServerCA.crt&#39;,)}
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Error. Skipping URL: https://markets.buffalonews.com/buffnews/article/getnews-2022-10-11-sandy-ut-ac-repair-by-one-stop-heating-and-air-conditioning-for-all-heating-and-air-conditioning-woes
+. . . Error. Skipping URL: https://www.stuff.co.nz/national/quizzes/300699690/quiz-take-the-three-strikes-trivia-test-for-october-12-2022
+. Error. Skipping URL: https://www.stuff.co.nz/national/crime/300710637/repeat-child-sex-offender-cut-off-ankle-monitor-to-abuse-a-toddler
+. . Error. Skipping URL: https://www.tap.info.tn/en/Portal-Politics/15632639-president-saied-pm
+. . . . . . . Error. Skipping URL: https://classiccountry957.iheart.com/content/2022-10-11-blake-shelton-to-step-away-from-the-voice-after-his-23rd-seasons/
+. Error. Skipping URL: https://www.stuff.co.nz/travel/destinations/nz/wellington/130143828/the-tripadvisor-restaurant-awards-were-a-big-snub-to-wellington-but-why
+. . . . . . . Error. Skipping URL: https://www.tap.info.tn/en/Portal-Economy/15631995-economic-growth-in
+. . . . . . . . Error. Skipping URL: https://www.stuff.co.nz/national/crime/300710713/man-charged-with-manslaughter-after-levin-car-crash-death
+. . . . . . . . . . . . . . Error. Skipping URL: https://www.tap.info.tn/en/Portal-Politics/15631969-former-mp-ghazi
+. . . . Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=432006&amp;whichpage=2
+. . . . . Done!
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Take-a-peek-at-the-texts">Take a peek at the texts<a class="anchor-link" href="#Take-a-peek-at-the-texts">&#128279;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1252</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">texts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;Rep. Tim Ryan – a 10-term congressman – and Republican JD Vance are fighting for Ohio\&#39;s open U.S. Senate seat being vacated by GOP Sen. Rob Portman.\n\nThe first debate between Democratic U.S. Rep. Tim Ryan and Republican JD Vance descended quickly into attacks Monday, with the candidates for Ohio\&#39;s open U.S. Senate seat accusing each other of being responsible for job losses and putting party loyalty ahead of voters’ needs.\n\nVance said Ryan had supported policies that led to a 10-year-old girl in Ohio being raped. Ryan said Vance had started a &#34;fake nonprofit&#34; to help people overcome addiction issues. The two accused each other of being beholden to their party, with Ryan echoing a comment from former President Donald Trump in calling Vance an &#34;a— kisser&#34; and Vance saying Ryan’s 100% voting record with President Joe Biden means he’s not the reasonable moderate he says he is.\n\nRelated Story What Are Ohioans Voting For In Their Senate Race?\n\nThe face-off between Ryan, a 10-term congressman, and Vance, a venture capitalist and author of &#34;Hillbilly Elegy,&#34; for the seat being vacated by retiring GOP Sen. Rob Portman was one of the most contentious debates of the general election season so far. The race is one of the most expensive and closely watched of the midterms, with Democrats viewing it as a possible pickup opportunity in November.\n\nBoth candidates sought to tailor their messages to the working-class voters who could determine the election in an evening peppered with barbs and one-liners.\n\nRyan sought to paint Vance as an extremist, someone who associates with &#34;crazies&#34; from his party who falsely claim the 2020 election was stolen, support national abortion restrictions and contributed to the Jan. 6 attack on the U.S. Capitol.\n\n&#34;You\&#39;re running around with Ron DeSantis, the governor of Florida, who wants to ban books. You\&#39;re running around with (Sen.) Lindsey Graham, who wants a national abortion ban. You\&#39;re running around with (Rep.) Marjorie Taylor Greene, who\&#39;s the absolute looniest politician in America,&#34; Ryan said.\n\nVance suggested Ryan’s focus on allegation of extremism was meant as a distraction from pocketbook issues important to voters, such as inflation and the price of groceries.\n\n&#34;It’s close to Halloween and Tim Ryan has put on a costume where he pretends to be a reasonable moderate.” Had he been, Vance said, “Youngstown may not have lost 50,000 manufacturing jobs during your 20 years.&#34;\n\nRyan said: &#34;I’m not gonna apologize for spending 20 years of my adult life slogging away to try to help one of the hardest economically hit regions of Ohio and dedicating my life to help that region come back. You ought to be ashamed of yourself, JD. You went off to California, you were drinking wine and eating cheese.&#34;\n\nVance countered that he left Ohio at 18 to join the Marines, and after working in Silicon Valley, he returned to Ohio to raise his family and start a business.\n\nDuring questioning about China, Ryan said Vance invested in China as a venture capitalist, the type of business move that exacerbated job losses in Ohio\&#39;s manufacturing base. &#34;The problem we\&#39;re having now with inflation is our supply chains all went to China, and guys like him made a whole lot of money off that,&#34; Ryan said.\n\nVance said it is Democratic economic policies that have harmed manufacturing, saying, &#34;They have completely gone to war against America\&#39;s energy sector.&#34; He said he could not remember investing in China.\n\nOn abortion, Vance did not answer whether he would support Graham\&#39;s proposed national ban after 15 weeks of pregnancy, with some exceptions. Vance said he thinks different states would likely want different laws but &#34;some minimum national standard is totally fine with me.&#34;\n\nHe called himself &#34;pro-life&#34; but said he has &#34;always believed in reasonable exceptions.&#34;\n\nRyan said he supports codifying the abortion rights established in Roe v. Wade, which was overturned by the U.S. Supreme Court in June. He said he opposes Ohio\&#39;s law banning most abortions after fetal cardiac activity has been detected, as early as six weeks into pregnancy, which was blocked Friday.\n\nVance agreed with Ryan that a 10-year-old Ohio rape victim should not have had to leave the state for an abortion, but he said the fact the suspect was in the country illegally was a failure of weak border policies.\n\n&#34;You voted so many times against the border wall funding, so many times for amnesty, Tim,&#34; Vance said. &#34;If you had done your job, she would have never been raped in the first place.&#34;\n\nOn foreign policy, the pair parted ways on what the U.S. response should be if Russian President Vladimir Putin were to launch nuclear weapons in Ukraine.\n\nRyan said the U.S. should be prepared with a &#34;swift and significant response,&#34; while Vance countered that the United States needs a &#34;foreign policy establishment that puts the interests of our citizens first.&#34;\n\nRyan responded: &#34;If JD had his way, Putin would be through Ukraine at this point. He’d be going into Poland.&#34;\n\n&#34;If I had my way,&#34; Vance retorted, &#34;you’d put money at the southern border, Tim, instead of launching tons of money into Ukraine.&#34; It echoed comments Vance had made in an interview before Russia\&#39;s invasion of Ukraine, saying he didn\&#39;t &#34;really care what happens to Ukraine one way or another&#34; because he wanted to see President Biden focus on his own country\&#39;s border security.\n\nWhile the general election debate between Ryan and Vance was acrimonious, it didn\&#39;t lead to a near-physical altercation, as an Ohio GOP Senate debate back in March during the primary season did. Former state Treasurer Josh Mandel and investment banker Mike Gibbons found themselves face to face on the debate stage, shouting at each other, while Vance told the two to stop fighting.\n\nAt the end of Monday\&#39;s debate, Vance and Ryan shook hands.\n\nAdditional reporting by The Associated Press.&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Optionally-save-the-texts">Optionally save the texts<a class="anchor-link" href="#Optionally-save-the-texts">&#128279;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You might do this above instead, depending on your goals. Here we save the acquired texts to the drive in anticipation of loading and using them later. <strong>Note, however, that the provided approach only saves to ephemeral space.</strong> If you need long term storage, you will want to <a href="https://colab.research.google.com/notebooks/snippets/drive.ipynb">mount your Drive account</a> and save to an appropriate path.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">TEXT_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;texts&quot;</span><span class="p">)</span>
+<span class="n">TEXT_DIR</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">texts</span><span class="p">):</span>
+    <span class="n">fp</span> <span class="o">=</span> <span class="n">TEXT_DIR</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">04</span><span class="si">}</span><span class="s2">.txt&quot;</span>
+    <span class="k">with</span> <span class="n">fp</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+        <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Reloading-texts">Reloading texts<a class="anchor-link" href="#Reloading-texts">&#128279;</a></h3><p>The texts can now be reloaded as follows:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">fp</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">TEXT_DIR</span><span class="o">.</span><span class="n">iterdir</span><span class="p">())):</span>
+    <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">open</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">texts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;Sam Smith revealed that they got an interesting gift from fellow singer-songwriter Ed Sheeran. During their appearance on The Kelly Clarkson Show, Smith talked about the massive NSFW (Not Safe For Work) present Sheeran recently sent them.\n\n&#34;It\&#39;s actually wild. I thought it was a joke,&#34; Smith said during Tuesday\&#39;s (October 11th) episode. &#34;It\&#39;s a six-foot-two marble penis. It\&#39;s two tons. I have to get it craned into my house.&#34; Clarkson thought the gift was hilarious and wanted to know more. &#34;In your foyer? Like, what\&#39;s going to happen?&#34; To which Smith replied, &#34;Well, I want to turn it into a fountain, which I think will be hard to do.&#34;&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+
+
