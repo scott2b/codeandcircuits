@@ -9,7 +9,7 @@ project:
     - "posts/**/*.qmd"
 
 website:
-  title: "codeandcircuits.com"
+  title: "Code & Circuits"
   favicon: assets/images/favicon.png
   navbar:
     background: secondary
@@ -19,13 +19,17 @@ website:
     logo-alt: "Site logo"
     title: false
     left:
-      - text: "Home"
-        href: index.qmd
+      - href: index.qmd
+        text: Home
+      - href: posts/index.qmd
+        text: Posts
+      - href: about.qmd
+        text: About
   site-url: "https://codeandcircuits.com"
 
 format:
   html:
     html: true
-    theme: sandstone
+    theme: cosmo
     highlight-style: atom-one
     css: assets/css/styles.css

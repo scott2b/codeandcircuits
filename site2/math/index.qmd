@@ -1,10 +1,14 @@
 ---
 title: "Mathematical Foundations"
+page-layout: full
+aliases:
+  - math
 format:
   html:
-    css: /assets/css/topic-layout.css
+    css: ../assets/css/topic-layout.css
 ---
 
+::: {.content-container}
 ::: {.topic-intro .math-topic}
 Advanced mathematics for engineering applications, including calculus, linear algebra, and differential equations.
 :::
@@ -55,6 +59,7 @@ Heat equation, wave equation, Laplace equation.
 
 #### Numerical Methods
 Computational approaches to solving differential equations.
+:::
 :::
 :::
 :::

@@ -2,5 +2,28 @@
     display: inline-block;
     visibility: visible;
     opacity: 1;
-    max-height: 50px;  /* adjust as needed */
+    max-height: 40px;  /* reduced from 50px */
+}
+
+/* Modern navbar styling with proper height and visible navigation */
+.navbar {
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    padding: 0.5rem 1rem; /* reduced padding */
+    min-height: 60px; /* explicit height control */
+}
+
+.navbar.fixed-top {
+    border-bottom: 2px solid #8a4baf;
+}
+
+/* Ensure navigation links are visible */
+.navbar-nav .nav-link {
+    color: #2d3436 !important; /* dark gray, override Quarto defaults */
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #8a4baf !important; /* purple on hover */
 }

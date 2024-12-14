@@ -1,9 +1,28 @@
 ---
-title: "All Posts"
+title: ""
+page-layout: full
 listing:
-  contents: "**/*.qmd"
-  type: table
+  contents: 
+    - "*.qmd"
+    - "!index.qmd"
   sort: "date desc"
-  fields: [date, title, description, categories]
+  type: table
   categories: true
+  sort-ui: true
+  filter-ui: true
+  fields: [date, title, description, categories]
+format:
+  html:
+    css: ../assets/css/styles.css
 ---
+
+::: {.content-container}
+# All Posts
+
+::: {.section-description}
+Browse all articles and tutorials.
+:::
+
+::: {#listing}
+:::
+:::
