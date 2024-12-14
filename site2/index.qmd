@@ -3,7 +3,9 @@ title: ""
 page-layout: full
 listing:
   - id: recent-posts-listing
-    contents: posts
+    contents: 
+      - posts
+      - "!posts/index.qmd"
     sort: "date desc"
     type: grid
     max-items: 3
