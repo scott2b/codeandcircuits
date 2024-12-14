@@ -1,7 +1,5 @@
 ---
 title: "Mathematical Foundations"
-aliases:
-  - math
 format:
   html:
     css: /assets/css/topic-layout.css

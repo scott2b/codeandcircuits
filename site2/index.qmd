@@ -56,7 +56,7 @@ Advanced mathematics for engineering applications, including calculus, linear al
 <span class="tag">Differential Equations</span>
 </div>
 
-[Explore Math →](/math){.explore-link}
+[Explore Math →](math){.explore-link}
 </div>
 
 <div class="card circuit-card">
