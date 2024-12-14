@@ -1,0 +1,202 @@
+---
+title: "Code and Circuits"
+page-layout: full
+listing:
+  contents: posts
+  sort: "date desc"
+  type: default
+  categories: true
+format:
+  html:
+    css: assets/css/card-layout.css
+---
+
+::: {.section-description}
+An engineer's notebook.
+:::
+
+## Latest Posts
+
+::: {#listing}
+:::
+
+## Featured Topics
+
+:::: {.card-grid}
+
+<div class="card math-card">
+<div class="card-header">
+<div class="icon-container">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <text x="6" y="20" font-size="24" font-weight="bold">∑</text>
+  </svg>
+</div>
+<h1 class="card-title">Mathematical Foundations</h1>
+</div>
+
+Advanced mathematics for engineering applications, including calculus, linear algebra, and differential equations.
+
+<div class="tag-container">
+<span class="tag">Vector Calculus</span>
+<span class="tag">Linear Algebra</span>
+<span class="tag">Differential Equations</span>
+</div>
+
+[Explore Math →]{.explore-link}
+</div>
+
+<div class="card circuit-card">
+<div class="card-header">
+<div class="icon-container">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 3v12"/>
+    <path d="M18 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+    <path d="M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+  </svg>
+</div>
+<h1 class="card-title">Circuit Design</h1>
+</div>
+
+Comprehensive guides on electronic circuit design, simulation tools, and practical implementations.
+
+<div class="tag-container">
+<span class="tag">Digital Logic</span>
+<span class="tag">Analog Circuits</span>
+<span class="tag">PCB Design</span>
+</div>
+
+[Explore Circuits →]{.explore-link}
+</div>
+
+<div class="card code-card">
+<div class="card-header">
+<div class="icon-container">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="16 18 22 12 16 6"/>
+    <polyline points="8 6 2 12 8 18"/>
+  </svg>
+</div>
+<h1 class="card-title">Code Notebooks</h1>
+</div>
+
+Interactive Python notebooks for solving real-world engineering problems and data analysis.
+
+<div class="tag-container">
+<span class="tag">Python</span>
+<span class="tag">MATLAB</span>
+<span class="tag">Simulation</span>
+</div>
+
+[Explore Notebooks →]{.explore-link}
+</div>
+
+<div class="card code-explore-card">
+<div class="card-header">
+<div class="icon-container">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+  </svg>
+</div>
+<h1 class="card-title">Code Explorations</h1>
+</div>
+
+Deep dives into programming concepts, algorithms, and software design patterns.
+
+<div class="tag-container">
+<span class="tag">Algorithms</span>
+<span class="tag">Design Patterns</span>
+<span class="tag">System Design</span>
+</div>
+
+[Explore Code →]{.explore-link}
+</div>
+
+<div class="card eng-card">
+<div class="card-header">
+<div class="icon-container">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+  </svg>
+</div>
+<h1 class="card-title">Engineering Fundamentals</h1>
+</div>
+
+Core engineering principles, from mechanics to thermodynamics and control systems.
+
+<div class="tag-container">
+<span class="tag">Mechanics</span>
+<span class="tag">Control Systems</span>
+<span class="tag">Thermodynamics</span>
+</div>
+
+[Explore Engineering →]{.explore-link}
+</div>
+
+<div class="card cs-card">
+<div class="card-header">
+<div class="icon-container">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+    <polyline points="15 3 21 3 21 9"/>
+    <line x1="10" y1="14" x2="21" y2="3"/>
+  </svg>
+</div>
+<h1 class="card-title">Computer Science</h1>
+</div>
+
+Fundamental computer science concepts, from data structures to operating systems.
+
+<div class="tag-container">
+<span class="tag">Data Structures</span>
+<span class="tag">Operating Systems</span>
+<span class="tag">Networks</span>
+</div>
+
+[Explore CS →]{.explore-link}
+</div>
+
+<div class="card data-card">
+<div class="card-header">
+<div class="icon-container">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12l-8-8v16l8-8z"/>
+    <path d="M3 12h12"/>
+  </svg>
+</div>
+<h1 class="card-title">Data Science</h1>
+</div>
+
+Statistical analysis, machine learning, and data visualization techniques.
+
+<div class="tag-container">
+<span class="tag">Statistics</span>
+<span class="tag">Machine Learning</span>
+<span class="tag">Visualization</span>
+</div>
+
+[Explore Data →]{.explore-link}
+</div>
+
+<div class="card complexity-card">
+<div class="card-header">
+<div class="icon-container">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </svg>
+</div>
+<h1 class="card-title">Complexity Science</h1>
+</div>
+
+Study of complex systems, emergence, and network science.
+
+<div class="tag-container">
+<span class="tag">Complex Systems</span>
+<span class="tag">Network Theory</span>
+<span class="tag">Emergence</span>
+</div>
+
+[Explore Complexity →]{.explore-link}
+</div>
+
+::::

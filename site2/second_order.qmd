@@ -1,0 +1,261 @@
+---
+title: "Second Order System Response"
+format:
+  html:
+    code-fold: true
+    code-tools: true
+    html-math-method: mathjax
+    embed-resources: true
+    link-external-newwindow: true     # Add this line
+    document-tools:
+      - text: "Slides"
+        href: "second_order-revealjs.html"
+      - text: "PDF"
+        href: "second_order.pdf"
+    other-links: false
+  pdf:
+    papersize: letter
+    geometry:
+      - margin=1in
+    fig-format: pdf
+  revealjs:
+    output-file: second_order-revealjs.html
+    theme: simple
+    slide-number: true
+    width: 1600
+    height: 900
+    code-fold: true
+    preview-links: true
+---
+
+{{< include common/_content.qmd >}}
+
+::: {.content-visible when-format="html"}
+## Interactive Plot
+
+```{ojs}
+viewof dampingRatio = Inputs.range([0, 2], {
+  value: 1.2,
+  step: 0.1,
+  label: "Damping ratio (ζ)"
+})
+
+viewof naturalFreq = Inputs.range([0.1, 5], {
+  value: 3.4,
+  step: 0.1,
+  label: "Natural frequency (ωn)"
+})
+
+data = {
+  const t = Array.from({length: 1000}, (_, i) => i * 0.01);
+  return t.map(t => ({
+    t,
+    y: Math.exp(-dampingRatio * naturalFreq * t) * 
+       Math.cos(naturalFreq * Math.sqrt(Math.max(0, 1 - dampingRatio**2)) * t)
+  }));
+}
+
+Plot.plot({
+  width: 800,
+  height: 500,
+  grid: true,
+  x: {
+    label: "Time (s)",
+    domain: [0, 10]
+  },
+  y: {
+    label: "Amplitude",
+    domain: [-1, 1]
+  },
+  marks: [
+    Plot.line(data, {
+      x: "t",
+      y: "y",
+      stroke: "blue"
+    })
+  ]
+})
+```
+:::
+
+::: {.content-visible when-format="pdf"}
+## System Response Examples
+
+```{python}
+#| echo: false
+#| fig-cap: 
+#|   - "Underdamped Response (ζ = 0.3, ωn = 2.0)"
+#|   - "Critically Damped Response (ζ = 1.0, ωn = 2.0)"
+#|   - "Overdamped Response (ζ = 1.5, ωn = 2.0)"
+#| layout-ncol: 2
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def create_response_plot(zeta, wn, static=True):
+    t = np.linspace(0, 10, 1000)
+    response = np.exp(-zeta * wn * t) * np.cos(wn * np.sqrt(np.maximum(0, 1 - zeta**2)) * t)
+    
+    plt.figure(figsize=(8, 4) if static else (6, 4))
+    plt.plot(t, response, 'b-')
+    plt.grid(True)
+    plt.xlabel('Time (s)')
+    plt.ylabel('Amplitude')
+    plt.title(f'Response (ζ = {zeta}, ωn = {wn})')
+    plt.ylim(-1, 1)
+    return plt
+
+cases = [(0.3, 2.0), (1.0, 2.0), (1.5, 2.0)]
+for zeta, wn in cases:
+    create_response_plot(zeta, wn)
+    plt.show()
+```
+:::
+
+::: {.content-visible when-format="revealjs"}
+
+## Second Order Systems {background-color="#40666e"}
+
+::: {.incremental}
+- Model many physical and control systems
+- Characterized by two parameters:
+  - Damping ratio (ζ)
+  - Natural frequency (ωn)
+:::
+
+## Transfer Function {background-color="#40666e"}
+
+:::: {.columns}
+
+::: {.column width="40%"}
+The system is described by:
+
+$$H(s) = \frac{\omega_n^2}{s^2 + 2\zeta\omega_n s + \omega_n^2}$$
+:::
+
+::: {.column width="60%"}
+Key parameters:
+
+::: {.incremental}
+- $\zeta$ controls oscillation behavior
+- $\omega_n$ determines response speed
+- Together they shape system dynamics
+:::
+:::
+
+::::
+
+## Response Types {auto-animate=true}
+
+Three characteristic behaviors based on damping ratio:
+
+::: {.fragment .fade-up}
+1. **Underdamped** ($\zeta < 1$)
+   - Oscillates with decreasing amplitude
+:::
+
+::: {.fragment .fade-up}
+2. **Critically Damped** ($\zeta = 1$)
+   - Fastest non-oscillatory response
+:::
+
+::: {.fragment .fade-up}
+3. **Overdamped** ($\zeta > 1$)
+   - Slow return to steady state
+:::
+
+## Underdamped Response {background-color="#2c4a52"}
+
+:::: {.columns}
+
+::: {.column width="40%"}
+Characteristics:
+
+- $\zeta < 1$
+- Oscillatory behavior
+- Common in practice
+:::
+
+::: {.column width="60%"}
+```{python}
+#| echo: false
+#| fig-align: center
+create_response_plot(0.3, 2.0)
+plt.show()
+```
+:::
+
+::::
+
+## Critically Damped Response {background-color="#2c4a52"}
+
+:::: {.columns}
+
+::: {.column width="40%"}
+Characteristics:
+
+- $\zeta = 1$
+- No oscillation
+- Fastest settling
+:::
+
+::: {.column width="60%"}
+```{python}
+#| echo: false
+#| fig-align: center
+create_response_plot(1.0, 2.0)
+plt.show()
+```
+:::
+
+::::
+
+## Overdamped Response {background-color="#2c4a52"}
+
+:::: {.columns}
+
+::: {.column width="40%"}
+Characteristics:
+
+- $\zeta > 1$
+- No oscillation
+- Slower response
+:::
+
+::: {.column width="60%"}
+```{python}
+#| echo: false
+#| fig-align: center
+create_response_plot(1.5, 2.0)
+plt.show()
+```
+:::
+
+::::
+
+## Applications {background-color="#40666e"}
+
+::: {.incremental}
+- Mechanical Systems
+  - Suspension systems
+  - Vibration dampers
+- Control Systems
+  - Motor position control
+  - Temperature regulation
+- Electronic Systems 
+  - RLC circuits
+  - Filters
+:::
+
+## Summary
+
+Key takeaways:
+
+::: {.incremental}
+- Second order systems are fundamental
+- Damping ratio determines response type
+- Natural frequency affects response speed
+- Design involves balancing speed vs. stability
+:::
+
+:::

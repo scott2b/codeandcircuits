@@ -1,0 +1,26 @@
+## System Transfer Function {.section}
+
+The transfer function $H(s)$ for a second-order system is:
+
+$$H(s) = \frac{\omega_n^2}{s^2 + 2\zeta\omega_n s + \omega_n^2}$$
+
+where:
+
+- $\zeta$ is the damping ratio
+- $\omega_n$ is the natural frequency
+
+## Response Types {.section}
+
+The system exhibits three characteristic behaviors:
+
+1. **Underdamped** ($\zeta < 1$)
+   - System oscillates with decreasing amplitude
+   - Common in systems with insufficient damping
+
+2. **Critically Damped** ($\zeta = 1$)
+   - Fastest return to steady state without oscillation
+   - Optimal for many control applications
+
+3. **Overdamped** ($\zeta > 1$)
+   - Returns to steady state without oscillation
+   - Slower response than critically damped
