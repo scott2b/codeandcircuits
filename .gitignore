@@ -3,6 +3,7 @@
 .venv/
 .python-version
 .quarto/
+.DS_Store
 
 .hugo_build.lock
 .jekyll-cache/

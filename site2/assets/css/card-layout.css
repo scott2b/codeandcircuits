@@ -1,3 +1,19 @@
+.content-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* Add left margin to match other content */
+.content-container img {
+    margin-left: 0;
+    display: block;
+}
+
+.section-description {
+    margin-left: 0;
+}
+
 /* Card base styles */
 .card {
     border: 1px solid rgba(0, 0, 0, 0.08);

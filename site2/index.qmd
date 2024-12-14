@@ -1,5 +1,5 @@
 ---
-title: "Code and Circuits"
+title: ""
 page-layout: full
 listing:
   contents: posts
@@ -11,8 +11,12 @@ format:
     css: assets/css/card-layout.css
 ---
 
+::: {.content-container}
+![](assets/images/logo.svg){width=300px style="margin-left: -0.75rem;"}
+
 ::: {.section-description}
 An engineer's notebook.
+:::
 :::
 
 ## Latest Posts

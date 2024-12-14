@@ -1,11 +1,12 @@
 project:
   type: website
+  title: "codeandcircuits.com"
   output-dir: _site
   resources:
     - "assets/"
 
 website:
-  title: "Your Site Title"
+  title: "codeandcircuits.com"
   navbar:
     background: secondary
     search: true
