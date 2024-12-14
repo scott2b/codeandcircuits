@@ -4,7 +4,7 @@ page-layout: full
 listing:
   contents: 
     - "*.qmd"
-    - "!index.qmd"
+    - "*/index.qmd"
   sort: "date desc"
   type: table
   categories: true
