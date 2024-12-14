@@ -1,0 +1,9 @@
+---
+title: "All Posts"
+listing:
+  contents: "**/*.qmd"
+  type: table
+  sort: "date desc"
+  fields: [date, title, description, categories]
+  categories: true
+---

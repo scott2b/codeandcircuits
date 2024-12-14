@@ -41,8 +41,9 @@
     margin: 0;
     padding: 1rem 1.5rem;
     color: #4b5563;
-    font-size: 1rem;
-    line-height: 1.6;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
 .subtopics {
@@ -80,8 +81,9 @@
 .subtopics p {
     margin: 0.5rem 0 1.5rem 0;
     color: #4b5563;
-    font-size: 0.95rem;
-    line-height: 1.6;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
 /* Expand/collapse indicator */
