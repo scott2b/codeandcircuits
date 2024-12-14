@@ -2,10 +2,17 @@
 title: ""
 page-layout: full
 listing:
-  contents: posts
-  sort: "date desc"
-  type: default
-  categories: true
+  - id: recent-posts-listing
+    contents: posts
+    sort: "date desc"
+    type: grid
+    max-items: 3
+    fields: [date, title, description]
+    filter-ui: false
+    categories: false
+    feed: false
+    sort-ui: false
+    page-size: 3
 format:
   html:
     css: assets/css/card-layout.css
@@ -21,11 +28,12 @@ An engineer's notebook.
 
 ## Latest Posts
 
-::: {#listing}
+::: {#recent-posts-listing}
 :::
 
-## Featured Topics
+[View All Posts →](posts/index.qmd){.explore-link style="display: block; margin-top: 2rem;"}
 
+## Featured Topics
 :::: {.card-grid}
 
 <div class="card math-card">
@@ -46,7 +54,7 @@ Advanced mathematics for engineering applications, including calculus, linear al
 <span class="tag">Differential Equations</span>
 </div>
 
-[Explore Math →]{.explore-link}
+[Explore Math →](/math){.explore-link}
 </div>
 
 <div class="card circuit-card">
@@ -204,3 +212,4 @@ Study of complex systems, emergence, and network science.
 </div>
 
 ::::
+

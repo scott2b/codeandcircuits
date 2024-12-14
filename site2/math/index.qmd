@@ -1,0 +1,73 @@
+---
+title: "Mathematical Foundations"
+aliases:
+  - math
+format:
+  html:
+    css: /assets/css/topic-layout.css
+---
+
+::: {.topic-intro .math-topic}
+Advanced mathematics for engineering applications, including calculus, linear algebra, and differential equations.
+:::
+
+::: {.subtopics-grid .math-topic}
+::: {.topic .collapsed}
+### Vector Calculus
+Essential tools for electromagnetic theory and fluid dynamics.
+
+::: {.subtopics}
+#### Gradient Fields
+Understanding scalar fields and their derivatives in multiple dimensions.
+
+#### Divergence and Curl
+Vector field operations and their physical interpretations.
+
+#### Line and Surface Integrals
+Integration techniques for vector fields along paths and surfaces.
+:::
+:::
+
+::: {.topic .collapsed}
+### Linear Algebra
+Fundamental concepts for signal processing and machine learning.
+
+::: {.subtopics}
+#### Vector Spaces
+Basic properties and operations in vector spaces.
+
+#### Matrix Operations
+Advanced matrix manipulations and their applications.
+
+#### Eigenvalues and Eigenvectors
+Understanding characteristic equations and diagonalization.
+:::
+:::
+
+::: {.topic .collapsed}
+### Differential Equations
+Mathematical modeling of dynamic systems.
+
+::: {.subtopics}
+#### Ordinary Differential Equations
+First and second-order equations, systems of ODEs.
+
+#### Partial Differential Equations
+Heat equation, wave equation, Laplace equation.
+
+#### Numerical Methods
+Computational approaches to solving differential equations.
+:::
+:::
+:::
+
+<script>
+window.addEventListener('load', function() {
+    document.querySelectorAll('.topic').forEach(topic => {
+        const header = topic.querySelector('h3');
+        header.addEventListener('click', () => {
+            topic.classList.toggle('collapsed');
+        });
+    });
+});
+</script>

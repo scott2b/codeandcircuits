@@ -4,6 +4,9 @@ project:
   output-dir: _site
   resources:
     - "assets/"
+  render:
+    - "*.qmd"
+    - "posts/**/*.qmd"
 
 website:
   title: "codeandcircuits.com"
@@ -13,6 +16,7 @@ website:
     left:
       - text: "Home"
         href: index.qmd
+  site-url: "https://codeandcircuits.com"
 
 format:
   html:
