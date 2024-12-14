@@ -10,9 +10,14 @@ project:
 
 website:
   title: "codeandcircuits.com"
+  favicon: assets/images/favicon.png
   navbar:
     background: secondary
     search: true
+    logo: assets/images/header-logo-fixed.png
+    logo-width: 300px
+    logo-alt: "Site logo"
+    title: false
     left:
       - text: "Home"
         href: index.qmd

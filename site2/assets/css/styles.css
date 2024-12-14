@@ -1,0 +1,6 @@
+.navbar-brand img {
+    display: inline-block;
+    visibility: visible;
+    opacity: 1;
+    max-height: 50px;  /* adjust as needed */
+}
