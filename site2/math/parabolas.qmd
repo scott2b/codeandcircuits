@@ -37,20 +37,24 @@ plt.rcParams.update({
     'figure.dpi': 150,
     'axes.grid': True,
     'grid.alpha': 0.3,
-    'lines.linewidth': 1,
-    'axes.linewidth': 1.5,
+    'lines.linewidth': 0.8,
+    'axes.linewidth': 1,
     'axes.axisbelow': True,
     'axes.labelsize': 10,
-    'axes.titlesize': 12
+    'axes.titlesize': 12,
+    'xtick.labelsize': 8,
+    'ytick.labelsize': 8,
+    'xtick.color': '#666666',
+    'ytick.color': '#666666'
 })
 
 x = np.linspace(-10, 10, 200)
 plt.figure()
-plt.axhline(y=0, color='k', linewidth=1.5)
-plt.axvline(x=0, color='k', linewidth=1.5)
-plt.plot(x, x**2, 'b-', linewidth=1, label='y = x²: Base parabola')
-plt.plot(x, 2*x**2, 'r-', linewidth=1, label='y = 2x²: Narrower (|a| > 1)')
-plt.plot(x, -0.5*x**2, 'g-', linewidth=1, label='y = -0.5x²: Wider (|a| < 1), flipped (a < 0)')
+plt.axhline(y=0, color='k', linewidth=0.8)
+plt.axvline(x=0, color='k', linewidth=0.8)
+plt.plot(x, x**2, 'b-', linewidth=0.8, label='y = x²: Base parabola')
+plt.plot(x, 2*x**2, 'r-', linewidth=0.8, label='y = 2x²: Narrower (|a| > 1)')
+plt.plot(x, -0.5*x**2, 'g-', linewidth=0.8, label='y = -0.5x²: Wider (|a| < 1), flipped (a < 0)')
 plt.grid(True)
 plt.legend()
 plt.xlabel('x')
@@ -62,6 +66,9 @@ plt.xticks(np.arange(-10, 11, 2))
 plt.yticks(np.arange(-10, 11, 2))
 plt.gca().set_aspect(0.7)
 plt.tight_layout()
+# Make all spines (outline) thinner
+for spine in plt.gca().spines.values():
+    spine.set_linewidth(0.5)
 plt.show()
 plt.close()
 ```
@@ -85,11 +92,11 @@ $f(x) = a(x - h)^2 + k$
 
 x = np.linspace(-10, 10, 200)
 plt.figure()
-plt.axhline(y=0, color='k', linewidth=1.5)
-plt.axvline(x=0, color='k', linewidth=1.5)
-plt.plot(x, x**2, 'b-', linewidth=1, label='y = x²: Base parabola')
-plt.plot(x, x**2 + 2, 'r-', linewidth=1, label='y = x² + 2: Shift up')
-plt.plot(x, x**2 - 2, 'g-', linewidth=1, label='y = x² - 2: Shift down')
+plt.axhline(y=0, color='k', linewidth=0.8)
+plt.axvline(x=0, color='k', linewidth=0.8)
+plt.plot(x, x**2, 'b-', linewidth=0.8, label='y = x²: Base parabola')
+plt.plot(x, x**2 + 2, 'r-', linewidth=0.8, label='y = x² + 2: Shift up')
+plt.plot(x, x**2 - 2, 'g-', linewidth=0.8, label='y = x² - 2: Shift down')
 plt.grid(True)
 plt.legend()
 plt.xlabel('x')
@@ -101,6 +108,9 @@ plt.xticks(np.arange(-10, 11, 2))
 plt.yticks(np.arange(-10, 11, 2))
 plt.gca().set_aspect(0.7)
 plt.tight_layout()
+# Make all spines (outline) thinner
+for spine in plt.gca().spines.values():
+    spine.set_linewidth(0.5)
 plt.show()
 plt.close()
 ```
@@ -112,11 +122,11 @@ plt.close()
 
 x = np.linspace(-10, 10, 200)
 plt.figure()
-plt.axhline(y=0, color='k', linewidth=1.5)
-plt.axvline(x=0, color='k', linewidth=1.5)
-plt.plot(x, x**2, 'b-', linewidth=1, label='y = x²: Base parabola')
-plt.plot(x, (x-2)**2, 'r-', linewidth=1, label='y = (x-2)²: Shift right')
-plt.plot(x, (x+2)**2, 'g-', linewidth=1, label='y = (x+2)²: Shift left')
+plt.axhline(y=0, color='k', linewidth=0.8)
+plt.axvline(x=0, color='k', linewidth=0.8)
+plt.plot(x, x**2, 'b-', linewidth=0.8, label='y = x²: Base parabola')
+plt.plot(x, (x-2)**2, 'r-', linewidth=0.8, label='y = (x-2)²: Shift right')
+plt.plot(x, (x+2)**2, 'g-', linewidth=0.8, label='y = (x+2)²: Shift left')
 plt.grid(True)
 plt.legend()
 plt.xlabel('x')
@@ -128,6 +138,9 @@ plt.xticks(np.arange(-10, 11, 2))
 plt.yticks(np.arange(-10, 11, 2))
 plt.gca().set_aspect(0.7)
 plt.tight_layout()
+# Make all spines (outline) thinner
+for spine in plt.gca().spines.values():
+    spine.set_linewidth(0.5)
 plt.show()
 plt.close()
 ```

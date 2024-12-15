@@ -28,20 +28,35 @@
     color: #8a4baf !important; /* purple on hover */
 }
 
-/* Subtle bullet styling */
-ul {
+/* Change the general ul styling to be more specific */
+.content ul, /* If you have a content wrapper class */
+main ul,     /* Or target main content area */
+article ul { /* Or target article areas */
     list-style: none;
-    padding-left: 2em;  /* Reduced from 1.2em */
+    padding-left: 2em;
 }
 
-ul li::before {
+/* Make the bullet styling specific to content lists */
+.content ul li::before,
+main ul li::before,
+article ul li::before {
     content: "•";
     color: #8a4baf;
     opacity: 0.8;
     display: inline-block;
-    width: 0.7em;  /* Reduced from 1em to bring content closer to bullet */
+    width: 0.7em;
     margin-left: -1em;
     font-size: 1em;
     position: relative;
     top: -1px;
+}
+
+/* Add this to explicitly remove bullets from navbar */
+.navbar-nav {
+    list-style: none;
+    padding-left: 0;
+}
+
+.navbar-nav li::before {
+    content: none;
 }
