@@ -36,6 +36,5 @@ This site is:
 
 - Built with [Quarto](https://quarto.org)
 - Written in Markdown and Jupyter notebooks
-- Source code available on [GitHub](https://github.com/yourusername/site-repo)
 
 :::
