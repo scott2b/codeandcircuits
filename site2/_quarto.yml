@@ -23,6 +23,8 @@ website:
         text: Home
       - href: posts/index.qmd
         text: Posts
+      - href: notebooks/index.qmd
+        text: Notebooks
       - href: about/index.qmd
         text: About
   site-url: "https://codeandcircuits.com"

@@ -1,0 +1,38 @@
+---
+title: "Code Notebooks"
+page-layout: full
+aliases:
+  - math
+format:
+  html:
+    css: ../assets/css/topic-layout.css
+---
+
+::: {.content-container}
+::: {.topic-intro .nlp-topic}
+Notebooks for code exploration.
+:::
+
+::: {.subtopics-grid .nlp-topic}
+::: {.topic .collapsed}
+### NLP
+Natural Language Processing notebooks.
+
+::: {.subtopics}
+#### GDELT
+- [Fetching from the GKG](nlp/fetching-the-gkg)
+
+
+:::
+:::
+
+<script>
+window.addEventListener('load', function() {
+    document.querySelectorAll('.topic').forEach(topic => {
+        const header = topic.querySelector('h3');
+        header.addEventListener('click', () => {
+            topic.classList.toggle('collapsed');
+        });
+    });
+});
+</script>

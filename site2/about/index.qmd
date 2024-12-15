@@ -1,0 +1,41 @@
+---
+title: ""
+page-layout: full
+format:
+  html:
+    css: assets/css/styles.css
+---
+
+::: {.content-container}
+# About
+
+::: {.section-description}
+Code & Circuits is an engineer's notebook for exploring mathematics, electronics, and programming.
+:::
+
+## Purpose
+
+This site serves as a collection of technical notes, tutorials, and explorations across various engineering disciplines. The content focuses on:
+
+- Mathematical foundations for engineering applications
+- Electronic circuit design and analysis
+- Programming and software development
+- Data science and machine learning
+
+## Structure
+
+Content is organized into:
+
+- **Posts**: Regular articles and tutorials on specific topics
+- **Topic Areas**: Curated collections of related content organized by subject
+- **Code Notebooks**: Interactive examples and demonstrations
+
+## Technical Details
+
+This site is:
+
+- Built with [Quarto](https://quarto.org)
+- Written in Markdown and Jupyter notebooks
+- Source code available on [GitHub](https://github.com/yourusername/site-repo)
+
+:::

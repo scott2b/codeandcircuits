@@ -1,0 +1,13 @@
+---
+title: "Fetching from the GKG"
+format: html
+---
+
+  <a style="display: inline-block;" href="https://colab.research.google.com/github/scott2b/codeandcircuits/blob/main/notebooks/nlp/fetching-the-gkg.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab"></a>
+  <span style="position: relative; top: 6px;">
+  <a class="github-button" href="https://github.com/scott2b/codeandcircuits/blob/main/notebooks/nlp/fetching-the-gkg.ipynb" aria-label="View on GitHub" target="_blank">View on GitHub</a>
+  </span>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+<iframe src="./fetching-the-gkg.html" width="100%" height="800px" frameborder="0"></iframe>

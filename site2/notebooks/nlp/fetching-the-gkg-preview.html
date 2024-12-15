@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="generator" content="quarto-1.6.39">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+    <title>Fetching the latest batch of articles from the GDELT GKG. – Code &amp; Circuits</title>
+    <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      div.columns{display: flex; gap: min(4vw, 1.5em);}
+      div.column{flex: auto; overflow-x: auto;}
+      div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+      ul.task-list{list-style: none;}
+      ul.task-list li input[type="checkbox"] {
+        width: 0.8em;
+        margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+        vertical-align: middle;
+      }
+      /* CSS for syntax highlighting */
+      pre > code.sourceCode { white-space: pre; position: relative; }
+      pre > code.sourceCode > span { line-height: 1.25; }
+      pre > code.sourceCode > span:empty { height: 1.2em; }
+      .sourceCode { overflow: visible; }
+      code.sourceCode > span { color: inherit; text-decoration: inherit; }
+      div.sourceCode { margin: 1em 0; }
+      pre.sourceCode { margin: 0; }
+      @media screen {
+      div.sourceCode { overflow: auto; }
+      }
+      @media print {
+      pre > code.sourceCode { white-space: pre-wrap; }
+      pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+      }
+      pre.numberSource code
+        { counter-reset: source-line 0; }
+      pre.numberSource code > span
+        { position: relative; left: -4em; counter-increment: source-line; }
+      pre.numberSource code > span > a:first-child::before
+        { content: counter(source-line);
+          position: relative; left: -1em; text-align: right; vertical-align: baseline;
+          border: none; display: inline-block;
+          -webkit-touch-callout: none; -webkit-user-select: none;
+          -khtml-user-select: none; -moz-user-select: none;
+          -ms-user-select: none; user-select: none;
+          padding: 0 4px; width: 4em;
+        }
+      pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+      div.sourceCode
+        {   }
+      @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+      }
+    </style>
+
+    <style>
+      body.hypothesis-enabled #quarto-embed-header {
+        padding-right: 36px;
+      }
+
+      #quarto-embed-header {
+        height: 3em;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: solid 1px;
+      }
+
+      #quarto-embed-header h6 {
+        font-size: 1.1em;
+        padding-top: 0.6em;
+        margin-left: 1em;
+        margin-right: 1em;
+        font-weight: 400;
+      }
+
+      #quarto-embed-header a.quarto-back-link,
+      #quarto-embed-header a.quarto-download-embed {
+        font-size: 0.8em;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        margin-left: 1em;
+        margin-right: 1em;
+      }
+
+      .quarto-back-container {
+        padding-left: 0.5em;
+        display: flex;
+      }
+
+      .headroom {
+          will-change: transform;
+          transition: transform 200ms linear;
+      }
+
+      .headroom--pinned {
+          transform: translateY(0%);
+      }
+
+      .headroom--unpinned {
+          transform: translateY(-100%);
+      }      
+    </style>
+
+    <script>
+    window.document.addEventListener("DOMContentLoaded", function () {
+
+      var header = window.document.querySelector("#quarto-embed-header");
+      const titleBannerEl = window.document.querySelector("body > #title-block-header");
+      if (titleBannerEl) {
+        titleBannerEl.style.paddingTop = header.clientHeight + "px";
+      }
+      const contentEl = window.document.getElementById('quarto-content');
+      for (const child of contentEl.children) {
+        child.style.paddingTop = header.clientHeight + "px";
+        child.style.marginTop = "1em";
+      }
+
+      // Use the article root if the `back` call doesn't work. This isn't perfect
+      // but should typically work
+      window.quartoBackToArticle = () => {
+        var currentUrl = window.location.href;
+        window.history.back();
+        setTimeout(() => {
+            // if location was not changed in 100 ms, then there is no history back
+            if(currentUrl === window.location.href){              
+                // redirect to site root
+                window.location.href = '/';
+            }
+        }, 100);
+      }
+
+      const headroom = new window.Headroom(header, {
+        tolerance: 5,
+        onPin: function () {
+        },
+        onUnpin: function () {
+        },
+      });
+      headroom.init();
+    });
+    </script>
+
+    
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/images/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e8fb9d25728d58bfeac61b497e4a6629.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-70573ac50c87dbd652f4e1f4b033de92.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+     <script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>  
+        <link rel="stylesheet" href="../../assets/css/styles.css">
+      </head>
+
+  <body class="floating nav-fixed quarto-notebook">
+    <div id="quarto-embed-header" class="headroom fixed-top bg-primary">
+      
+      <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link"><i class="bi bi-caret-left"></i> Back to Article</a>
+      <h6><i class="bi bi-journal-code"></i> Fetching the latest batch of articles from the GDELT GKG.</h6>
+
+            <a href="../../notebooks/nlp/fetching-the-gkg.ipynb" class="btn btn-primary quarto-download-embed" download="fetching-the-gkg.ipynb">Download Notebook</a>
+          </div>
+
+     <div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo">
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../posts/index.html"> 
+<span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about/index.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#imports" id="toc-imports" class="nav-link active" data-scroll-target="#imports">Imports</a></li>
+  <li><a href="#fetch-the-latest-gkg-batch-of-news-urls" id="toc-fetch-the-latest-gkg-batch-of-news-urls" class="nav-link" data-scroll-target="#fetch-the-latest-gkg-batch-of-news-urls">Fetch the latest GKG batch of news URLs</a></li>
+  <li><a href="#utilities" id="toc-utilities" class="nav-link" data-scroll-target="#utilities">Utilities</a></li>
+  <li><a href="#take-a-peek-at-the-urls" id="toc-take-a-peek-at-the-urls" class="nav-link" data-scroll-target="#take-a-peek-at-the-urls">Take a peek at the URLs</a></li>
+  <li><a href="#fetch-the-article-pages-and-extract-their-texts" id="toc-fetch-the-article-pages-and-extract-their-texts" class="nav-link" data-scroll-target="#fetch-the-article-pages-and-extract-their-texts">Fetch the article pages and extract their texts</a></li>
+  <li><a href="#log-level-error" id="toc-log-level-error" class="nav-link" data-scroll-target="#log-level-error">Log level ERROR</a></li>
+  <li><a href="#skipping-failures" id="toc-skipping-failures" class="nav-link" data-scroll-target="#skipping-failures">Skipping failures</a></li>
+  <li><a href="#alternative-article-extractors" id="toc-alternative-article-extractors" class="nav-link" data-scroll-target="#alternative-article-extractors">Alternative article extractors</a></li>
+  <li><a href="#be-prepared-to-wait" id="toc-be-prepared-to-wait" class="nav-link" data-scroll-target="#be-prepared-to-wait">Be prepared to wait</a></li>
+  <li><a href="#take-a-peek-at-the-texts" id="toc-take-a-peek-at-the-texts" class="nav-link" data-scroll-target="#take-a-peek-at-the-texts">Take a peek at the texts</a></li>
+  <li><a href="#optionally-save-the-texts" id="toc-optionally-save-the-texts" class="nav-link" data-scroll-target="#optionally-save-the-texts">Optionally save the texts</a></li>
+  <li><a href="#reloading-texts" id="toc-reloading-texts" class="nav-link" data-scroll-target="#reloading-texts">Reloading texts</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">      <header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Fetching the latest batch of articles from the GDELT GKG.</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>     <div id="cell-1" class="cell markdown">
+
+</div>
+<div id="cell-2" class="cell markdown">
+<p><a href="https://www.gdeltproject.org/">The GDELT Project</a> which is dubbed “A Global Database of Society” is an excellent, freely available resource of world news.</p>
+<section id="the-gkg" class="level3">
+<h3 class="anchored" data-anchor-id="the-gkg">The GKG</h3>
+<p>In particular, I make regular use of the GDELT Knowledge Graph (GKG) raw data files for getting a snapshot of the current news. The GKG is updated every 15 minutes, and is essentially a dump of all the latest news, including URLs as well as a bunch of useful metadata.</p>
+</section>
+<section id="some-caveats" class="level3">
+<h3 class="anchored" data-anchor-id="some-caveats">Some caveats</h3>
+<p>This notebook demonstrates the use of the GKG for obtaining a list of URLs representing the latest news snapshot, and downloading the content of those news article where available. In some cases, such as paywall situations, or attempts at bot thwarting, you may not get everything with this approach, but I’ve been able to obtain quite a representative bit of the news this way.</p>
+</section>
+<section id="project-ideas" class="level3">
+<h3 class="anchored" data-anchor-id="project-ideas">Project ideas</h3>
+<p>The resulting text dumps from this notebook can be used for any number of news-related projects. Try building a classifier using the metadata provided, or build a topic model using <a href="https://maartengr.github.io/BERTopic/index.html">BERTopic</a>. In the future, I will publish examples of these ideas and more.</p>
+</section>
+</div>
+<div id="cell-3" class="cell markdown">
+<section id="imports" class="level2">
+<h2 class="anchored" data-anchor-id="imports">Imports</h2>
+</section>
+</div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div id="cell-4" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shutil</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tempfile</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> urllib</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> urllib.request</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> zipfile</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> goose3</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ModuleNotFoundError</span>:</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">!</span>pip install goose3 <span class="op">--</span>quiet</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> goose3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div id="cell-5" class="cell markdown">
+<section id="fetch-the-latest-gkg-batch-of-news-urls" class="level2">
+<h2 class="anchored" data-anchor-id="fetch-the-latest-gkg-batch-of-news-urls">Fetch the latest GKG batch of news URLs</h2>
+</section>
+</div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div id="cell-6" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>GKG_URL <span class="op">=</span> <span class="st">"http://data.gdeltproject.org/gdeltv2/</span><span class="sc">%s</span><span class="st">"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>DT_FORMAT <span class="op">=</span> <span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">%H%M%S"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>GKG_DATA_DIR <span class="op">=</span> Path(<span class="st">"gkg-data"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>GKG_HEADER <span class="op">=</span> [</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"GKGRECORDID"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DATE"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SourceCollectionIdentifier"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SourceCommonName"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DocumentIdentifier"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Counts"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"V2Counts"</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Themes"</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"V2Themes"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Locations"</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"V2Locations"</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Persons"</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"V2Persons"</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Organizations"</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"V2Organizations"</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"V2Tone"</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Dates"</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"GCAM"</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SharingImage"</span>,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RelatedImages"</span>,</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SocialImageEmbeds"</span>,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SocialVideoEmbeds"</span>,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Quotations"</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"AllNames"</span>,</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Amounts"</span>,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">"TranslationInfo"</span>,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Extras"</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div id="cell-7" class="cell markdown">
+<section id="utilities" class="level2">
+<h2 class="anchored" data-anchor-id="utilities">Utilities</h2>
+<p>Resources for fetching GKG data and extracting the URLs.</p>
+</section>
+</div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div id="cell-8" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> download(url, tofile<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Fetch a file from `url` and save it to `tofile`."""</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> tofile <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        tofile <span class="op">=</span> os.path.basename(urllib.parse.urlparse(url).path)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> urllib.request.urlopen(url) <span class="im">as</span> response, <span class="bu">open</span>(tofile, <span class="st">"wb"</span>) <span class="im">as</span> outfile:</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        shutil.copyfileobj(response, outfile)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> tofile</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gkg_filename(dt<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Returns the filename of the csv.zip GKG file associated with the latest</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">    15 minute period before dt, or the current time if dt is None.</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> dt <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        dt <span class="op">=</span> datetime.datetime.utcnow()</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    minute <span class="op">=</span> <span class="dv">15</span> <span class="op">*</span> (dt.minute<span class="op">//</span><span class="dv">15</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    dt <span class="op">=</span> dt.replace(minute<span class="op">=</span>minute, second<span class="op">=</span><span class="dv">0</span>, microsecond<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    dt_str <span class="op">=</span> dt.strftime(DT_FORMAT)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f"</span><span class="sc">{</span>dt_str<span class="sc">}</span><span class="ss">.gkg.csv.zip"</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch_gkg_urls(force<span class="op">=</span><span class="va">False</span>, dt<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Yields an iterable of URLs fetched from the latest GKG or None if the most</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co">    recent GKG file has already been processed.</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co">    Optionally pass in a historical datetime to be used rather than the</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co">    current time for determining the latest 15-minute batch to fetch.</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    fn <span class="op">=</span> gkg_filename(dt)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    download_file <span class="op">=</span> GKG_DATA_DIR <span class="op">/</span> fn </span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    csv_file <span class="op">=</span> GKG_DATA_DIR <span class="op">/</span> fn[:<span class="op">-</span><span class="bu">len</span>(<span class="st">".zip"</span>)]</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> download_file.exists() <span class="kw">and</span> <span class="kw">not</span> force:</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Skipping file for previously processed period:"</span>, fn)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    url <span class="op">=</span> GKG_URL <span class="op">%</span> fn</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Fetching gkg file:"</span>, url)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>        fn <span class="op">=</span> download(url, tofile<span class="op">=</span>download_file)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Unable to download GKG file:"</span>, e)</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> zipfile.ZipFile(download_file, <span class="st">"r"</span>) <span class="im">as</span> ref:</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        ref.extractall(GKG_DATA_DIR)</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(csv_file, encoding<span class="op">=</span><span class="st">"utf8"</span>, errors<span class="op">=</span><span class="st">"surrogateescape"</span>) <span class="im">as</span> f:</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i, line <span class="kw">in</span> <span class="bu">enumerate</span>(f):</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>            <span class="cf">yield</span> line.split(<span class="st">"</span><span class="ch">\t</span><span class="st">"</span>)[<span class="dv">4</span>].strip()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div id="cell-9" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>GKG_DATA_DIR.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div id="cell-10" class="cell" data-outputid="e25e1eb9-5bf1-40c5-f59f-3eccd3fb333a" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>urls <span class="op">=</span> <span class="bu">list</span>(fetch_gkg_urls(force<span class="op">=</span><span class="va">False</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fetching gkg file: http://data.gdeltproject.org/gdeltv2/20221011233000.gkg.csv.zip</code></pre>
+</div>
+</div></div>
+<div id="cell-11" class="cell markdown">
+<section id="take-a-peek-at-the-urls" class="level3">
+<h3 class="anchored" data-anchor-id="take-a-peek-at-the-urls">Take a peek at the URLs</h3>
+</section>
+</div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div id="cell-12" class="cell" data-outputid="2c53f987-a1b8-4189-d5ee-4b57e284e31c" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>urls[:<span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>['https://www.newsy.com/stories/ohio-senate-debate-with-ryan-vance-descends-into-attacks/',
+ 'https://www.russiaherald.com/news/272905643/elon-musk-spoke-to-putin-before-presenting-ukraine-peace-proposal-report',
+ 'https://www.forbes.com/sites/forbes-personal-shopper/2022/10/11/best-espresso-machines/',
+ 'https://www.kvor.com/news/pfizer-exec-admits-covid-vaccine-never-tested-to-prevent-transmission/',
+ 'https://www.kvor.com/news/fetterman-stroke-recovery-wont-have-an-impact-if-elected/',
+ 'https://www.montrosepress.com/free_access/hospital-recognizes-leadership-at-annual-fall-clinics/article_c7364b94-4994-11ed-985b-1f9ddec93453.html',
+ 'https://www.nbcconnecticut.com/tag/well-water/',
+ 'https://www.sbstatesman.com/2022/10/11/dont-worry-darling-continues-to-romanticize-bad-men/',
+ 'https://news.yahoo.com/obamas-praise-iranian-women-girls-200453660.html',
+ 'https://wild104.iheart.com/content/2022-10-11-khloe-kardashian-gets-rare-tumor-removed-from-face-take-this-seriously/']</code></pre>
+</div>
+</div></div>
+<div id="cell-13" class="cell markdown">
+<section id="fetch-the-article-pages-and-extract-their-texts" class="level2">
+<h2 class="anchored" data-anchor-id="fetch-the-article-pages-and-extract-their-texts">Fetch the article pages and extract their texts</h2>
+<p><a href="https://github.com/goose3/goose3">Goose3</a> is used here to fetch the texts of the articles from our list of URLs.</p>
+</section>
+</div>
+<div id="cell-14" class="cell markdown">
+<section id="log-level-error" class="level3">
+<h3 class="anchored" data-anchor-id="log-level-error">Log level ERROR</h3>
+<p>Goose3 tends to log out a lot of warnings about not being able to resolve article publication dates to UTC. We are just looking at text, so setting log level to ERROR to squelch those warnings.</p>
+</section>
+</div>
+<div id="cell-15" class="cell markdown">
+<section id="skipping-failures" class="level3">
+<h3 class="anchored" data-anchor-id="skipping-failures">Skipping failures</h3>
+<p>The code below does that bad thing of burying the general Exception, and just skips any URLs it cannot fetch. If you require squeezing out as many of these URLs as possible, you might want to dig into the specific errors.</p>
+</section>
+</div>
+<div id="cell-16" class="cell markdown">
+<section id="alternative-article-extractors" class="level3">
+<h3 class="anchored" data-anchor-id="alternative-article-extractors">Alternative article extractors</h3>
+<p>There are a number of good libraries available for article text extraction. Experiment to see what works best for your needs. Some options include:</p>
+<ul>
+<li><a href="https://github.com/goose3/goose3">goose3</a> (used here)</li>
+<li><a href="https://github.com/jmriebold/BoilerPy3">BoilerPy3</a></li>
+<li><a href="https://github.com/TeamHG-Memex/html-text">html-text</a> (extracts all the text, not just the primary article)</li>
+<li><a href="https://github.com/codelucas/newspaper/">Newspaper3k</a></li>
+<li><a href="https://trafilatura.readthedocs.io/en/latest/">trafilatura</a></li>
+</ul>
+</section>
+</div>
+<div id="cell-17" class="cell markdown">
+<section id="be-prepared-to-wait" class="level3">
+<h3 class="anchored" data-anchor-id="be-prepared-to-wait">Be prepared to wait</h3>
+<p>It takes a while to fetch the whole batch of web pages. There is a crude dotted status indicator just to make things appear alive. In a production scenario, you will probably want to use an approach that spawns multiple threads or processes for fetching.</p>
+<blockquote class="blockquote">
+<p>🔥 Pro tip: If you are trying to get an end-to-end run of the notebook just to see how things work, iterate just a slice of the urls (e.g.: <code>urls[:10]</code>) and carry on.</p>
+</blockquote>
+</section>
+</div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div id="cell-18" class="cell" data-outputid="f00a1eb1-8113-43d8-e81b-04b5c6612387" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>goose <span class="op">=</span> goose3.Goose()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>texts <span class="op">=</span> []</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>crawler_logger <span class="op">=</span> logging.getLogger(<span class="st">"goose3.crawler"</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>crawler_logger.setLevel(logging.ERROR)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>MIN_TEXT_LENGTH <span class="op">=</span> <span class="dv">200</span> <span class="co"># Sometimes the extracted text just isn't worth keeping</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, url <span class="kw">in</span> <span class="bu">enumerate</span>(urls):</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> i <span class="op">%</span> <span class="dv">10</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"."</span>, end<span class="op">=</span><span class="st">" "</span>) <span class="co"># just trying to look alive</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        article <span class="op">=</span> goose.extract(url<span class="op">=</span>url)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span>:</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Warning: buried general Exception is considered bad practice.</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co">        There are various reasons a fetch might not succeed. If you are getting</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">        a lot of skipped URLs, you may want to dig into this and handle each</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">        error specifically.</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Error. Skipping URL:"</span>, url)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    title <span class="op">=</span> article.title</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    descr <span class="op">=</span> article.meta_description</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    text <span class="op">=</span> article.cleaned_text</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(text) <span class="op">&gt;=</span> MIN_TEXT_LENGTH:</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>        texts.append(text)</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Done!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>. . . . . Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=432255
+. . . . . . . . . . . . . . . . Error. Skipping URL: https://www.npr.org/2022/10/11/1128197781/the-supreme-court-hears-the-pork-industrys-case-against-an-animal-welfare-law
+. . Error. Skipping URL: https://www.npr.org/2022/10/11/1128208223/supreme-court-pork-producers-sue-california
+. . . . . . . . . Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=430541&amp;whichpage=2
+. . Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=432256
+. . . . . . . . . . . . . . . . . Error. Skipping URL: https://www.stuff.co.nz/environment/130146301/government-announces-new-measures-to-protect-south-island-hectors-dolphins
+. . Error. Skipping URL: https://www.stuff.co.nz/life-style/homed/nz-house-garden/300671006/pappardelle-with-duck-ragout-recipe
+. . . . . . . . . . Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=432050&amp;whichpage=2
+. . . . . . . . . . </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ERROR:urllib3.connection:Certificate did not match expected hostname: markets.buffalonews.com. Certificate: {'subject': ((('commonName', '*.financialcontent.com'),),), 'issuer': ((('countryName', 'GB'),), (('stateOrProvinceName', 'Greater Manchester'),), (('localityName', 'Salford'),), (('organizationName', 'Sectigo Limited'),), (('commonName', 'Sectigo RSA Domain Validation Secure Server CA'),)), 'version': 3, 'serialNumber': 'E7612383D9F0E303A71AD943BDD22F23', 'notBefore': 'Apr 22 00:00:00 2022 GMT', 'notAfter': 'May 23 23:59:59 2023 GMT', 'subjectAltName': (('DNS', '*.financialcontent.com'), ('DNS', 'financialcontent.com')), 'OCSP': ('http://ocsp.sectigo.com',), 'caIssuers': ('http://crt.sectigo.com/SectigoRSADomainValidationSecureServerCA.crt',)}</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Error. Skipping URL: https://markets.buffalonews.com/buffnews/article/etrendy-2022-10-11-a-closer-look-at-hong-kongs-fugitives-in-the-us
+. . . Error. Skipping URL: https://www.npr.org/transcripts/1128032407
+. Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=350667&amp;whichpage=1304
+. . Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=432257
+. Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=432254
+. . Error. Skipping URL: https://www.npr.org/transcripts/1127995338
+. . . Error. Skipping URL: https://www.tap.info.tn/en/Portal-Politics/15632206-president-saied
+. . . . </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ERROR:urllib3.connection:Certificate did not match expected hostname: markets.buffalonews.com. Certificate: {'subject': ((('commonName', '*.financialcontent.com'),),), 'issuer': ((('countryName', 'GB'),), (('stateOrProvinceName', 'Greater Manchester'),), (('localityName', 'Salford'),), (('organizationName', 'Sectigo Limited'),), (('commonName', 'Sectigo RSA Domain Validation Secure Server CA'),)), 'version': 3, 'serialNumber': 'E7612383D9F0E303A71AD943BDD22F23', 'notBefore': 'Apr 22 00:00:00 2022 GMT', 'notAfter': 'May 23 23:59:59 2023 GMT', 'subjectAltName': (('DNS', '*.financialcontent.com'), ('DNS', 'financialcontent.com')), 'OCSP': ('http://ocsp.sectigo.com',), 'caIssuers': ('http://crt.sectigo.com/SectigoRSADomainValidationSecureServerCA.crt',)}</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Error. Skipping URL: https://markets.buffalonews.com/buffnews/article/getnews-2022-10-11-sandy-ut-ac-repair-by-one-stop-heating-and-air-conditioning-for-all-heating-and-air-conditioning-woes
+. . . Error. Skipping URL: https://www.stuff.co.nz/national/quizzes/300699690/quiz-take-the-three-strikes-trivia-test-for-october-12-2022
+. Error. Skipping URL: https://www.stuff.co.nz/national/crime/300710637/repeat-child-sex-offender-cut-off-ankle-monitor-to-abuse-a-toddler
+. . Error. Skipping URL: https://www.tap.info.tn/en/Portal-Politics/15632639-president-saied-pm
+. . . . . . . Error. Skipping URL: https://classiccountry957.iheart.com/content/2022-10-11-blake-shelton-to-step-away-from-the-voice-after-his-23rd-seasons/
+. Error. Skipping URL: https://www.stuff.co.nz/travel/destinations/nz/wellington/130143828/the-tripadvisor-restaurant-awards-were-a-big-snub-to-wellington-but-why
+. . . . . . . Error. Skipping URL: https://www.tap.info.tn/en/Portal-Economy/15631995-economic-growth-in
+. . . . . . . . Error. Skipping URL: https://www.stuff.co.nz/national/crime/300710713/man-charged-with-manslaughter-after-levin-car-crash-death
+. . . . . . . . . . . . . . Error. Skipping URL: https://www.tap.info.tn/en/Portal-Politics/15631969-former-mp-ghazi
+. . . . Error. Skipping URL: https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=432006&amp;whichpage=2
+. . . . . Done!</code></pre>
+</div>
+</div></div>
+<div id="cell-19" class="cell markdown">
+<section id="take-a-peek-at-the-texts" class="level3">
+<h3 class="anchored" data-anchor-id="take-a-peek-at-the-texts">Take a peek at the texts</h3>
+</section>
+</div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div id="cell-20" class="cell" data-outputid="083ddf68-3e7d-41cb-88be-537386a023c4" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(texts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>1252</code></pre>
+</div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div id="cell-21" class="cell" data-outputid="b4725f9c-f0a8-4540-c2ce-ddf9b13e3b1e" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>texts[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>'Rep. Tim Ryan – a 10-term congressman – and Republican JD Vance are fighting for Ohio\'s open U.S. Senate seat being vacated by GOP Sen. Rob Portman.\n\nThe first debate between Democratic U.S. Rep. Tim Ryan and Republican JD Vance descended quickly into attacks Monday, with the candidates for Ohio\'s open U.S. Senate seat accusing each other of being responsible for job losses and putting party loyalty ahead of voters’ needs.\n\nVance said Ryan had supported policies that led to a 10-year-old girl in Ohio being raped. Ryan said Vance had started a "fake nonprofit" to help people overcome addiction issues. The two accused each other of being beholden to their party, with Ryan echoing a comment from former President Donald Trump in calling Vance an "a— kisser" and Vance saying Ryan’s 100% voting record with President Joe Biden means he’s not the reasonable moderate he says he is.\n\nRelated Story What Are Ohioans Voting For In Their Senate Race?\n\nThe face-off between Ryan, a 10-term congressman, and Vance, a venture capitalist and author of "Hillbilly Elegy," for the seat being vacated by retiring GOP Sen. Rob Portman was one of the most contentious debates of the general election season so far. The race is one of the most expensive and closely watched of the midterms, with Democrats viewing it as a possible pickup opportunity in November.\n\nBoth candidates sought to tailor their messages to the working-class voters who could determine the election in an evening peppered with barbs and one-liners.\n\nRyan sought to paint Vance as an extremist, someone who associates with "crazies" from his party who falsely claim the 2020 election was stolen, support national abortion restrictions and contributed to the Jan. 6 attack on the U.S. Capitol.\n\n"You\'re running around with Ron DeSantis, the governor of Florida, who wants to ban books. You\'re running around with (Sen.) Lindsey Graham, who wants a national abortion ban. You\'re running around with (Rep.) Marjorie Taylor Greene, who\'s the absolute looniest politician in America," Ryan said.\n\nVance suggested Ryan’s focus on allegation of extremism was meant as a distraction from pocketbook issues important to voters, such as inflation and the price of groceries.\n\n"It’s close to Halloween and Tim Ryan has put on a costume where he pretends to be a reasonable moderate.” Had he been, Vance said, “Youngstown may not have lost 50,000 manufacturing jobs during your 20 years."\n\nRyan said: "I’m not gonna apologize for spending 20 years of my adult life slogging away to try to help one of the hardest economically hit regions of Ohio and dedicating my life to help that region come back. You ought to be ashamed of yourself, JD. You went off to California, you were drinking wine and eating cheese."\n\nVance countered that he left Ohio at 18 to join the Marines, and after working in Silicon Valley, he returned to Ohio to raise his family and start a business.\n\nDuring questioning about China, Ryan said Vance invested in China as a venture capitalist, the type of business move that exacerbated job losses in Ohio\'s manufacturing base. "The problem we\'re having now with inflation is our supply chains all went to China, and guys like him made a whole lot of money off that," Ryan said.\n\nVance said it is Democratic economic policies that have harmed manufacturing, saying, "They have completely gone to war against America\'s energy sector." He said he could not remember investing in China.\n\nOn abortion, Vance did not answer whether he would support Graham\'s proposed national ban after 15 weeks of pregnancy, with some exceptions. Vance said he thinks different states would likely want different laws but "some minimum national standard is totally fine with me."\n\nHe called himself "pro-life" but said he has "always believed in reasonable exceptions."\n\nRyan said he supports codifying the abortion rights established in Roe v. Wade, which was overturned by the U.S. Supreme Court in June. He said he opposes Ohio\'s law banning most abortions after fetal cardiac activity has been detected, as early as six weeks into pregnancy, which was blocked Friday.\n\nVance agreed with Ryan that a 10-year-old Ohio rape victim should not have had to leave the state for an abortion, but he said the fact the suspect was in the country illegally was a failure of weak border policies.\n\n"You voted so many times against the border wall funding, so many times for amnesty, Tim," Vance said. "If you had done your job, she would have never been raped in the first place."\n\nOn foreign policy, the pair parted ways on what the U.S. response should be if Russian President Vladimir Putin were to launch nuclear weapons in Ukraine.\n\nRyan said the U.S. should be prepared with a "swift and significant response," while Vance countered that the United States needs a "foreign policy establishment that puts the interests of our citizens first."\n\nRyan responded: "If JD had his way, Putin would be through Ukraine at this point. He’d be going into Poland."\n\n"If I had my way," Vance retorted, "you’d put money at the southern border, Tim, instead of launching tons of money into Ukraine." It echoed comments Vance had made in an interview before Russia\'s invasion of Ukraine, saying he didn\'t "really care what happens to Ukraine one way or another" because he wanted to see President Biden focus on his own country\'s border security.\n\nWhile the general election debate between Ryan and Vance was acrimonious, it didn\'t lead to a near-physical altercation, as an Ohio GOP Senate debate back in March during the primary season did. Former state Treasurer Josh Mandel and investment banker Mike Gibbons found themselves face to face on the debate stage, shouting at each other, while Vance told the two to stop fighting.\n\nAt the end of Monday\'s debate, Vance and Ryan shook hands.\n\nAdditional reporting by The Associated Press.'</code></pre>
+</div>
+</div></div>
+<div id="cell-22" class="cell markdown">
+<section id="optionally-save-the-texts" class="level2">
+<h2 class="anchored" data-anchor-id="optionally-save-the-texts">Optionally save the texts</h2>
+</section>
+</div>
+<div id="cell-23" class="cell markdown">
+<p>You might do this above instead, depending on your goals. Here we save the acquired texts to the drive in anticipation of loading and using them later. <strong>Note, however, that the provided approach only saves to ephemeral space.</strong> If you need long term storage, you will want to <a href="https://colab.research.google.com/notebooks/snippets/drive.ipynb">mount your Drive account</a> and save to an appropriate path.</p>
+</div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [10]:</pre></div><div id="cell-24" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>TEXT_DIR <span class="op">=</span> Path(<span class="st">"texts"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>TEXT_DIR.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, text <span class="kw">in</span> <span class="bu">enumerate</span>(texts):</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    fp <span class="op">=</span> TEXT_DIR <span class="op">/</span> <span class="ss">f"</span><span class="sc">{</span>i<span class="sc">:04}</span><span class="ss">.txt"</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> fp.<span class="bu">open</span>(<span class="st">"w"</span>) <span class="im">as</span> outfile:</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>        outfile.write(text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div id="cell-25" class="cell markdown">
+<section id="reloading-texts" class="level3">
+<h3 class="anchored" data-anchor-id="reloading-texts">Reloading texts</h3>
+<p>The texts can now be reloaded as follows:</p>
+</section>
+</div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [11]:</pre></div><div id="cell-26" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>texts <span class="op">=</span> []</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> fp <span class="kw">in</span> <span class="bu">sorted</span>(<span class="bu">list</span>(TEXT_DIR.iterdir())):</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    texts.append(fp.<span class="bu">open</span>().read())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [12]:</pre></div><div id="cell-27" class="cell" data-outputid="a2883c26-867a-4d16-e630-04c697046853" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>texts[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>'Sam Smith revealed that they got an interesting gift from fellow singer-songwriter Ed Sheeran. During their appearance on The Kelly Clarkson Show, Smith talked about the massive NSFW (Not Safe For Work) present Sheeran recently sent them.\n\n"It\'s actually wild. I thought it was a joke," Smith said during Tuesday\'s (October 11th) episode. "It\'s a six-foot-two marble penis. It\'s two tons. I have to get it craned into my house." Clarkson thought the gift was hilarious and wanted to know more. "In your foyer? Like, what\'s going to happen?" To which Smith replied, "Well, I want to turn it into a fountain, which I think will be hard to do."'</code></pre>
+</div>
+</div></div>
+
+
+     </main> <!-- /main -->  <script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/codeandcircuits\.com");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>  </div> <!-- /content --> 
+  
+</body></html>
