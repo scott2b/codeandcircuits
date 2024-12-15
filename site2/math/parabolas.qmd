@@ -45,7 +45,8 @@ plt.rcParams.update({
     'xtick.labelsize': 8,
     'ytick.labelsize': 8,
     'xtick.color': '#666666',
-    'ytick.color': '#666666'
+    'ytick.color': '#666666',
+    'legend.fontsize': 7
 })
 
 x = np.linspace(-10, 10, 200)
@@ -60,6 +61,40 @@ plt.legend()
 plt.xlabel('x')
 plt.ylabel('y')
 plt.title('Width and Orientation')
+plt.xlim(-10, 10)
+plt.ylim(-10, 10)
+plt.xticks(np.arange(-10, 11, 2))
+plt.yticks(np.arange(-10, 11, 2))
+plt.gca().set_aspect(0.7)
+plt.tight_layout()
+# Make all spines (outline) thinner
+for spine in plt.gca().spines.values():
+    spine.set_linewidth(0.5)
+plt.show()
+plt.close()
+```
+
+### Vertical Shift
+
+The constant term $c$ controls vertical position:
+- $c > 0$: shift up
+- $c < 0$: shift down
+
+```{python}
+#| echo: false
+
+x = np.linspace(-10, 10, 200)
+plt.figure()
+plt.axhline(y=0, color='k', linewidth=0.8)
+plt.axvline(x=0, color='k', linewidth=0.8)
+plt.plot(x, x**2, 'b-', linewidth=0.8, label='y = x²: Base parabola')
+plt.plot(x, x**2 + 2, 'r-', linewidth=0.8, label='y = x² + 2: Shift up')
+plt.plot(x, x**2 - 2, 'g-', linewidth=0.8, label='y = x² - 2: Shift down')
+plt.grid(True)
+plt.legend()
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Vertical Shifts')
 plt.xlim(-10, 10)
 plt.ylim(-10, 10)
 plt.xticks(np.arange(-10, 11, 2))
