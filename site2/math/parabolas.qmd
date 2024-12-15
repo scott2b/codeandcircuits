@@ -38,7 +38,7 @@ plt.rcParams.update({
     'axes.grid': True,
     'grid.alpha': 0.3,
     'lines.linewidth': 0.8,
-    'axes.linewidth': 1,
+    'axes.linewidth': 0.5,
     'axes.axisbelow': True,
     'axes.labelsize': 10,
     'axes.titlesize': 12,
