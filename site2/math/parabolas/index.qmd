@@ -1,3 +1,31 @@
+---
+title: "Parabolas"
+format:
+  html:
+    code-fold: true
+    code-tools: true
+    html-math-method: mathjax
+    embed-resources: true
+    document-tools:
+      - text: "Slides"
+        href: "parabolas-revealjs.html"
+      - text: "PDF"
+        href: "parabolas.pdf"
+  pdf:
+    papersize: letter
+    geometry:
+      - margin=1in
+    fig-format: pdf
+    jupyter: python3
+  revealjs:
+    output-file: parabolas-revealjs.html
+    theme: simple
+    slide-number: true
+    width: 1600
+    height: 900
+    code-fold: true
+jupyter: python3
+---
 
 ## Standard form of a parabola
 
@@ -7,14 +35,28 @@ $f(x) = ax^2 + bx + c$
     - $\mathbf{a > 0}$: Opens upward.  $\mathbf{a < 0}$: Opens downward.
     - $\mathbf{|a| > 1}$: Narrower. $\mathbf{|a| < 1}$: Wider
 
-- $b$:  Influences the horizontal position of the vertex, given by  $x = -\frac{b}{2a}$
-- $c$:  Is the **y-intercept**, thus determining vertical shift.
+- $b$: Influences the horizontal position of the vertex, given by $x = -\frac{b}{2a}$
+- $c$: Is the **y-intercept**, thus determining vertical shift.
 
-
+::: {.content-visible when-format="html"}
 ```{ojs}
-//| label: width-orientation
-//| title: Width and orientation
-//| code-fold: true
+viewof a = Inputs.range([-2, 2], {
+  value: 1,
+  step: 0.1,
+  label: "a (width & direction)"
+})
+
+viewof b = Inputs.range([-5, 5], {
+  value: 0,
+  step: 0.5,
+  label: "b (horizontal shift)"
+})
+
+viewof c = Inputs.range([-5, 5], {
+  value: 0,
+  step: 0.5,
+  label: "c (vertical shift)"
+})
 
 Plot.plot({
   grid: true,
@@ -26,32 +68,44 @@ Plot.plot({
     Plot.ruleX([0], {stroke: "black", strokeWidth: 2}),
     Plot.line(d3.range(-5, 5, 0.1), {
       x: d => d,
-      y: d => d ** 2,
+      y: d => a * d ** 2 + b * d + c,
       stroke: "blue"
-    }),
-    Plot.line(d3.range(-3.5, 3.5, 0.1), {
-      x: d => d,
-      y: d => 2 * d ** 2,
-      stroke: "red"
-    }),
-    Plot.line(d3.range(-7, 7, 0.1), {
-      x: d => d,
-      y: d => -0.5 * d ** 2,
-      stroke: "green"
     })
   ]
 })
 ```
+:::
 
-$\textcolor{blue}{\mathbf{y = x^2}}$: Base parabola
-$\textcolor{red}{\mathbf{y = 2x^2}}$: Narrower ($|a|>1$)
-$\textcolor{green}{\mathbf{y = -0.5x^2}}$: Wider ($|a|<1$), flipped ($a<0$)
+## Vertex form
 
+$f(x) = a(x - h)^2 + k$
 
+- $h$ controls **horizontal shift**
+  - $h > 0$: shift right
+  - $h < 0$: shift left
+- $k$ is the **vertical position** of the vertex
+  - $k > 0$: shift up
+  - $k < 0$: shift down
+
+::: {.content-visible when-format="html"}
 ```{ojs}
-//| label: vertical-shifts
-//| title: Vertical shifts
-//| code-fold: true
+viewof a2 = Inputs.range([-2, 2], {
+  value: 1,
+  step: 0.1,
+  label: "a (width & direction)"
+})
+
+viewof h = Inputs.range([-5, 5], {
+  value: 0,
+  step: 0.5,
+  label: "h (horizontal shift)"
+})
+
+viewof k = Inputs.range([-5, 5], {
+  value: 0,
+  step: 0.5,
+  label: "k (vertical shift)"
+})
 
 Plot.plot({
   grid: true,
@@ -61,84 +115,56 @@ Plot.plot({
   marks: [
     Plot.ruleY([0], {stroke: "black", strokeWidth: 2}),
     Plot.ruleX([0], {stroke: "black", strokeWidth: 2}),
-    Plot.line(d3.range(-10, 10, 0.1), {
+    Plot.line(d3.range(-5, 5, 0.1), {
       x: d => d,
-      y: d => d ** 2,
-      stroke: "blue"
-    }),
-    Plot.line(d3.range(-10, 10, 0.1), {
-      x: d => d,
-      y: d => d ** 2 + 4,
+      y: d => a2 * (d - h) ** 2 + k,
       stroke: "red"
-    }),
-    Plot.line(d3.range(-10, 10, 0.1), {
-      x: d => d,
-      y: d => d ** 2 - 4,
-      stroke: "green"
     })
   ]
 })
 ```
+:::
 
-$\textcolor{blue}{\mathbf{y = x^2}}$: Base parabola
-$\textcolor{red}{\mathbf{y = x^2 + 4}}$: Shifted up by 4 units
-$\textcolor{green}{\mathbf{y = x^2 - 4}}$: Shifted down by 4 units
+## Example Parabolas
 
-<div style="page-break-before: always;"></div>
+```{python}
+#| echo: false
+#| fig-cap: 
+#|   - "Standard Form Examples"
+#|   - "Vertex Form Examples"
+#| layout-ncol: 2
 
-### x-coordinate of the vertex in standard form
-$$
-x = -\frac{b}{2a}
-$$
+import numpy as np
+import matplotlib.pyplot as plt
 
-**Note:** Changing $b$  moves the vertex **left or right** along the x-axis. However, it is easier to see the horizontal shift in the vertex form of the equation (see section below).
+def plot_standard_form():
+    x = np.linspace(-5, 5, 200)
+    plt.figure(figsize=(8, 6))
+    plt.plot(x, x**2, 'b-', label='y = x²')
+    plt.plot(x, 2*x**2, 'r-', label='y = 2x²')
+    plt.plot(x, -0.5*x**2, 'g-', label='y = -0.5x²')
+    plt.grid(True)
+    plt.legend()
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title('Standard Form Examples')
+    return plt
 
-## The vertex form
+def plot_vertex_form():
+    x = np.linspace(-5, 5, 200)
+    plt.figure(figsize=(8, 6))
+    plt.plot(x, (x)**2, 'b-', label='y = x²')
+    plt.plot(x, (x-2)**2, 'r-', label='y = (x-2)²')
+    plt.plot(x, (x+2)**2 - 1, 'g-', label='y = (x+2)² - 1')
+    plt.grid(True)
+    plt.legend()
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title('Vertex Form Examples')
+    return plt
 
-$$
-f(x) = a(x - h)^2 + k
-$$
-
-$h$ controls **horizontal shift**
-- $h > 0$: shift to right
-- $h < 0$: shift to left
-
-$k$ is the **vertical position** of the vertex
-- $k > 0$: shift up
-- $k < 0$: shift down
-
-```{ojs}
-//| label: horizontal-shifts
-//| title: Horizontal shifts
-//| code-fold: true
-
-Plot.plot({
-  grid: true,
-  x: {domain: [-10, 10], label: "x"},
-  y: {domain: [-10, 10], label: "y"},
-  clip: true,
-  marks: [
-    Plot.ruleY([0], {stroke: "black", strokeWidth: 2}),
-    Plot.ruleX([0], {stroke: "black", strokeWidth: 2}),
-    Plot.line(d3.range(-10, 10, 0.1), {
-      x: d => d,
-      y: d => d ** 2,
-      stroke: "blue"
-    }),
-    Plot.line(d3.range(-10, 10, 0.1), {
-      x: d => d,
-      y: d => (d - 3) ** 2,
-      stroke: "red"
-    }),
-    Plot.line(d3.range(-10, 10, 0.1), {
-      x: d => d,
-      y: d => (d + 3) ** 2,
-      stroke: "green"
-    })
-  ]
-})
+plot_standard_form()
+plt.show()
+plot_vertex_form()
+plt.show()
 ```
-
-$\textcolor{blue}{\mathbf{y = x^2}}$: Base parabola
-$\textcolor{red}{\mathbf{y = (x - 3)^2}}$: Shifted right by 3 units
-$\textcolor{green}{\mathbf{y = (x + 3)^2}}$: Shifted left by 3 units

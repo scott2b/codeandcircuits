@@ -1,0 +1,133 @@
+---
+title: "Parabolas"
+format: 
+  pdf:
+    fig-format: pdf
+    fig-dpi: 150
+    fig-width: 6
+    fig-height: 4
+  html: default
+jupyter: python3
+---
+
+## Standard Form
+
+$f(x) = ax^2 + bx + c$
+
+### Width and Orientation
+
+The coefficient $a$ determines both width and direction:
+
+- $\mathbf{a > 0}$: Opens upward
+- $\mathbf{a < 0}$: Opens downward
+- $\mathbf{|a| > 1}$: Narrower
+- $\mathbf{|a| < 1}$: Wider
+
+```{python}
+#| echo: false
+#| page-break-after: always
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Set consistent style for both PDF and HTML
+plt.style.use('default')
+plt.rcParams.update({
+    'figure.figsize': (6, 4),
+    'figure.dpi': 150,
+    'axes.grid': True,
+    'grid.alpha': 0.3,
+    'lines.linewidth': 1,
+    'axes.linewidth': 1.5,
+    'axes.axisbelow': True,
+    'axes.labelsize': 10,
+    'axes.titlesize': 12
+})
+
+x = np.linspace(-10, 10, 200)
+plt.figure()
+plt.axhline(y=0, color='k', linewidth=1.5)
+plt.axvline(x=0, color='k', linewidth=1.5)
+plt.plot(x, x**2, 'b-', linewidth=1, label='y = x²: Base parabola')
+plt.plot(x, 2*x**2, 'r-', linewidth=1, label='y = 2x²: Narrower (|a| > 1)')
+plt.plot(x, -0.5*x**2, 'g-', linewidth=1, label='y = -0.5x²: Wider (|a| < 1), flipped (a < 0)')
+plt.grid(True)
+plt.legend()
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Width and Orientation')
+plt.xlim(-10, 10)
+plt.ylim(-10, 10)
+plt.xticks(np.arange(-10, 11, 2))
+plt.yticks(np.arange(-10, 11, 2))
+plt.gca().set_aspect(0.7)
+plt.tight_layout()
+plt.show()
+plt.close()
+```
+
+\newpage
+
+## Vertex Form
+
+$f(x) = a(x - h)^2 + k$
+
+- $h$ controls **horizontal shift**
+  - $h > 0$: shift right
+  - $h < 0$: shift left
+- $k$ is the **vertical position** of the vertex
+  - $k > 0$: shift up
+  - $k < 0$: shift down
+
+```{python}
+#| echo: false
+#| page-break-after: always
+
+x = np.linspace(-10, 10, 200)
+plt.figure()
+plt.axhline(y=0, color='k', linewidth=1.5)
+plt.axvline(x=0, color='k', linewidth=1.5)
+plt.plot(x, x**2, 'b-', linewidth=1, label='y = x²: Base parabola')
+plt.plot(x, x**2 + 2, 'r-', linewidth=1, label='y = x² + 2: Shift up')
+plt.plot(x, x**2 - 2, 'g-', linewidth=1, label='y = x² - 2: Shift down')
+plt.grid(True)
+plt.legend()
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Vertical Shifts')
+plt.xlim(-10, 10)
+plt.ylim(-10, 10)
+plt.xticks(np.arange(-10, 11, 2))
+plt.yticks(np.arange(-10, 11, 2))
+plt.gca().set_aspect(0.7)
+plt.tight_layout()
+plt.show()
+plt.close()
+```
+
+\newpage
+
+```{python}
+#| echo: false
+
+x = np.linspace(-10, 10, 200)
+plt.figure()
+plt.axhline(y=0, color='k', linewidth=1.5)
+plt.axvline(x=0, color='k', linewidth=1.5)
+plt.plot(x, x**2, 'b-', linewidth=1, label='y = x²: Base parabola')
+plt.plot(x, (x-2)**2, 'r-', linewidth=1, label='y = (x-2)²: Shift right')
+plt.plot(x, (x+2)**2, 'g-', linewidth=1, label='y = (x+2)²: Shift left')
+plt.grid(True)
+plt.legend()
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Horizontal Shifts')
+plt.xlim(-10, 10)
+plt.ylim(-10, 10)
+plt.xticks(np.arange(-10, 11, 2))
+plt.yticks(np.arange(-10, 11, 2))
+plt.gca().set_aspect(0.7)
+plt.tight_layout()
+plt.show()
+plt.close()
+```
