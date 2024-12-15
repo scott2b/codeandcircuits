@@ -1,0 +1,144 @@
+
+## Standard form of a parabola
+
+$f(x) = ax^2 + bx + c$
+
+- $a$: Determines the **direction** and **width** of the parabola:
+    - $\mathbf{a > 0}$: Opens upward.  $\mathbf{a < 0}$: Opens downward.
+    - $\mathbf{|a| > 1}$: Narrower. $\mathbf{|a| < 1}$: Wider
+
+- $b$:  Influences the horizontal position of the vertex, given by  $x = -\frac{b}{2a}$
+- $c$:  Is the **y-intercept**, thus determining vertical shift.
+
+
+```{ojs}
+//| label: width-orientation
+//| title: Width and orientation
+//| code-fold: true
+
+Plot.plot({
+  grid: true,
+  x: {domain: [-10, 10], label: "x"},
+  y: {domain: [-10, 10], label: "y"},
+  clip: true,
+  marks: [
+    Plot.ruleY([0], {stroke: "black", strokeWidth: 2}),
+    Plot.ruleX([0], {stroke: "black", strokeWidth: 2}),
+    Plot.line(d3.range(-5, 5, 0.1), {
+      x: d => d,
+      y: d => d ** 2,
+      stroke: "blue"
+    }),
+    Plot.line(d3.range(-3.5, 3.5, 0.1), {
+      x: d => d,
+      y: d => 2 * d ** 2,
+      stroke: "red"
+    }),
+    Plot.line(d3.range(-7, 7, 0.1), {
+      x: d => d,
+      y: d => -0.5 * d ** 2,
+      stroke: "green"
+    })
+  ]
+})
+```
+
+$\textcolor{blue}{\mathbf{y = x^2}}$: Base parabola
+$\textcolor{red}{\mathbf{y = 2x^2}}$: Narrower ($|a|>1$)
+$\textcolor{green}{\mathbf{y = -0.5x^2}}$: Wider ($|a|<1$), flipped ($a<0$)
+
+
+```{ojs}
+//| label: vertical-shifts
+//| title: Vertical shifts
+//| code-fold: true
+
+Plot.plot({
+  grid: true,
+  x: {domain: [-10, 10], label: "x"},
+  y: {domain: [-10, 10], label: "y"},
+  clip: true,
+  marks: [
+    Plot.ruleY([0], {stroke: "black", strokeWidth: 2}),
+    Plot.ruleX([0], {stroke: "black", strokeWidth: 2}),
+    Plot.line(d3.range(-10, 10, 0.1), {
+      x: d => d,
+      y: d => d ** 2,
+      stroke: "blue"
+    }),
+    Plot.line(d3.range(-10, 10, 0.1), {
+      x: d => d,
+      y: d => d ** 2 + 4,
+      stroke: "red"
+    }),
+    Plot.line(d3.range(-10, 10, 0.1), {
+      x: d => d,
+      y: d => d ** 2 - 4,
+      stroke: "green"
+    })
+  ]
+})
+```
+
+$\textcolor{blue}{\mathbf{y = x^2}}$: Base parabola
+$\textcolor{red}{\mathbf{y = x^2 + 4}}$: Shifted up by 4 units
+$\textcolor{green}{\mathbf{y = x^2 - 4}}$: Shifted down by 4 units
+
+<div style="page-break-before: always;"></div>
+
+### x-coordinate of the vertex in standard form
+$$
+x = -\frac{b}{2a}
+$$
+
+**Note:** Changing $b$  moves the vertex **left or right** along the x-axis. However, it is easier to see the horizontal shift in the vertex form of the equation (see section below).
+
+## The vertex form
+
+$$
+f(x) = a(x - h)^2 + k
+$$
+
+$h$ controls **horizontal shift**
+- $h > 0$: shift to right
+- $h < 0$: shift to left
+
+$k$ is the **vertical position** of the vertex
+- $k > 0$: shift up
+- $k < 0$: shift down
+
+```{ojs}
+//| label: horizontal-shifts
+//| title: Horizontal shifts
+//| code-fold: true
+
+Plot.plot({
+  grid: true,
+  x: {domain: [-10, 10], label: "x"},
+  y: {domain: [-10, 10], label: "y"},
+  clip: true,
+  marks: [
+    Plot.ruleY([0], {stroke: "black", strokeWidth: 2}),
+    Plot.ruleX([0], {stroke: "black", strokeWidth: 2}),
+    Plot.line(d3.range(-10, 10, 0.1), {
+      x: d => d,
+      y: d => d ** 2,
+      stroke: "blue"
+    }),
+    Plot.line(d3.range(-10, 10, 0.1), {
+      x: d => d,
+      y: d => (d - 3) ** 2,
+      stroke: "red"
+    }),
+    Plot.line(d3.range(-10, 10, 0.1), {
+      x: d => d,
+      y: d => (d + 3) ** 2,
+      stroke: "green"
+    })
+  ]
+})
+```
+
+$\textcolor{blue}{\mathbf{y = x^2}}$: Base parabola
+$\textcolor{red}{\mathbf{y = (x - 3)^2}}$: Shifted right by 3 units
+$\textcolor{green}{\mathbf{y = (x + 3)^2}}$: Shifted left by 3 units
