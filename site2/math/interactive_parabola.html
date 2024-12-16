@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interactive Parabola</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Interactive Parabola: y = ax² + bx + c</h1>
+    <!-- Sliders -->
+    <div>
+        <label for="a-slider">a:</label>
+        <input id="a-slider" type="range" min="-2" max="2" step="0.1" value="1">
+        <span id="a-value">1.0</span>
+    </div>
+    <div>
+        <label for="b-slider">b:</label>
+        <input id="b-slider" type="range" min="-5" max="5" step="0.1" value="0">
+        <span id="b-value">0.0</span>
+    </div>
+    <div>
+        <label for="c-slider">c:</label>
+        <input id="c-slider" type="range" min="-10" max="10" step="0.1" value="0">
+        <span id="c-value">0.0</span>
+    </div>
+
+    <!-- Plotly Graph -->
+    <div id="plot"></div>
+
+    <script>
+        // Function to generate y values
+        function generateY(a, b, c, x) {
+            return x.map(xi => a * xi * xi + b * xi + c);
+        }
+
+        // Initialize the graph
+        const x = Array.from({length: 500}, (_, i) => -10 + (i / 500) * 20);
+        let a = 1, b = 0, c = 0;
+        const y = generateY(a, b, c, x);
+
+        const trace = {
+            x: x,
+            y: y,
+            type: 'scatter',
+            mode: 'lines',
+            line: {color: 'blue', width: 2}
+        };
+
+        const layout = {
+            title: `y = ${a}x² + ${b}x + ${c}`,
+            xaxis: {title: "x", range: [-10, 10]},
+            yaxis: {title: "y", range: [-20, 20]},
+            template: 'plotly_white'
+        };
+
+        Plotly.newPlot('plot', [trace], layout);
+
+        // Update graph on slider change
+        function updateGraph() {
+            a = parseFloat(document.getElementById('a-slider').value);
+            b = parseFloat(document.getElementById('b-slider').value);
+            c = parseFloat(document.getElementById('c-slider').value);
+
+            document.getElementById('a-value').innerText = a.toFixed(1);
+            document.getElementById('b-value').innerText = b.toFixed(1);
+            document.getElementById('c-value').innerText = c.toFixed(1);
+
+            const newY = generateY(a, b, c, x);
+            Plotly.react('plot', [{x: x, y: newY, mode: 'lines', line: {color: 'blue', width: 2}}], {
+                ...layout,
+                title: `y = ${a.toFixed(1)}x² + ${b.toFixed(1)}x + ${c.toFixed(1)}`
+            });
+        }
+
+        // Attach slider listeners
+        document.getElementById('a-slider').addEventListener('input', updateGraph);
+        document.getElementById('b-slider').addEventListener('input', updateGraph);
+        document.getElementById('c-slider').addEventListener('input', updateGraph);
+    </script>
+</body>
+</html>
