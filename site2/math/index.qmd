@@ -13,7 +13,30 @@ format:
 Advanced mathematics for engineering applications, including calculus, linear algebra, and differential equations.
 :::
 
+
 ::: {.subtopics-grid .math-topic}
+
+
+::: {.topic .collapsed}
+### Fundamentals
+Core mathematical concepts that form the foundation for advanced topics.
+
+::: {.subtopics}
+#### Functions and Relations
+Understanding mappings, domains, and mathematical relationships.
+
+[Parabolic functions and their properties.](parabolas)
+
+
+#### Complex Numbers
+Operations and applications in engineering and physics.
+
+#### Series and Sequences
+Convergence, divergence, and infinite series analysis.
+:::
+:::
+
+
 ::: {.topic .collapsed}
 ### Vector Calculus
 Essential tools for electromagnetic theory and fluid dynamics.

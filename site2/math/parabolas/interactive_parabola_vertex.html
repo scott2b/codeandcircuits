@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interactive Parabola (Vertex Form)</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Interactive Parabola: y = a(x - h)² + k</h1>
+
+    <!-- Sliders -->
+    <div>
+        <label for="a-slider">a:</label>
+        <input id="a-slider" type="range" min="-2" max="2" step="0.1" value="1">
+        <span id="a-value">1.0</span>
+    </div>
+    <div>
+        <label for="h-slider">h:</label>
+        <input id="h-slider" type="range" min="-10" max="10" step="0.1" value="0">
+        <span id="h-value">0.0</span>
+    </div>
+    <div>
+        <label for="k-slider">k:</label>
+        <input id="k-slider" type="range" min="-10" max="10" step="0.1" value="0">
+        <span id="k-value">0.0</span>
+    </div>
+
+    <!-- Reset Button -->
+    <button id="reset-button" style="margin-top: 20px;">Reset to y = 1(x - 0)² + 0</button>
+
+    <!-- Plotly Graph -->
+    <div id="plot" style="margin-top: 20px;"></div>
+
+    <script>
+        // Function to generate y values for vertex form
+        function generateY(a, h, k, x) {
+            return x.map(xi => a * Math.pow((xi - h), 2) + k);
+        }
+
+        // Initialize the graph
+        const x = Array.from({length: 5000}, (_, i) => -20 + (i / 5000) * 40);
+        let a = 1, h = 0, k = 0;
+        const y = generateY(a, h, k, x);
+
+        const trace = {
+            x: x,
+            y: y,
+            type: 'scatter',
+            mode: 'lines',
+            line: {color: 'blue', width: 2}
+        };
+
+        const layout = {
+            title: `y = ${a}(x - ${h})² + ${k}`,
+            xaxis: {title: "x", dtick: 2, range: [-20, 20]},
+            yaxis: {title: "y", dtick: 2, range: [-20, 20]},
+            template: 'plotly_white'
+        };
+
+        Plotly.newPlot('plot', [trace], layout);
+
+        // Update graph on slider change
+        function updateGraph() {
+            a = parseFloat(document.getElementById('a-slider').value);
+            h = parseFloat(document.getElementById('h-slider').value);
+            k = parseFloat(document.getElementById('k-slider').value);
+
+            document.getElementById('a-value').innerText = a.toFixed(1);
+            document.getElementById('h-value').innerText = h.toFixed(1);
+            document.getElementById('k-value').innerText = k.toFixed(1);
+
+            const newY = generateY(a, h, k, x);
+            Plotly.react('plot', [{x: x, y: newY, mode: 'lines', line: {color: 'blue', width: 2}}], {
+                ...layout,
+                title: `y = ${a.toFixed(1)}(x - ${h.toFixed(1)})² + ${k.toFixed(1)}`
+            });
+        }
+
+        // Reset function
+        function resetGraph() {
+            document.getElementById('a-slider').value = 1;
+            document.getElementById('h-slider').value = 0;
+            document.getElementById('k-slider').value = 0;
+
+            document.getElementById('a-value').innerText = "1.0";
+            document.getElementById('h-value').innerText = "0.0";
+            document.getElementById('k-value').innerText = "0.0";
+
+            a = 1;
+            h = 0;
+            k = 0;
+
+            const resetY = generateY(a, h, k, x);
+            Plotly.react('plot', [{x: x, y: resetY, mode: 'lines', line: {color: 'blue', width: 2}}], {
+                ...layout,
+                title: `y = 1.0(x - 0.0)² + 0.0`
+            });
+        }
+
+        // Attach event listeners
+        document.getElementById('a-slider').addEventListener('input', updateGraph);
+        document.getElementById('h-slider').addEventListener('input', updateGraph);
+        document.getElementById('k-slider').addEventListener('input', updateGraph);
+        document.getElementById('reset-button').addEventListener('click', resetGraph);
+    </script>
+</body>
+</html>

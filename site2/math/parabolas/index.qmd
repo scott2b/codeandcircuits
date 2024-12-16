@@ -1,82 +1,101 @@
 ---
 title: "Parabolas"
-format:
-  html:
-    code-fold: true
-    code-tools: true
-    html-math-method: mathjax
-    embed-resources: true
-    document-tools:
-      - text: "Slides"
-        href: "parabolas-revealjs.html"
-      - text: "PDF"
-        href: "parabolas.pdf"
+format: 
   pdf:
-    papersize: letter
-    geometry:
-      - margin=1in
     fig-format: pdf
-    jupyter: python3
-  revealjs:
-    output-file: parabolas-revealjs.html
-    theme: simple
-    slide-number: true
-    width: 1600
-    height: 900
-    code-fold: true
+    fig-dpi: 150
+    fig-width: 6
+    fig-height: 4.2
+    geometry:
+      - margin=15mm
+    documentclass: article
+    keep-tex: true
+  html:
+    fig-width: 12
+    fig-height: 8.4
 jupyter: python3
+cache: false
+freeze: false
 ---
 
-## Standard form of a parabola
+<style>
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: auto;
+}
+</style>
+
+```{python}
+#| echo: false
+from parabolas import width_and_orientation, vertical_shifts, vertex_horizontal_shifts, vertex_vertical_shifts
+from parabolas import plotly_width_and_orientation
+```
+
+## Standard Form
 
 $f(x) = ax^2 + bx + c$
 
-- $a$: Determines the **direction** and **width** of the parabola:
-    - $\mathbf{a > 0}$: Opens upward.  $\mathbf{a < 0}$: Opens downward.
-    - $\mathbf{|a| > 1}$: Narrower. $\mathbf{|a| < 1}$: Wider
+The coefficient $a$ determines both width and direction:
 
-- $b$: Influences the horizontal position of the vertex, given by $x = -\frac{b}{2a}$
-- $c$: Is the **y-intercept**, thus determining vertical shift.
+- $\mathbf{a > 0}$: Opens upward
+- $\mathbf{a < 0}$: Opens downward
+- $\mathbf{|a| > 1}$: Narrower
+- $\mathbf{|a| < 1}$: Wider
+
+The constant term $c$ controls vertical position:
+
+- $c > 0$: shift up
+- $c < 0$: shift down
+
 
 ::: {.content-visible when-format="html"}
-```{ojs}
-viewof a = Inputs.range([-2, 2], {
-  value: 1,
-  step: 0.1,
-  label: "a (width & direction)"
-})
 
-viewof b = Inputs.range([-5, 5], {
-  value: 0,
-  step: 0.5,
-  label: "b (horizontal shift)"
-})
+```{python}
+#| echo: false
+#| out-width: "100%"
+plt = plotly_width_and_orientation()
+```
 
-viewof c = Inputs.range([-5, 5], {
-  value: 0,
-  step: 0.5,
-  label: "c (vertical shift)"
-})
-
-Plot.plot({
-  grid: true,
-  x: {domain: [-10, 10], label: "x"},
-  y: {domain: [-10, 10], label: "y"},
-  clip: true,
-  marks: [
-    Plot.ruleY([0], {stroke: "black", strokeWidth: 2}),
-    Plot.ruleX([0], {stroke: "black", strokeWidth: 2}),
-    Plot.line(d3.range(-5, 5, 0.1), {
-      x: d => d,
-      y: d => a * d ** 2 + b * d + c,
-      stroke: "blue"
-    })
-  ]
-})
+```{python}
+#| echo: false
+#| fig-width: 6
+#| out-width: 100% 
+plt = vertical_shifts()
+plt.show()
+plt.close()
 ```
 :::
 
-## Vertex form
+::: {layout-ncol=2 .content-visible when-format="pdf"}
+
+```{python}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 3
+#| out-width: 100% 
+plotly_width_and_orientation(export_path="width_and_orientation.png")
+```
+
+
+![](width_and_orientation.png){width="100%"}
+
+
+```{python}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 3
+#| out-width: 100% 
+plt = vertical_shifts()
+plt.show()
+plt.close()
+```
+:::
+
+
+
+## Vertex Form
 
 $f(x) = a(x - h)^2 + k$
 
@@ -88,83 +107,46 @@ $f(x) = a(x - h)^2 + k$
   - $k < 0$: shift down
 
 ::: {.content-visible when-format="html"}
-```{ojs}
-viewof a2 = Inputs.range([-2, 2], {
-  value: 1,
-  step: 0.1,
-  label: "a (width & direction)"
-})
-
-viewof h = Inputs.range([-5, 5], {
-  value: 0,
-  step: 0.5,
-  label: "h (horizontal shift)"
-})
-
-viewof k = Inputs.range([-5, 5], {
-  value: 0,
-  step: 0.5,
-  label: "k (vertical shift)"
-})
-
-Plot.plot({
-  grid: true,
-  x: {domain: [-10, 10], label: "x"},
-  y: {domain: [-10, 10], label: "y"},
-  clip: true,
-  marks: [
-    Plot.ruleY([0], {stroke: "black", strokeWidth: 2}),
-    Plot.ruleX([0], {stroke: "black", strokeWidth: 2}),
-    Plot.line(d3.range(-5, 5, 0.1), {
-      x: d => d,
-      y: d => a2 * (d - h) ** 2 + k,
-      stroke: "red"
-    })
-  ]
-})
+```{python}
+#| echo: false
+plt = vertex_horizontal_shifts()
+plt.show()
+plt.close()
+```
+```{python}
+#| echo: false
+#| fig-width: 6
+#| out-width: 100% 
+plt = vertex_vertical_shifts()
+plt.show()
+plt.close()
 ```
 :::
 
-## Example Parabolas
-
+::: {layout-ncol=2 .content-visible when-format="pdf"}
 ```{python}
 #| echo: false
-#| fig-cap: 
-#|   - "Standard Form Examples"
-#|   - "Vertex Form Examples"
-#| layout-ncol: 2
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-def plot_standard_form():
-    x = np.linspace(-5, 5, 200)
-    plt.figure(figsize=(8, 6))
-    plt.plot(x, x**2, 'b-', label='y = x²')
-    plt.plot(x, 2*x**2, 'r-', label='y = 2x²')
-    plt.plot(x, -0.5*x**2, 'g-', label='y = -0.5x²')
-    plt.grid(True)
-    plt.legend()
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.title('Standard Form Examples')
-    return plt
-
-def plot_vertex_form():
-    x = np.linspace(-5, 5, 200)
-    plt.figure(figsize=(8, 6))
-    plt.plot(x, (x)**2, 'b-', label='y = x²')
-    plt.plot(x, (x-2)**2, 'r-', label='y = (x-2)²')
-    plt.plot(x, (x+2)**2 - 1, 'g-', label='y = (x+2)² - 1')
-    plt.grid(True)
-    plt.legend()
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.title('Vertex Form Examples')
-    return plt
-
-plot_standard_form()
+#| fig-width: 4
+#| fig-height: 3
+#| out-width: 100% 
+plt = vertex_horizontal_shifts()
 plt.show()
-plot_vertex_form()
-plt.show()
+plt.close()
 ```
+```{python}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 3
+#| out-width: 100% 
+plt = vertex_vertical_shifts()
+plt.show()
+plt.close()
+```
+:::
+
+## 🔨 Try it out!
+
+
+::: {.content-visible when-format="html"}
+<iframe src="interactive_parabola_combined.html" width="100%" height="1000px" style="border: none;"></iframe>
+:::
