@@ -24,6 +24,11 @@ jobs:
       - name: Install Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
+      - name: Install Jupyter and Python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install jupyter nbformat
+
       - name: Render Quarto site
         run: quarto render site2/
 
