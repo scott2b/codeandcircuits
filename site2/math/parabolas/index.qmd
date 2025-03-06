@@ -30,7 +30,7 @@ img {
 ```{python}
 #| echo: false
 from parabolas import width_and_orientation, vertical_shifts, vertex_horizontal_shifts, vertex_vertical_shifts
-from parabolas import plotly_width_and_orientation
+from parabolas import plotly_width_and_orientation, plotly_vertical_shifts
 ```
 
 ## Standard Form
@@ -46,9 +46,8 @@ The coefficient $a$ determines both width and direction:
 
 The constant term $c$ controls vertical position:
 
-- $c > 0$: shift up
-- $c < 0$: shift down
-
+- $\mathbf{c > 0}$: shift up
+- $\mathbf{c < 0}$: shift down
 
 ::: {.content-visible when-format="html"}
 
@@ -56,6 +55,12 @@ The constant term $c$ controls vertical position:
 #| echo: false
 #| out-width: "100%"
 plt = plotly_width_and_orientation()
+```
+
+```{python}
+#| echo: false
+#| out-width: "100%"
+plt = plotly_vertical_shifts()
 ```
 
 ```{python}
@@ -150,3 +155,11 @@ plt.close()
 ::: {.content-visible when-format="html"}
 <iframe src="interactive_parabola_combined.html" width="100%" height="1000px" style="border: none;"></iframe>
 :::
+
+## 🧭 Explore more
+
+Parabolas appear in many real-world applications. Check out how they are used in:
+
+- [Bridges and Architecture](bridges): Learn how parabolic shapes provide structural efficiency in suspension bridges and architectural designs.
+- [Projectile Motion](projectile-motion): Discover how parabolas describe the path of objects moving under gravity.
+- [Antennas and Satellite Dishes](antennas): Explore how parabolic reflectors focus signals in communication systems.

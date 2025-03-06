@@ -261,13 +261,8 @@ def plotly_width_and_orientation(export_path=None):
         export_path (str): Path to export the static image (e.g., 'output.png').
                            If None, the plot will be displayed interactively.
     """
-    # Generate a smooth x range
     x = np.linspace(-10, 10, 1000)
-
-    # Create the plot
     fig = go.Figure()
-
-    # Add the parabola traces
     fig.add_trace(go.Scatter(
         x=x, y=x**2, mode='lines',
         name='y = x²', line=dict(color='blue', width=2)
@@ -280,35 +275,80 @@ def plotly_width_and_orientation(export_path=None):
         x=x, y=-0.5*x**2, mode='lines',
         name='y = -0.5x²', line=dict(color='green', width=2)
     ))
-
-    # Set the axis ranges, grid lines, and darker 0 axes
     fig.update_layout(
         title="Width and Orientation",
         xaxis=dict(
             title="x",
             range=[-10, 10],
-            tickmode='linear',
-            dtick=1,
+            tickmode='array',
+            tickvals=list(range(-10, 11, 2)),  # Even-numbered ticks from -10 to 10
             showgrid=True, gridcolor='lightgray',
-            zeroline=True, zerolinecolor='black', zerolinewidth=2  # Darker 0 axis
+            zeroline=True, zerolinecolor='black', zerolinewidth=2
         ),
         yaxis=dict(
             title="y",
             range=[-10, 10],
-            tickmode='linear',
-            dtick=1,
+            tickmode='array',
+            tickvals=list(range(-10, 11, 2)),  # Even-numbered ticks from -10 to 10
             showgrid=True, gridcolor='lightgray',
-            zeroline=True, zerolinecolor='black', zerolinewidth=2  # Darker 0 axis
+            zeroline=True, zerolinecolor='black', zerolinewidth=2
         ),
         template="plotly_white",
         showlegend=True
     )
-
-    # Export or display the figure
     if export_path:
-        fig.write_image(export_path)  # Export to a static image
+        fig.write_image(export_path)
     else:
-        fig.show()  # Display interactively
+        fig.show()
+
+
+def plotly_vertical_shifts(export_path=None):
+    """
+    Generate a Plotly plot for 'Width and Orientation'.
+
+    Parameters:
+        export_path (str): Path to export the static image (e.g., 'output.png').
+                           If None, the plot will be displayed interactively.
+    """
+    x = np.linspace(-10, 10, 1000)
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=x, y=x**2, mode='lines',
+        name='y = x²', line=dict(color='blue', width=2)
+    ))
+    fig.add_trace(go.Scatter(
+        x=x, y=x**2+2, mode='lines',
+        name='y = x² + 2', line=dict(color='red', width=2)
+    ))
+    fig.add_trace(go.Scatter(
+        x=x, y=x**2-2, mode='lines',
+        name='y = x² - 2', line=dict(color='green', width=2)
+    ))
+    fig.update_layout(
+        title="Vertical Shifts",
+        xaxis=dict(
+            title="x",
+            range=[-10, 10],
+            tickmode='array',
+            tickvals=list(range(-10, 11, 2)),  # Even-numbered ticks from -10 to 10
+            showgrid=True, gridcolor='lightgray',
+            zeroline=True, zerolinecolor='black', zerolinewidth=2
+        ),
+        yaxis=dict(
+            title="y",
+            range=[-10, 10],
+            tickmode='array',
+            tickvals=list(range(-10, 11, 2)),  # Even-numbered ticks from -10 to 10
+            showgrid=True, gridcolor='lightgray',
+            zeroline=True, zerolinecolor='black', zerolinewidth=2
+        ),
+        template="plotly_white",
+        showlegend=True
+    )
+    if export_path:
+        fig.write_image(export_path)
+    else:
+        fig.show()
 
 import plotly.graph_objects as go
 import numpy as np
