@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interactive Parabola Plots</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        /* Tab and layout styling */
+        .tab {
+            display: inline-block;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            background-color: #f1f1f1;
+            font-weight: bold;
+        }
+        .tab.active {
+            background-color: white;
+        }
+        .tab-content {
+            display: none;
+            border: 1px solid #ddd;
+            padding: 20px;
+            background-color: white;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .slider-container {
+            margin-bottom: 10px;
+        }
+        input[type="range"] {
+            width: 60%;
+            margin: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Parabola Plots</h1>
+    <div>
+        <!-- Tabs -->
+        <div id="tabs">
+            <div class="tab active" data-target="standard">Standard Form</div>
+            <div class="tab" data-target="vertex">Vertex Form</div>
+        </div>
+
+        <!-- Standard Form -->
+        <div id="standard" class="tab-content active">
+            <h2>Standard Form: y = ax² + bx + c</h2>
+            <div class="slider-container">
+                <label for="a-slider-std">a:</label>
+                <input id="a-slider-std" type="range" min="-2" max="2" step="0.1" value="1">
+                <span id="a-value-std">1.0</span>
+            </div>
+            <div class="slider-container">
+                <label for="b-slider-std">b:</label>
+                <input id="b-slider-std" type="range" min="-5" max="5" step="0.1" value="0">
+                <span id="b-value-std">0.0</span>
+            </div>
+            <div class="slider-container">
+                <label for="c-slider-std">c:</label>
+                <input id="c-slider-std" type="range" min="-10" max="10" step="0.1" value="0">
+                <span id="c-value-std">0.0</span>
+            </div>
+            <div id="plot-standard" style="width: 100%; height: 500px;"></div>
+        </div>
+
+        <!-- Vertex Form -->
+        <div id="vertex" class="tab-content">
+            <h2>Vertex Form: y = a(x - h)² + k</h2>
+            <div class="slider-container">
+                <label for="a-slider-vert">a:</label>
+                <input id="a-slider-vert" type="range" min="-2" max="2" step="0.1" value="1">
+                <span id="a-value-vert">1.0</span>
+            </div>
+            <div class="slider-container">
+                <label for="h-slider-vert">h:</label>
+                <input id="h-slider-vert" type="range" min="-10" max="10" step="0.1" value="0">
+                <span id="h-value-vert">0.0</span>
+            </div>
+            <div class="slider-container">
+                <label for="k-slider-vert">k:</label>
+                <input id="k-slider-vert" type="range" min="-10" max="10" step="0.1" value="0">
+                <span id="k-value-vert">0.0</span>
+            </div>
+            <div id="plot-vertex" style="width: 100%; height: 500px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching logic
+        document.querySelectorAll(".tab").forEach(tab => {
+            tab.addEventListener("click", () => {
+                document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+                document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+
+                tab.classList.add("active");
+                document.getElementById(tab.dataset.target).classList.add("active");
+            });
+        });
+
+        // Function to generate y values
+        function generateYStandard(a, b, c, x) {
+            return x.map(xi => a * xi * xi + b * xi + c);
+        }
+
+        function generateYVertex(a, h, k, x) {
+            return x.map(xi => a * (xi - h) * (xi - h) + k);
+        }
+
+        const x = Array.from({length: 1000}, (_, i) => -20 + (i / 1000) * 40);
+
+        // Standard Form Plot
+        function updateStandard() {
+            const a = parseFloat(document.getElementById("a-slider-std").value);
+            const b = parseFloat(document.getElementById("b-slider-std").value);
+            const c = parseFloat(document.getElementById("c-slider-std").value);
+            document.getElementById("a-value-std").innerText = a.toFixed(1);
+            document.getElementById("b-value-std").innerText = b.toFixed(1);
+            document.getElementById("c-value-std").innerText = c.toFixed(1);
+            Plotly.react('plot-standard', [{x: x, y: generateYStandard(a, b, c, x), mode: 'lines'}], {
+                title: "Standard Form",
+                xaxis: {dtick: 2, range: [-20, 20]},
+                yaxis: {dtick: 5, range: [-20, 20], showgrid: true, gridcolor: 'lightgray'}
+            });
+        }
+
+        // Vertex Form Plot
+        function updateVertex() {
+            const a = parseFloat(document.getElementById("a-slider-vert").value);
+            const h = parseFloat(document.getElementById("h-slider-vert").value);
+            const k = parseFloat(document.getElementById("k-slider-vert").value);
+            document.getElementById("a-value-vert").innerText = a.toFixed(1);
+            document.getElementById("h-value-vert").innerText = h.toFixed(1);
+            document.getElementById("k-value-vert").innerText = k.toFixed(1);
+            Plotly.react('plot-vertex', [{x: x, y: generateYVertex(a, h, k, x), mode: 'lines'}], {
+                title: "Vertex Form",
+                xaxis: {dtick: 2, range: [-20, 20]},
+                yaxis: {dtick: 5, range: [-20, 20], showgrid: true, gridcolor: 'lightgray'}
+            });
+        }
+
+        // Initialize plots
+        Plotly.newPlot('plot-standard', [{x: x, y: generateYStandard(1, 0, 0, x), mode: 'lines'}], {
+            title: "Standard Form", xaxis: {dtick: 2, range: [-20, 20]}, yaxis: {dtick: 5, range: [-20, 20]}
+        });
+
+        Plotly.newPlot('plot-vertex', [{x: x, y: generateYVertex(1, 0, 0, x), mode: 'lines'}], {
+            title: "Vertex Form", xaxis: {dtick: 2, range: [-20, 20]}, yaxis: {dtick: 5, range: [-20, 20]}
+        });
+
+        // Attach event listeners
+        document.querySelectorAll("#a-slider-std, #b-slider-std, #c-slider-std").forEach(el => el.addEventListener("input", updateStandard));
+        document.querySelectorAll("#a-slider-vert, #h-slider-vert, #k-slider-vert").forEach(el => el.addEventListener("input", updateVertex));
+    </script>
+</body>
+</html>
