@@ -36,9 +36,8 @@ jobs:
         run: quarto render site2/
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v2
         with:
-          name: quarto-site
           path: site2/_site
 
   deploy:
@@ -51,5 +50,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-        with:
-          artifact_name: quarto-site
