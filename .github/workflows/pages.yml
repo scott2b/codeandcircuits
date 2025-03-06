@@ -30,8 +30,9 @@ jobs:
         run: quarto render site2/
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
+          name: quarto-site
           path: site2/_site
 
   deploy:
