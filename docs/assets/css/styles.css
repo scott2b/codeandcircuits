@@ -1,0 +1,62 @@
+.navbar-brand img {
+    display: inline-block;
+    visibility: visible;
+    opacity: 1;
+    max-height: 40px;  /* reduced from 50px */
+}
+
+/* Modern navbar styling with proper height and visible navigation */
+.navbar {
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    padding: 0.5rem 1rem; /* reduced padding */
+    min-height: 60px; /* explicit height control */
+}
+
+.navbar.fixed-top {
+    border-bottom: 2px solid #8a4baf;
+}
+
+/* Ensure navigation links are visible */
+.navbar-nav .nav-link {
+    color: #2d3436 !important; /* dark gray, override Quarto defaults */
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #8a4baf !important; /* purple on hover */
+}
+
+/* Change the general ul styling to be more specific */
+.content ul, /* If you have a content wrapper class */
+main ul,     /* Or target main content area */
+article ul { /* Or target article areas */
+    list-style: none;
+    padding-left: 2em;
+}
+
+/* Make the bullet styling specific to content lists */
+.content ul li::before,
+main ul li::before,
+article ul li::before {
+    content: "•";
+    color: #8a4baf;
+    opacity: 0.8;
+    display: inline-block;
+    width: 0.7em;
+    margin-left: -1em;
+    font-size: 1em;
+    position: relative;
+    top: -1px;
+}
+
+/* Add this to explicitly remove bullets from navbar */
+.navbar-nav {
+    list-style: none;
+    padding-left: 0;
+}
+
+.navbar-nav li::before {
+    content: none;
+}
