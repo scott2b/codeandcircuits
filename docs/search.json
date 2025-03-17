@@ -109,7 +109,7 @@
     "href": "posts/index.html",
     "title": "All Posts",
     "section": "",
-    "text": "All Posts\n\nBrowse all articles and tutorials.\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Title\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\nDate\n\n\nTitle\n\n\nDescription\n\n\nCategories\n\n\n\n\n\n\nOct 11, 2022\n\n\nUsing urllib to wget a file in Python 3\n\n\nPost description\n\n\npython, io\n\n\n\n\nOct 11, 2022\n\n\nAdding Post content to Jekyll search\n\n\n\n\n\nweb, jekyll\n\n\n\n\nOct 11, 2022\n\n\nUse baseurl to specify the location of assets in Jekyll\n\n\n\n\n\nweb, jekyll\n\n\n\n\nOct 11, 2022\n\n\nSpecifying a custom Jekyll site location in GitHub pages\n\n\n\n\n\nweb, jekyll\n\n\n\n\nOct 10, 2022\n\n\nMy Publication Pipeline\n\n\n\n\n\nmisc\n\n\n\n\n\nNo matching items"
+    "text": "All Posts\n\nBrowse all articles and tutorials.\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Title\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\nDate\n\n\nTitle\n\n\nDescription\n\n\nCategories\n\n\n\n\n\n\nMar 17, 2025\n\n\nSome ways to easily get news content\n\n\n\n\n\npython\n\n\n\n\nOct 11, 2022\n\n\nUsing urllib to wget a file in Python 3\n\n\nPost description\n\n\npython, io\n\n\n\n\nOct 11, 2022\n\n\nAdding Post content to Jekyll search\n\n\n\n\n\nweb, jekyll\n\n\n\n\nOct 11, 2022\n\n\nUse baseurl to specify the location of assets in Jekyll\n\n\n\n\n\nweb, jekyll\n\n\n\n\nOct 11, 2022\n\n\nSpecifying a custom Jekyll site location in GitHub pages\n\n\n\n\n\nweb, jekyll\n\n\n\n\nOct 10, 2022\n\n\nMy Publication Pipeline\n\n\n\n\n\nmisc\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/2022-10-11-use-baseurl-for-jekyll-assets/index.html",
@@ -193,7 +193,7 @@
     "href": "index.html#latest-posts",
     "title": "\nMathematical Foundations\n",
     "section": "Latest Posts",
-    "text": "Latest Posts\n\n\n\n\n\n\n\nUsing urllib to wget a file in Python 3\n\n\nPost description\n\n\n\nOct 11, 2022\n\n\n\n\n\n\n\n\n\n\n\nAdding Post content to Jekyll search\n\n\n\n\n\n\nOct 11, 2022\n\n\n\n\n\n\n\n\n\n\n\nUse baseurl to specify the location of assets in Jekyll\n\n\n\n\n\n\nOct 11, 2022\n\n\n\n\n\n\n\n\nNo matching items\n\n\nView All Posts →"
+    "text": "Latest Posts\n\n\n\n\n\n\n\nSome ways to easily get news content\n\n\n\n\n\n\nMar 17, 2025\n\n\n\n\n\n\n\n\n\n\n\nUsing urllib to wget a file in Python 3\n\n\nPost description\n\n\n\nOct 11, 2022\n\n\n\n\n\n\n\n\n\n\n\nAdding Post content to Jekyll search\n\n\n\n\n\n\nOct 11, 2022\n\n\n\n\n\n\n\n\nNo matching items\n\n\nView All Posts →"
   },
   {
     "objectID": "index.html#featured-topics",
@@ -376,5 +376,33 @@
     "title": "🚀 Node.js and Python Project Setup Cheatsheet",
     "section": "",
     "text": "rm -rf node_modules package-lock.json\nnpm install\n\n\n\nrm -rf .venv\nUnsource the environment and re-create with the correct python (see above)\npython -m venv .venv"
+  },
+  {
+    "objectID": "posts/2025-03-17-getting-news-content/index.html",
+    "href": "posts/2025-03-17-getting-news-content/index.html",
+    "title": "Some ways to easily get news content",
+    "section": "",
+    "text": "It is a common scenario in the lab to need to get ahold of some news content to work with for experimenting with and building projects. Here are some go-to approaches that I use:"
+  },
+  {
+    "objectID": "posts/2025-03-17-getting-news-content/index.html#the-cc-news-dataset",
+    "href": "posts/2025-03-17-getting-news-content/index.html#the-cc-news-dataset",
+    "title": "Some ways to easily get news content",
+    "section": "The cc-news dataset",
+    "text": "The cc-news dataset\nThe cc-news dataset on Huggingface is probably the easiest way to just grab a bunch of articles. You may need to accept the licensing agreement in HuggingFace, but beyond that, it is about as simple as this:\npip install datasets\nfrom datasets import load_dataset\ndataset = load_dataset(\"cc_news\", split=\"train\") # note: there is only a \"train\" split available for this dataset\nfor article in dataset:\n    ... # keys include title, text, url, date, domain, description, image_url"
+  },
+  {
+    "objectID": "posts/2025-03-17-getting-news-content/index.html#news-api",
+    "href": "posts/2025-03-17-getting-news-content/index.html#news-api",
+    "title": "Some ways to easily get news content",
+    "section": "News API",
+    "text": "News API\nnewsapi.org is super easy to use and has a reasonable free tier of 100 requests per day, which is suitable for a lot of basic use cases, and will give you more recent news than the cc-news dataset."
+  },
+  {
+    "objectID": "posts/2025-03-17-getting-news-content/index.html#the-gdelt-gkg",
+    "href": "posts/2025-03-17-getting-news-content/index.html#the-gdelt-gkg",
+    "title": "Some ways to easily get news content",
+    "section": "The GDELT GKG",
+    "text": "The GDELT GKG\nThe GDELT raw files, which include the Global Knowledge Graph of up-to-date news article references released every 15 minutes is a bit more of a lift. The GKG Does not provide the articles themselves, so you will have to fetch the articles yourelf, but it does include a good amount of potentially useful metadata along with the URLs, and it is 100% free to use.\nFor extracting news articles from fetched html pages, I variously use the following tools:\n\nGoose3\nNewspaper3k\nTrafilatura\n\nFor more detail about this approach, see my code notebook: Fetching from the GKG"
   }
 ]

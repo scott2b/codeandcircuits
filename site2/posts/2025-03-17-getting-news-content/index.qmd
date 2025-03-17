@@ -1,0 +1,53 @@
+---
+title: "Some ways to easily get news content"
+layout: post
+date:   2025-03-17 10:47:32 -0500
+categories: python
+---
+
+It is a common scenario in the lab to need to get ahold of some news content to work with
+for experimenting with and building projects. Here are some go-to approaches that I use:
+
+
+## The cc-news dataset
+
+The [cc-news dataset on Huggingface](https://huggingface.co/datasets/vblagoje/cc_news) is
+probably the easiest way to just grab a bunch of articles. You may need to accept the
+licensing agreement in HuggingFace, but beyond that, it is about as simple as this:
+
+
+```bash
+pip install datasets
+```
+
+```python
+from datasets import load_dataset
+dataset = load_dataset("cc_news", split="train") # note: there is only a "train" split available for this dataset
+for article in dataset:
+    ... # keys include title, text, url, date, domain, description, image_url
+```
+
+
+## News API
+
+[newsapi.org](https://newsapi.org/) is super easy to use and has a reasonable free tier
+of 100 requests per day, which is suitable for a lot of basic use cases, and will give
+you more recent news than the cc-news dataset.
+
+
+## The GDELT GKG
+
+The [GDELT raw files](https://www.gdeltproject.org/data.html#rawdatafiles), which include
+the Global Knowledge Graph of up-to-date news article references released every 15
+minutes is a bit more of a lift. The GKG Does not provide the articles themselves, so
+you will have to fetch the articles yourelf, but it does include a good amount of
+potentially useful metadata along with the URLs, and it is 100% free to use.
+
+For extracting news articles from fetched html pages, I variously use the following tools:
+
+ - [Goose3](https://github.com/goose3/goose3)
+ - [Newspaper3k](https://newspaper.readthedocs.io/en/latest/)
+ - [Trafilatura](https://trafilatura.readthedocs.io/en/latest/)
+
+
+For more detail about this approach, see my code notebook: [Fetching from the GKG](/notebooks/nlp/fetching-the-gkg/)
