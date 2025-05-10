@@ -1,7 +1,7 @@
 project:
   type: website
   title: "codeandcircuits.com"
-  output-dir: _site
+  output-dir: "../docs"
   resources:
     - "assets/"
     - "CNAME"
