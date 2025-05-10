@@ -1,87 +1,132 @@
 ---
 title: "Fixing Git LFS Integration in Obsidian’s Git Plugin on macOS"
 layout: post
-date:   2025-05-09 20:34:00 -0500
+date: 2025-05-09
 categories:
   - macos
   - obsidian
+  - git
 ---
 
-If you’re using the Obsidian Git plugin and Git LFS (Large File Storage) on macOS, you may run into a frustrating issue: Git LFS is installed and working from your terminal, but Obsidian Git still fails with errors like git-lfs not found on your path.
+If you're using the Obsidian Git plugin with Git LFS (Large File Storage) on macOS, you may run into a frustrating issue: `git-lfs` works fine in your terminal, but Obsidian Git throws this error:
 
-Despite setting up everything correctly with git lfs install and .gitattributes, you might still get this: This repository is configured for Git LFS but 'git-lfs' was not found on your path.
+> This repository is configured for Git LFS but 'git-lfs' was not found on your path.
 
-This post explains why this happens — and how to fix it.
+Even after running `git lfs install` and configuring `.gitattributes` correctly, Git LFS fails — and so do pushes involving large files.
 
-⸻
+---
 
-🧠 The Problem: macOS GUI Apps Use a Different PATH
+## 🧠 The Problem: GUI apps ignore your shell config
 
-When you launch Obsidian from Spotlight, the Dock, or Finder, it does not inherit your terminal’s environment. That means:
+When you launch Obsidian from the Dock, Spotlight, or Finder:
 
-  - Your shell config files — like ~/.zprofile, ~/.bash_profile, ~/.bashrc, or ~/.config/fish/config.fish — are ignored.
-  - /usr/local/bin — where git-lfs lives — may not be in the PATH.
-  - The Git plugin inside Obsidian cannot find git-lfs, even though you can from the command line.
+- It **does not load** your `~/.zprofile`, `~/.bashrc`, or `config.fish`.
+- It **does not inherit** the same `$PATH` you see in your terminal.
+- So anything installed in `/usr/local/bin`, like `git-lfs`, is invisible to Obsidian’s Git plugin.
 
-This breaks Git LFS, and by extension, breaks Git pushes involving large files — even though everything looks configured correctly.
+---
 
-⸻
+## ✅ The Solution: A Custom `.app` Launcher With a Fixed `$PATH`
 
-✅ The Solution: A Custom Obsidian Launcher That Forces the Correct PATH
+Instead of trying to patch macOS’s environment or launchctl quirks, the simplest and most reliable fix is:
 
-Instead of hacking around with shell configs or launchctl, the most reliable solution is to create a wrapper app — a custom .app bundle that:
+> 🛠 Build a wrapper `.app` that launches Obsidian with the correct environment.
 
-	1.	Launches Obsidian manually, bypassing macOS sandbox restrictions.
-	2.	Injects a clean and correct PATH that includes /usr/local/bin.
+This gives you:
 
+- A real clickable macOS app
+- The ability to fix `$PATH` permanently
+- A proper app icon and dock integration
 
-🚀 How to Build the Obsidian Launcher That Works with Git LFS
+---
 
-To solve the git-lfs not found issue, create a small .app bundle that launches Obsidian with the correct environment.
+## 🚀 How to Build the App
 
-🔧 Step-by-step Instructions
+### 1. Create the directory structure
 
-	1.	Open Automator (via Spotlight or Applications folder)
-	2.	Choose “Application” as the new document type
-	3.	Add a “Run Shell Script” action
-	4.	Set the shell to /bin/bash
-	5.	Paste the following script:
-
+```bash
+mkdir -p ~/Applications/Obsidian\ With\ Git\ LFS.app/Contents/{MacOS,Resources}
 ```
+
+2. Add a wrapper script
+
+Create the file:
+~/Applications/Obsidian With Git LFS.app/Contents/MacOS/Obsidian With Git LFS
+
+```bash
+#!/bin/bash
 export PATH="$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-open -a "Obsidian"
+/Applications/Obsidian.app/Contents/MacOS/Obsidian "$@"
 ```
 
+Make it executable:
 
-	6.	Save the app as something like Obsidian With Git LFS.app
-	7.	Move it to /Applications or pin it to your Dock
+```bash
+chmod +x ~/Applications/Obsidian\ With\ Git\ LFS.app/Contents/MacOS/Obsidian\ With\ Git\ LFS
+```
 
-Now, launch Obsidian using this custom app, and the Git plugin will be able to find git-lfs even if your normal PATH isn’t inherited.
+3. Add a valid Info.plist
+
+Create Contents/Info.plist with this content:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key>
+  <string>Obsidian With Git LFS</string>
+  <key>CFBundleIdentifier</key>
+  <string>com.example.obsidian-lfs-launcher</string>
+  <key>CFBundleVersion</key>
+  <string>1.0</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleExecutable</key>
+  <string>Obsidian With Git LFS</string>
+  <key>CFBundleIconFile</key>
+  <string>icon.icns</string>
+</dict>
+</plist>
+```
+
+4. Copy the Obsidian icon
+
+```
+cp /Applications/Obsidian.app/Contents/Resources/icon.icns \
+   ~/Applications/Obsidian\ With\ Git\ LFS.app/Contents/Resources/icon.icns
+```
+
+5. Refresh Finder and Dock
+
+```bash
+touch ~/Applications/Obsidian\ With\ Git\ LFS.app
+killall Finder
+```
+
+You can now drag the app to your Dock and launch it like any normal app.
 
 ⸻
 
-🤔 Why This Works
+💡 Why This Works
 
-macOS GUI apps do not inherit the environment of your login shell — not Bash, Zsh, Fish, or anything else. This means tools installed in /usr/local/bin or via Homebrew may be invisible to apps like Obsidian when launched normally.
+macOS apps launched from the GUI don’t inherit your shell environment. By wrapping Obsidian in a script and explicitly setting PATH, you restore visibility to git-lfs (and anything else installed outside system paths).
 
-By wrapping Obsidian in a small script that explicitly sets the PATH it sees git-lfs and any other CLI tools you rely on.
+No more pre-push hook errors. No more surprises when you push large files. And it looks and works like a native app.
+
+⸻
+
+
+🧭 TL;DR
+
+Problem | Fix
+--------|----
+Git LFS not found in Obsidian Git | Build a .app wrapper that sets a clean $PATH
+No icon for Automator-style apps | Add Info.plist and obsidian.icns
+GUI apps don’t see shell environment | Use a launch wrapper, not a shell config
 
 
 ⸻
 
-🧰 Optional: Add Other Tools to PATH
-
-If you install other CLI tools in custom locations (like gh, brew, or python), you can update the PATH line in the launcher script as needed.
-
-⸻
-
-🎯 Why This Matters
-
-Git LFS is critical when you’re working with binary files (PDFs, images, media, etc.) that exceed GitHub’s 100MB limit. If Obsidian Git can’t invoke git-lfs, large commits will silently fail or confuse your workflow.
-
-This approach:
-	•	Works reliably on all versions of macOS
-	•	Doesn’t require sudo access or risky symlinks to /usr/bin
-	•	Avoids the frustration of debugging shell PATH inheritance in GUI apps
-
+This fix keeps your Git workflows smooth and protects you from GitHub’s 100MB limit surprises. Launch Obsidian like you always do — but now it Just Works™.
 

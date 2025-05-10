@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -69,6 +103,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../assets/css/styles.css">
 </head>
@@ -127,6 +190,7 @@ ul.task-list li input[type="checkbox"] {
   <div class="quarto-categories">
     <div class="quarto-category">macos</div>
     <div class="quarto-category">obsidian</div>
+    <div class="quarto-category">git</div>
   </div>
   </div>
 
@@ -150,49 +214,120 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>If you’re using the Obsidian Git plugin and Git LFS (Large File Storage) on macOS, you may run into a frustrating issue: Git LFS is installed and working from your terminal, but Obsidian Git still fails with errors like git-lfs not found on your path.</p>
-<p>Despite setting up everything correctly with git lfs install and .gitattributes, you might still get this: This repository is configured for Git LFS but ‘git-lfs’ was not found on your path.</p>
-<p>This post explains why this happens — and how to fix it.</p>
-<p>⸻</p>
-<p>🧠 The Problem: macOS GUI Apps Use a Different PATH</p>
-<p>When you launch Obsidian from Spotlight, the Dock, or Finder, it does not inherit your terminal’s environment. That means:</p>
+<p>If you’re using the Obsidian Git plugin with Git LFS (Large File Storage) on macOS, you may run into a frustrating issue: <code>git-lfs</code> works fine in your terminal, but Obsidian Git throws this error:</p>
+<blockquote class="blockquote">
+<p>This repository is configured for Git LFS but ‘git-lfs’ was not found on your path.</p>
+</blockquote>
+<p>Even after running <code>git lfs install</code> and configuring <code>.gitattributes</code> correctly, Git LFS fails — and so do pushes involving large files.</p>
+<hr>
+<section id="the-problem-gui-apps-ignore-your-shell-config" class="level2">
+<h2 class="anchored" data-anchor-id="the-problem-gui-apps-ignore-your-shell-config">🧠 The Problem: GUI apps ignore your shell config</h2>
+<p>When you launch Obsidian from the Dock, Spotlight, or Finder:</p>
 <ul>
-<li>Your shell config files — like ~/.zprofile, ~/.bash_profile, ~/.bashrc, or ~/.config/fish/config.fish — are ignored.</li>
-<li>/usr/local/bin — where git-lfs lives — may not be in the PATH.</li>
-<li>The Git plugin inside Obsidian cannot find git-lfs, even though you can from the command line.</li>
+<li>It <strong>does not load</strong> your <code>~/.zprofile</code>, <code>~/.bashrc</code>, or <code>config.fish</code>.</li>
+<li>It <strong>does not inherit</strong> the same <code>$PATH</code> you see in your terminal.</li>
+<li>So anything installed in <code>/usr/local/bin</code>, like <code>git-lfs</code>, is invisible to Obsidian’s Git plugin.</li>
 </ul>
-<p>This breaks Git LFS, and by extension, breaks Git pushes involving large files — even though everything looks configured correctly.</p>
+<hr>
+</section>
+<section id="the-solution-a-custom-.app-launcher-with-a-fixed-path" class="level2">
+<h2 class="anchored" data-anchor-id="the-solution-a-custom-.app-launcher-with-a-fixed-path">✅ The Solution: A Custom <code>.app</code> Launcher With a Fixed <code>$PATH</code></h2>
+<p>Instead of trying to patch macOS’s environment or launchctl quirks, the simplest and most reliable fix is:</p>
+<blockquote class="blockquote">
+<p>🛠 Build a wrapper <code>.app</code> that launches Obsidian with the correct environment.</p>
+</blockquote>
+<p>This gives you:</p>
+<ul>
+<li>A real clickable macOS app</li>
+<li>The ability to fix <code>$PATH</code> permanently</li>
+<li>A proper app icon and dock integration</li>
+</ul>
+<hr>
+</section>
+<section id="how-to-build-the-app" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-build-the-app">🚀 How to Build the App</h2>
+<section id="create-the-directory-structure" class="level3">
+<h3 class="anchored" data-anchor-id="create-the-directory-structure">1. Create the directory structure</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/Applications/Obsidian\ With\ Git\ LFS.app/Contents/<span class="dt">{MacOS</span><span class="op">,</span><span class="dt">Resources}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="2" type="1">
+<li>Add a wrapper script</li>
+</ol>
+<p>Create the file: ~/Applications/Obsidian With Git LFS.app/Contents/MacOS/Obsidian With Git LFS</p>
+<p>#!/bin/bash export PATH=“<span class="math inline">\(HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+/Applications/Obsidian.app/Contents/MacOS/Obsidian "\)</span>@”</p>
+<p>Make it executable:</p>
+<p>chmod +x ~/Applications/Obsidian&nbsp;With&nbsp;Git&nbsp;LFS.app/Contents/MacOS/Obsidian&nbsp;With&nbsp;Git&nbsp;LFS</p>
+<ol start="3" type="1">
+<li>Add a valid Info.plist</li>
+</ol>
+<p>Create Contents/Info.plist with this content:</p>
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
+&lt;plist version="1.0"&gt;
+&lt;dict&gt;
+  &lt;key&gt;CFBundleName&lt;/key&gt;
+  &lt;string&gt;Obsidian With Git LFS&lt;/string&gt;
+  &lt;key&gt;CFBundleIdentifier&lt;/key&gt;
+  &lt;string&gt;com.example.obsidian-lfs-launcher&lt;/string&gt;
+  &lt;key&gt;CFBundleVersion&lt;/key&gt;
+  &lt;string&gt;1.0&lt;/string&gt;
+  &lt;key&gt;CFBundlePackageType&lt;/key&gt;
+  &lt;string&gt;APPL&lt;/string&gt;
+  &lt;key&gt;CFBundleExecutable&lt;/key&gt;
+  &lt;string&gt;Obsidian With Git LFS&lt;/string&gt;
+  &lt;key&gt;CFBundleIconFile&lt;/key&gt;
+  &lt;string&gt;obsidian.icns&lt;/string&gt;
+&lt;/dict&gt;
+&lt;/plist&gt;</code></pre>
+<ol start="4" type="1">
+<li>Copy the Obsidian icon</li>
+</ol>
+<p>cp /Applications/Obsidian.app/Contents/Resources/electron.icns<br>
+~/Applications/Obsidian&nbsp;With&nbsp;Git&nbsp;LFS.app/Contents/Resources/obsidian.icns</p>
+<ol start="5" type="1">
+<li>Refresh Finder and Dock</li>
+</ol>
+<pre><code>touch ~/Applications/Obsidian\ With\ Git\ LFS.app
+killall Finder</code></pre>
+<p>You can now drag the app to your Dock and launch it like any normal app.</p>
 <p>⸻</p>
-<p>✅ The Solution: A Custom Obsidian Launcher That Forces the Correct PATH</p>
-<p>Instead of hacking around with shell configs or launchctl, the most reliable solution is to create a wrapper app — a custom .app bundle that:</p>
-<pre><code>1.  Launches Obsidian manually, bypassing macOS sandbox restrictions.
-2.  Injects a clean and correct PATH that includes /usr/local/bin.</code></pre>
-<p>🚀 How to Build the Obsidian Launcher That Works with Git LFS</p>
-<p>To solve the git-lfs not found issue, create a small .app bundle that launches Obsidian with the correct environment.</p>
-<p>🔧 Step-by-step Instructions</p>
-<pre><code>1.  Open Automator (via Spotlight or Applications folder)
-2.  Choose “Application” as the new document type
-3.  Add a “Run Shell Script” action
-4.  Set the shell to /bin/bash
-5.  Paste the following script:</code></pre>
-<pre><code>export PATH="$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-open -a "Obsidian"</code></pre>
-<pre><code>6.  Save the app as something like Obsidian With Git LFS.app
-7.  Move it to /Applications or pin it to your Dock</code></pre>
-<p>Now, launch Obsidian using this custom app, and the Git plugin will be able to find git-lfs even if your normal PATH isn’t inherited.</p>
+<p>💡 Why This Works</p>
+<p>macOS apps launched from the GUI don’t inherit your shell environment. By wrapping Obsidian in a script and explicitly setting PATH, you restore visibility to git-lfs (and anything else installed outside system paths).</p>
+<p>No more pre-push hook errors. No more surprises when you push large files. And it looks and works like a native app.</p>
 <p>⸻</p>
-<p>🤔 Why This Works</p>
-<p>macOS GUI apps do not inherit the environment of your login shell — not Bash, Zsh, Fish, or anything else. This means tools installed in /usr/local/bin or via Homebrew may be invisible to apps like Obsidian when launched normally.</p>
-<p>By wrapping Obsidian in a small script that explicitly sets the PATH it sees git-lfs and any other CLI tools you rely on.</p>
+<p>🧭 TL;DR</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 66%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Problem</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Git LFS not found in Obsidian Git</td>
+<td>Build a .app wrapper that sets a clean $PATH</td>
+</tr>
+<tr class="even">
+<td>No icon for Automator-style apps</td>
+<td>Add Info.plist and obsidian.icns</td>
+</tr>
+<tr class="odd">
+<td>GUI apps don’t see shell environment</td>
+<td>Use a launch wrapper, not a shell config</td>
+</tr>
+</tbody>
+</table>
 <p>⸻</p>
-<p>🧰 Optional: Add Other Tools to PATH</p>
-<p>If you install other CLI tools in custom locations (like gh, brew, or python), you can update the PATH line in the launcher script as needed.</p>
-<p>⸻</p>
-<p>🎯 Why This Matters</p>
-<p>Git LFS is critical when you’re working with binary files (PDFs, images, media, etc.) that exceed GitHub’s 100MB limit. If Obsidian Git can’t invoke git-lfs, large commits will silently fail or confuse your workflow.</p>
-<p>This approach: • Works reliably on all versions of macOS • Doesn’t require sudo access or risky symlinks to /usr/bin • Avoids the frustration of debugging shell PATH inheritance in GUI apps</p>
+<p>This fix keeps your Git workflows smooth and protects you from GitHub’s 100MB limit surprises. Launch Obsidian like you always do — but now it Just Works™.</p>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
