@@ -2,7 +2,9 @@
 title: "Fixing Git LFS Integration in Obsidian’s Git Plugin on macOS"
 layout: post
 date:   2025-05-09 20:34:00 -0500
-categories: macos
+categories:
+  - macos
+  - obsidian
 ---
 
 If you’re using the Obsidian Git plugin and Git LFS (Large File Storage) on macOS, you may run into a frustrating issue: Git LFS is installed and working from your terminal, but Obsidian Git still fails with errors like git-lfs not found on your path.
@@ -58,7 +60,7 @@ Now, launch Obsidian using this custom app, and the Git plugin will be able to f
 
 ⸻
 
-🧠 Why This Works
+🤔 Why This Works
 
 macOS GUI apps do not inherit the environment of your login shell — not Bash, Zsh, Fish, or anything else. This means tools installed in /usr/local/bin or via Homebrew may be invisible to apps like Obsidian when launched normally.
 

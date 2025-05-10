@@ -126,6 +126,7 @@ ul.task-list li input[type="checkbox"] {
 <h1 class="title">Fixing Git LFS Integration in Obsidian’s Git Plugin on macOS</h1>
   <div class="quarto-categories">
     <div class="quarto-category">macos</div>
+    <div class="quarto-category">obsidian</div>
   </div>
   </div>
 
@@ -180,7 +181,7 @@ open -a "Obsidian"</code></pre>
 7.  Move it to /Applications or pin it to your Dock</code></pre>
 <p>Now, launch Obsidian using this custom app, and the Git plugin will be able to find git-lfs even if your normal PATH isn’t inherited.</p>
 <p>⸻</p>
-<p>🧠 Why This Works</p>
+<p>🤔 Why This Works</p>
 <p>macOS GUI apps do not inherit the environment of your login shell — not Bash, Zsh, Fish, or anything else. This means tools installed in /usr/local/bin or via Homebrew may be invisible to apps like Obsidian when launched normally.</p>
 <p>By wrapping Obsidian in a small script that explicitly sets the PATH it sees git-lfs and any other CLI tools you rely on.</p>
 <p>⸻</p>
