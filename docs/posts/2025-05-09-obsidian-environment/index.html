@@ -103,35 +103,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../../assets/css/styles.css">
 </head>
@@ -253,42 +224,43 @@ window.Quarto = {
 <li>Add a wrapper script</li>
 </ol>
 <p>Create the file: ~/Applications/Obsidian With Git LFS.app/Contents/MacOS/Obsidian With Git LFS</p>
-<p>#!/bin/bash export PATH=“<span class="math inline">\(HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-/Applications/Obsidian.app/Contents/MacOS/Obsidian "\)</span>@”</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="st">"</span><span class="va">$HOME</span><span class="st">/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">/Applications/Obsidian.app/Contents/MacOS/Obsidian</span> <span class="st">"</span><span class="va">$@</span><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Make it executable:</p>
-<p>chmod +x ~/Applications/Obsidian&nbsp;With&nbsp;Git&nbsp;LFS.app/Contents/MacOS/Obsidian&nbsp;With&nbsp;Git&nbsp;LFS</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> +x ~/Applications/Obsidian\ With\ Git\ LFS.app/Contents/MacOS/Obsidian\ With\ Git\ LFS</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ol start="3" type="1">
 <li>Add a valid Info.plist</li>
 </ol>
 <p>Create Contents/Info.plist with this content:</p>
-<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
-&lt;plist version="1.0"&gt;
-&lt;dict&gt;
-  &lt;key&gt;CFBundleName&lt;/key&gt;
-  &lt;string&gt;Obsidian With Git LFS&lt;/string&gt;
-  &lt;key&gt;CFBundleIdentifier&lt;/key&gt;
-  &lt;string&gt;com.example.obsidian-lfs-launcher&lt;/string&gt;
-  &lt;key&gt;CFBundleVersion&lt;/key&gt;
-  &lt;string&gt;1.0&lt;/string&gt;
-  &lt;key&gt;CFBundlePackageType&lt;/key&gt;
-  &lt;string&gt;APPL&lt;/string&gt;
-  &lt;key&gt;CFBundleExecutable&lt;/key&gt;
-  &lt;string&gt;Obsidian With Git LFS&lt;/string&gt;
-  &lt;key&gt;CFBundleIconFile&lt;/key&gt;
-  &lt;string&gt;obsidian.icns&lt;/string&gt;
-&lt;/dict&gt;
-&lt;/plist&gt;</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode xml code-with-copy"><code class="sourceCode xml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">&lt;?xml</span><span class="ot"> version=</span><span class="st">"1.0"</span><span class="ot"> encoding=</span><span class="st">"UTF-8"</span><span class="fu">?&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!DOCTYPE</span> <span class="dt">plist</span> PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"<span class="dt">&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">plist</span><span class="ot"> version=</span><span class="st">"1.0"</span>&gt;</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">dict</span>&gt;</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">key</span>&gt;CFBundleName&lt;/<span class="kw">key</span>&gt;</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">string</span>&gt;Obsidian With Git LFS&lt;/<span class="kw">string</span>&gt;</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">key</span>&gt;CFBundleIdentifier&lt;/<span class="kw">key</span>&gt;</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">string</span>&gt;com.example.obsidian-lfs-launcher&lt;/<span class="kw">string</span>&gt;</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">key</span>&gt;CFBundleVersion&lt;/<span class="kw">key</span>&gt;</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">string</span>&gt;1.0&lt;/<span class="kw">string</span>&gt;</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">key</span>&gt;CFBundlePackageType&lt;/<span class="kw">key</span>&gt;</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">string</span>&gt;APPL&lt;/<span class="kw">string</span>&gt;</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">key</span>&gt;CFBundleExecutable&lt;/<span class="kw">key</span>&gt;</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">string</span>&gt;Obsidian With Git LFS&lt;/<span class="kw">string</span>&gt;</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">key</span>&gt;CFBundleIconFile&lt;/<span class="kw">key</span>&gt;</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">string</span>&gt;icon.icns&lt;/<span class="kw">string</span>&gt;</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">dict</span>&gt;</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">plist</span>&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ol start="4" type="1">
 <li>Copy the Obsidian icon</li>
 </ol>
-<p>cp /Applications/Obsidian.app/Contents/Resources/electron.icns<br>
-~/Applications/Obsidian&nbsp;With&nbsp;Git&nbsp;LFS.app/Contents/Resources/obsidian.icns</p>
+<pre><code>cp /Applications/Obsidian.app/Contents/Resources/icon.icns \
+   ~/Applications/Obsidian\ With\ Git\ LFS.app/Contents/Resources/icon.icns</code></pre>
 <ol start="5" type="1">
 <li>Refresh Finder and Dock</li>
 </ol>
-<pre><code>touch ~/Applications/Obsidian\ With\ Git\ LFS.app
-killall Finder</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">touch</span> ~/Applications/Obsidian\ With\ Git\ LFS.app</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">killall</span> Finder</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>You can now drag the app to your Dock and launch it like any normal app.</p>
 <p>⸻</p>
 <p>💡 Why This Works</p>
