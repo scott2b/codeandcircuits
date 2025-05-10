@@ -1,9 +1,10 @@
 project:
   type: website
   title: "codeandcircuits.com"
-  output-dir: ../docs
+  output-dir: _site
   resources:
     - "assets/"
+    - "CNAME"
   render:
     - "*.qmd"
     - "posts/**/*.qmd"
