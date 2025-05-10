@@ -1,0 +1,52 @@
+---
+title: "Specifying a custom Jekyll site location in GitHub pages"
+layout: post
+date:   2022-10-11 09:50:00 -0500
+categories:
+  - web
+  - jekyll
+---
+
+If you move the root of your Jekyll project to a subdirectory of a Github Pages enabled
+repository, you will need to be sure to change the `source` and `destination` locations
+for the `jekyll-build-pages` action accordingly.
+
+But, that's not all. It is not obvious, but you also need to specify the path to the
+`upload-pages-artifact` action. Failure to do this will result in a GitHub Actions
+build fail for the "Uplodad artifact" stage, with the error message:
+"Error: Process completed with exit code 2" (see screenshot below).
+
+![Build fail screenshot](/assets/images/posts/2022-10/build-fail-upload-artifact.png)
+
+The reason this configuration requirement is not obvious is because the path
+parameter is not defined in the auto-generated Action config that GitHub gives you
+for Jekyll pages, but instead utilizes the
+[default value of ./\_site](https://github.com/actions/jekyll-build-pages/blob/main/action.yml#L12).
+To specify the path, use the `with > path` syntax.
+
+
+For example, I have moved my Jekyll root to a location called `site`. Thus, the `jobs`
+section of my `.github/workflows/pages.yml` looks like this, (with special attention
+paid to the `jekyll-build-pages`, and the `upload-pages-artifact` actions):
+
+
+```yaml
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./site/
+          destination: ./site/_site
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./site/_site
+```

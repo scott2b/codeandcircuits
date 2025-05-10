@@ -1,0 +1,73 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Adding Post content to Jekyll search\"\n",
+        "description: \"\"\n",
+        "author: \"Scott\"\n",
+        "date:   2022-10-11 10:55:00 -0500\n",
+        "categories:\n",
+        "  - python\n",
+        "  - io\n",
+        "---\n",
+        "\n",
+        "\n",
+        "I used [this tutorial at webjeda.com](https://blog.webjeda.com/instant-jekyll-search/){:target=\"_blank\"}\n",
+        "to add simple search capabilities to my Jekyll site.\n",
+        "\n",
+        "The article recommends against including the full content in the search config, stating:\n",
+        "\n",
+        "> You can also add post.content to this. But I recommend not to. Adding content will result in a huge JSON file and also inaccurate search result.\n",
+        "\n",
+        "Since I am just getting started, I am not too concerned about the search json getting\n",
+        "too large (yet) -- I want to see how far this simple approach will take me before I\n",
+        "need to change tack.\n",
+        "\n",
+        "The \"inaccurate search result\" is not really explained, and is not intuitive to me. I\n",
+        "suspect it is more this, which I found: using the following seems to break the search\n",
+        "entirely (although I am not sure why):\n",
+        "\n",
+        "⚠️ Probably don't do this:\n"
+      ],
+      "id": "8196e3d7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "{% raw %}\"content\"  : \"{{ post.content | strip_html | strip_newlines }}\"{% endraw %}"
+      ],
+      "id": "9a50e0dd",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Instead, I've found that using cgi_escape, which replaces spaces with `+` signs, instead\n",
+        "of `strip_newlines` seems to do the trick without breaking the search:\n",
+        "\n",
+        "✅ Do this instead:\n",
+        "\n",
+        "```\n",
+        "{% raw %}\"content\"  : \"{{ post.content | strip_html | cgi_escape }}\"{% endraw %}\n",
+        "```\n"
+      ],
+      "id": "a500d0f8"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/Users/scott/github/scott2b/codeandcircuits/.venv/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
