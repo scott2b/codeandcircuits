@@ -1,0 +1,96 @@
+---
+title: "Speed Up Typesense Startup in Production with Disk Persistence"
+layout: post
+date: 2025-05-10
+categories:
+  - typesense
+---
+
+If you're running Typesense in production with large collections or semantic search, startup time can become a bottleneck. By default, Typesense rebuilds its in-memory index from scratch on each boot — which means loading and re-indexing every document. This can take minutes (or hours) as your dataset grows.
+
+To fix this, **enable disk persistence and snapshots** so your data and indexes are saved between restarts.
+
+---
+
+## 🔧 How to Enable Disk Persistence
+
+Edit your `typesense-server.ini`:
+
+```ini
+enable_disk_persistence = true
+snapshot_interval_seconds = 300
+```
+
+This configuration tells Typesense to:
+
+ - Save a snapshot of in-memory state every 5 minutes.
+ - Reuse that snapshot to skip rebuilding indexes on startup.
+
+Then restart the server:
+
+```bash
+sudo systemctl restart typesense-server
+```
+
+⸻
+
+✅ Verifying It Works
+
+You can confirm snapshot saving and reuse in two ways:
+
+1. Log Messages
+
+Run:
+
+```bash
+journalctl -u typesense-server -f
+```
+
+Look for messages like:
+
+Saving snapshot for collection content_en
+Restoring collection from snapshot
+
+This confirms that the collection was successfully persisted and restored.
+
+2. Check Snapshot Files on Disk
+
+Navigate to your data-dir, e.g.:
+
+```bash
+cd /mnt/data/typesense/data/
+```
+
+There should be a folder of .sst file that looks something like this:
+
+`state/snapshot/snapshot_00000000000000394299/db_snapshot/`
+
+
+These files store the serialized in-memory state and write-ahead log.
+
+⸻
+
+🚀 Result: Faster Restarts
+
+Without disk persistence, Typesense must reload and re-index every document from disk. With snapshots enabled, startup time drops dramatically — even with millions of documents.
+
+Documents | Without Persistence | With Persistence
+----------|---------------------|-----------------
+100k      | ~2 minutes          | ~5 seconds
+1M        | ~20 minutes         | ~15 seconds
+
+
+⸻
+
+🛡️ Production-Ready Tip
+
+Enable disk persistence for any production deployment, especially when using:
+
+ - Large text collections
+ - ONNX/embedding-based semantic search
+ - Limited system memory or shared environments
+
+Snapshots keep your data safe and your APIs fast after restarts or crashes.
+
+⸻
+
