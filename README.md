@@ -25,3 +25,11 @@ quarto render
 ```
 
 Merge changes into pub and push
+
+## Troubleshooting
+
+To force re-rendering a file, e.g.:
+
+```
+quarto render posts/2025-05-09-obsidian-environment/index.qmd --execute
+```
