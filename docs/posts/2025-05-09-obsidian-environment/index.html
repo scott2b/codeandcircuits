@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2025-05-09">
 
-<title>index – Code &amp; Circuits</title>
+<title>Fixing Git LFS Integration in Obsidian’s Git Plugin on macOS – Code &amp; Circuits</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,25 +24,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<link href="../assets/images/favicon.png" rel="icon" type="image/png">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="../site_libs/quarto-html/quarto.js"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e8fb9d25728d58bfeac61b497e4a6629.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-70573ac50c87dbd652f4e1f4b033de92.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/images/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e8fb9d25728d58bfeac61b497e4a6629.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-70573ac50c87dbd652f4e1f4b033de92.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -69,78 +68,20 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-title-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="../assets/css/styles.css">
+<link rel="stylesheet" href="../../assets/css/styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo">
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -150,19 +91,19 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../posts/index.html" aria-current="page"> 
+    <a class="nav-link" href="../../posts/index.html"> 
 <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../notebooks/index.html"> 
+    <a class="nav-link" href="../../notebooks/index.html"> 
 <span class="menu-text">Notebooks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../about/index.html"> 
+    <a class="nav-link" href="../../about/index.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
@@ -173,170 +114,68 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(7)</span></div><div class="category" data-category="aW8=">io <span class="quarto-category-count">(1)</span></div><div class="category" data-category="amVreWxs">jekyll <span class="quarto-category-count">(3)</span></div><div class="category" data-category="bWFjb3M=">macos <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bWlzYw==">misc <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHl0aG9u">python <span class="quarto-category-count">(2)</span></div><div class="category" data-category="d2Vi">web <span class="quarto-category-count">(3)</span></div></div></div>
+    
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
 
-
-
-
-<section id="all-posts" class="level1 content-container">
-<h1>All Posts</h1>
-<div class="section-description">
-<p>Browse all articles and tutorials.</p>
-</div>
-<div id="listing-listing" class="quarto-listing quarto-listing-container-table">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-       <option value="" disabled="" selected="" hidden="">Order By</option>
-       <option value="index" data-direction="asc">Default</option>
-         <option value="listing-date-sort" data-direction="asc">
-          Date - Oldest
-        </option>
-         <option value="listing-date-sort" data-direction="desc">
-          Date - Newest
-        </option>
-         <option value="listing-title-sort" data-direction="asc">
-          Title
-        </option>
-     </select>
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Fixing Git LFS Integration in Obsidian’s Git Plugin on macOS</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">macos</div>
   </div>
-    <div class="input-group input-group-sm quarto-listing-filter">
-      <span class="input-group-text"><i class="bi bi-search"></i></span>
-      <input type="text" class="search form-control" placeholder="Filter">
-    </div>
-</div>
-<table class="quarto-listing-table table">
-<thead>
-<tr>
-<th>
-<a class="sort" data-sort="listing-date-sort" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Date</a>
-</th>
-<th>
-<a class="sort" data-sort="listing-title-sort" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Title</a>
-</th>
-<th>
-Description
-</th>
-<th>
-Categories
-</th>
-</tr>
-</thead>
-<tbody class="list">
-<tr data-index="0" data-categories="bWFjb3M=" data-listing-date-sort="1746840840000" data-listing-file-modified-sort="1746841510453" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="483" data-listing-title-sort="Fixing Git LFS Integration in Obsidian’s Git Plugin on macOS" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">May 9, 2025</span>
-</td>
-<td>
-<a href="../posts/2025-05-09-obsidian-environment/index.html" class="title listing-title">Fixing Git LFS Integration in Obsidian’s Git Plugin on macOS</a>
-</td>
-<td>
-<span class="listing-description">If you’re using the Obsidian Git plugin and Git LFS (Large File Storage) on macOS, you may run into a frustrating issue: Git LFS is installed and working from your terminal…</span>
-</td>
-<td>
-<span class="listing-categories">macos</span>
-</td>
-</tr>
-<tr data-index="1" data-categories="cHl0aG9u" data-listing-date-sort="1742226452000" data-listing-file-modified-sort="1742234191503" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="236" data-listing-title-sort="Some ways to easily get news content" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Mar 17, 2025</span>
-</td>
-<td>
-<a href="../posts/2025-03-17-getting-news-content/index.html" class="title listing-title">Some ways to easily get news content</a>
-</td>
-<td>
-<span class="listing-description">It is a common scenario in the lab to need to get ahold of some news content to work with for experimenting with and building projects. Here are some go-to approaches that I…</span>
-</td>
-<td>
-<span class="listing-categories">python</span>
-</td>
-</tr>
-<tr data-index="2" data-categories="cHl0aG9uJTJDaW8=" data-listing-date-sort="1665522000000" data-listing-file-modified-sort="1734205472964" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="100" data-listing-title-sort="Using urllib to wget a file in Python 3" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 11, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-11-using-urllib-to-wget-a-file-in-python/index.html" class="title listing-title">Using urllib to wget a file in Python 3</a>
-</td>
-<td>
-<span class="listing-description">Post description</span>
-</td>
-<td>
-<span class="listing-categories">python, io</span>
-</td>
-</tr>
-<tr data-index="3" data-categories="d2ViJTJDamVreWxs" data-listing-date-sort="1665503700000" data-listing-file-modified-sort="1740430193003" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="179" data-listing-title-sort="Adding Post content to Jekyll search" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 11, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-11-adding-post-content-to-jekyll-search/index.html" class="title listing-title">Adding Post content to Jekyll search</a>
-</td>
-<td>
-<span class="listing-description">I used this tutorial at webjeda.com to add simple search capabilities to my Jekyll site.</span>
-</td>
-<td>
-<span class="listing-categories">web, jekyll</span>
-</td>
-</tr>
-<tr data-index="4" data-categories="d2ViJTJDamVreWxs" data-listing-date-sort="1665503100000" data-listing-file-modified-sort="1740430163353" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="78" data-listing-title-sort="Use baseurl to specify the location of assets in Jekyll" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 11, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-11-use-baseurl-for-jekyll-assets/index.html" class="title listing-title">Use baseurl to specify the location of assets in Jekyll</a>
-</td>
-<td>
-<span class="listing-description">Jekyll’s <code>baseurl</code> parameter is a path prefix (i.e.&nbsp;the subpath of your site) which is specified in the <code>_config.yml</code> file. Specify this parameter, for example, for GitHub…</span>
-</td>
-<td>
-<span class="listing-categories">web, jekyll</span>
-</td>
-</tr>
-<tr data-index="5" data-categories="d2ViJTJDamVreWxs" data-listing-date-sort="1665499800000" data-listing-file-modified-sort="1740430653424" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="291" data-listing-title-sort="Specifying a custom Jekyll site location in GitHub pages" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 11, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-11-custom-jekyll-location-github-pages/index.html" class="title listing-title">Specifying a custom Jekyll site location in GitHub pages</a>
-</td>
-<td>
-<span class="listing-description">If you move the root of your Jekyll project to a subdirectory of a Github Pages enabled repository, you will need to be sure to change the <code>source</code> and <code>destination</code> locations…<code></code></span>
-</td>
-<td>
-<span class="listing-categories">web, jekyll</span>
-</td>
-</tr>
-<tr data-index="6" data-categories="bWlzYw==" data-listing-date-sort="1665416852000" data-listing-file-modified-sort="1740430785935" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="134" data-listing-title-sort="My Publication Pipeline" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 10, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-10-my-publication-pipeline/index.html" class="title listing-title">My Publication Pipeline</a>
-</td>
-<td>
-<span class="listing-description">Here is a rough outline of how my content makes its way to publication.</span>
-</td>
-<td>
-<span class="listing-categories">misc</span>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div>
-</section>
+  </div>
 
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 9, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>If you’re using the Obsidian Git plugin and Git LFS (Large File Storage) on macOS, you may run into a frustrating issue:</p>
+<p>Git LFS is installed and working from your terminal, but Obsidian Git still fails with errors like git-lfs not found on your path.</p>
+<p>Despite setting up everything correctly with git lfs install and .gitattributes, you might still get this:</p>
+<p>This repository is configured for Git LFS but ‘git-lfs’ was not found on your path.</p>
+<p>This post explains why this happens — and how we fixed it.</p>
+<p>⸻</p>
+<p>🧠 The Problem: macOS GUI Apps Use a Different PATH</p>
+<p>When you launch Obsidian from Spotlight, the Dock, or Finder, it does not inherit your terminal’s environment. That means: • Your fish or zsh shell config (.zprofile, config.fish, etc.) is ignored. • /usr/local/bin — where git-lfs lives — may not be in the PATH. • The Git plugin inside Obsidian cannot find git-lfs, even though you can from the command line.</p>
+<p>This breaks Git LFS, and by extension, breaks Git pushes involving large files — even though everything looks configured correctly.</p>
+<p>⸻</p>
+<p>✅ The Solution: A Custom Obsidian Launcher That Forces the Correct PATH</p>
+<p>Instead of hacking around with shell configs or launchctl, the most reliable solution is to create a wrapper app — a custom .app bundle that: 1. Launches Obsidian manually, bypassing macOS sandbox restrictions. 2. Injects a clean and correct PATH that includes /usr/local/bin.</p>
+<p>We created a tiny Automator-style .app that runs this:</p>
+<pre><code>#!/bin/bash
+export PATH="$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+/Applications/Obsidian.app/Contents/MacOS/Obsidian</code></pre>
+<p>This guarantees that git-lfs is always available to Obsidian when it starts.</p>
+<p>⸻</p>
+<p>🚀 How to Use It 1. Download the Obsidian With Git LFS Launcher 2. Unzip the .app 3. Move it to /Applications (or anywhere you prefer) 4. Use this app to open Obsidian instead of your default Dock icon</p>
+<p>Now Git LFS will work seamlessly inside the Obsidian Git plugin — just like it does in your terminal.</p>
+<p>⸻</p>
+<p>🧰 Optional: Add Other Tools to PATH</p>
+<p>If you install other CLI tools in custom locations (like gh, brew, or python), you can update the PATH line in the launcher script as needed.</p>
+<p>⸻</p>
+<p>🎯 Why This Matters</p>
+<p>Git LFS is critical when you’re working with binary files (PDFs, images, media, etc.) that exceed GitHub’s 100MB limit. If Obsidian Git can’t invoke git-lfs, large commits will silently fail or confuse your workflow.</p>
+<p>This approach: • Works reliably on all versions of macOS • Doesn’t require sudo access or risky symlinks to /usr/bin • Avoids the frustration of debugging shell PATH inheritance in GUI apps</p>
 
 
 
