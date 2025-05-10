@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Code &amp; Circuits</title>
+<title>project-setup – Code &amp; Circuits</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -31,8 +65,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./assets/images/favicon.png" rel="icon" type="image/png">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -69,72 +101,12 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-recent-posts-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      page: 3,
-    pagination: { item: "<li class='page-item'><a class='page page-link' href='#'></a></li>" },
-      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-recent-posts-listing'] = new List('listing-recent-posts-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="assets/css/styles.css">
-<link rel="stylesheet" href="assets/css/card-layout.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -152,7 +124,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -175,217 +147,161 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content column-page" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
 
-<div class="content-container">
-<p><img src="assets/images/logo.svg" class="img-fluid" style="margin-left: -0.75rem;" width="300"></p>
-<div class="section-description">
-<p>An engineer’s notebook.</p>
-</div>
-</div>
-<section id="latest-posts" class="level2">
-<h2 class="anchored" data-anchor-id="latest-posts">Latest Posts</h2>
-<div id="listing-recent-posts-listing" class="quarto-listing quarto-listing-container-grid">
-<div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-categories="dHlwZXNlbnNl" data-listing-date-sort="1746853200000" data-listing-file-modified-sort="1746880641969" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="279">
-<a href="./posts/2025-05-10-typesense-in-production/index.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Speed Up Typesense Startup in Production with Disk Persistence
-</h5>
-<div class="card-text listing-description">
-If you’re running Typesense in production with large collections or semantic search, startup time can become a bottleneck. By default, Typesense rebuilds its in-memory index…
-</div>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-May 10, 2025
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="1" data-categories="bWFjb3MlMkNvYnNpZGlhbiUyQ2dpdA==" data-listing-date-sort="1746766800000" data-listing-file-modified-sort="1746846836484" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="418">
-<a href="./posts/2025-05-09-obsidian-git-lfs/index.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Fixing Git LFS Integration in Obsidian’s Git Plugin on macOS
-</h5>
-<div class="card-text listing-description">
-If you’re using the Obsidian Git plugin with Git LFS (Large File Storage) on macOS, you may run into a frustrating issue: <code>git-lfs</code> works fine in your terminal, but Obsidian…
-</div>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-May 9, 2025
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="2" data-categories="cHl0aG9u" data-listing-date-sort="1742226452000" data-listing-file-modified-sort="1742234191503" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="236">
-<a href="./posts/2025-03-17-getting-news-content/index.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Some ways to easily get news content
-</h5>
-<div class="card-text listing-description">
-It is a common scenario in the lab to need to get ahold of some news content to work with for experimenting with and building projects. Here are some go-to approaches that I…
-</div>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Mar 17, 2025
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div>
-<p><a href="./posts/index.html" class="explore-link" style="display: block; margin-top: 2rem;">View All Posts →</a></p>
+<section id="node.js-and-python-project-setup-cheatsheet" class="level1">
+<h1>🚀 Node.js and Python Project Setup Cheatsheet</h1>
+<section id="install-nvm.fish-for-fish-shell" class="level2">
+<h2 class="anchored" data-anchor-id="install-nvm.fish-for-fish-shell"><strong>1. Install <code>nvm.fish</code> for Fish Shell</strong></h2>
+<p>Install <code>nvm.fish</code> to manage Node versions natively in Fish shell:</p>
+<pre class="fish"><code>fisher install jorgebucaran/nvm.fish</code></pre>
+<hr>
 </section>
-<section id="featured-topics" class="level2">
-<h2 class="anchored" data-anchor-id="featured-topics">Featured Topics</h2>
-<div class="card-grid">
-<div class="card math-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <text x="6" y="20" font-size="24" font-weight="bold">∑</text> </svg></p>
-</div>
-<h1 class="card-title">
-Mathematical Foundations
-</h1>
-</div>
-<p>Advanced mathematics for engineering applications, including calculus, linear algebra, and differential equations.</p>
-<div class="tag-container">
-<p><span class="tag">Vector Calculus</span> <span class="tag">Linear Algebra</span> <span class="tag">Differential Equations</span></p>
-</div>
-<p><a href="./math" class="explore-link">Explore Math →</a></p>
-</div>
-<div class="card circuit-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M6 3v12"></path> <path d="M18 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path> <path d="M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path> </svg></p>
-</div>
-<h1 class="card-title">
-Circuit Design
-</h1>
-</div>
-<p>Comprehensive guides on electronic circuit design, simulation tools, and practical implementations.</p>
-<div class="tag-container">
-<p><span class="tag">Digital Logic</span> <span class="tag">Analog Circuits</span> <span class="tag">PCB Design</span></p>
-</div>
-<p><span class="explore-link">Explore Circuits →</span></p>
-</div>
-<div class="card code-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <polyline points="16 18 22 12 16 6"></polyline> <polyline points="8 6 2 12 8 18"></polyline> </svg></p>
-</div>
-<h1 class="card-title">
-Code Notebooks
-</h1>
-</div>
-<p>Interactive Python notebooks for solving real-world engineering problems and data analysis.</p>
-<div class="tag-container">
-<p><span class="tag">Python</span> <span class="tag">MATLAB</span> <span class="tag">Simulation</span></p>
-</div>
-<p><span class="explore-link">Explore Notebooks →</span></p>
-</div>
-<div class="card code-explore-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path> </svg></p>
-</div>
-<h1 class="card-title">
-Code Explorations
-</h1>
-</div>
-<p>Deep dives into programming concepts, algorithms, and software design patterns.</p>
-<div class="tag-container">
-<p><span class="tag">Algorithms</span> <span class="tag">Design Patterns</span> <span class="tag">System Design</span></p>
-</div>
-<p><span class="explore-link">Explore Code →</span></p>
-</div>
-<div class="card eng-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path> </svg></p>
-</div>
-<h1 class="card-title">
-Engineering Fundamentals
-</h1>
-</div>
-<p>Core engineering principles, from mechanics to thermodynamics and control systems.</p>
-<div class="tag-container">
-<p><span class="tag">Mechanics</span> <span class="tag">Control Systems</span> <span class="tag">Thermodynamics</span></p>
-</div>
-<p><span class="explore-link">Explore Engineering →</span></p>
-</div>
-<div class="card cs-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path> <polyline points="15 3 21 3 21 9"></polyline> <line x1="10" y1="14" x2="21" y2="3"></line> </svg></p>
-</div>
-<h1 class="card-title">
-Computer Science
-</h1>
-</div>
-<p>Fundamental computer science concepts, from data structures to operating systems.</p>
-<div class="tag-container">
-<p><span class="tag">Data Structures</span> <span class="tag">Operating Systems</span> <span class="tag">Networks</span></p>
-</div>
-<p><span class="explore-link">Explore CS →</span></p>
-</div>
-<div class="card data-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <line x1="18" y1="20" x2="18" y2="10"></line> <line x1="12" y1="20" x2="12" y2="4"></line> <line x1="6" y1="20" x2="6" y2="14"></line> <line x1="3" y1="20" x2="21" y2="20"></line> </svg></p>
-</div>
-<h1 class="card-title">
-Data Science
-</h1>
-</div>
-<p>Statistical analysis, machine learning, and data visualization techniques.</p>
-<div class="tag-container">
-<p><span class="tag">Statistics</span> <span class="tag">Machine Learning</span> <span class="tag">Visualization</span></p>
-</div>
-<p><span class="explore-link">Explore Data →</span></p>
-</div>
-<div class="card complexity-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="12" cy="12" r="3"></circle> <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path> </svg></p>
-</div>
-<h1 class="card-title">
-Complexity Science
-</h1>
-</div>
-<p>Study of complex systems, emergence, and network science.</p>
-<div class="tag-container">
-<p><span class="tag">Complex Systems</span> <span class="tag">Network Theory</span> <span class="tag">Emergence</span></p>
-</div>
-<p><span class="explore-link">Explore Complexity →</span></p>
-</div>
-</div>
+<section id="install-required-node.js-versions" class="level2">
+<h2 class="anchored" data-anchor-id="install-required-node.js-versions"><strong>2. Install Required Node.js Versions</strong></h2>
+<p>Install the specific Node versions needed for your project.</p>
+<ul>
+<li><p>Install a specific version: <code>fish  nvm install 12.18.1</code></p></li>
+<li><p>Install the latest LTS release: <code>fish  nvm install lts/iron</code></p></li>
+<li><p>Verify installed versions: <code>fish  nvm ls</code></p></li>
+</ul>
+<hr>
+</section>
+<section id="install-required-python-version" class="level2">
+<h2 class="anchored" data-anchor-id="install-required-python-version"><strong>3. Install Required Python Version</strong></h2>
+<p>If the correct Python version is not available, use <code>pyenv</code> to install it:</p>
+<ul>
+<li><p>Install a specific Python version: <code>bash  pyenv install 3.10.12</code></p></li>
+<li><p>Set the local Python version for the project: <code>bash  pyenv local 3.10.12</code></p></li>
+</ul>
+<p>Verify the Python version:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">--version</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="create-python-virtual-environment" class="level2">
+<h2 class="anchored" data-anchor-id="create-python-virtual-environment"><strong>4. Create Python Virtual Environment</strong></h2>
+<p>Create a virtual environment for the project:</p>
+<ul>
+<li><p>Use the Python shim to create a virtual environment: <code>bash  python -m venv .venv</code></p></li>
+<li><p>Source the virtual environment (handled by <code>direnv</code>): <code>bash  source .venv/bin/activate</code></p></li>
+<li><p>Upgrade <code>pip</code>: <code>bash  pip install --upgrade pip</code></p></li>
+<li><p>Install project dependencies (e.g., from a <code>requirements.txt</code> file): <code>bash  pip install -r requirements.txt</code></p></li>
+</ul>
+<p>Verify the virtual environment and Python version:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span> python</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">--version</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="create-a-.nvmrc-file" class="level2">
+<h2 class="anchored" data-anchor-id="create-a-.nvmrc-file"><strong>5. Create a <code>.nvmrc</code> File</strong></h2>
+<p>The <code>.nvmrc</code> file specifies the Node version required for your project.</p>
+<p>Example <code>.nvmrc</code> file:</p>
+<pre class="plaintext"><code>12.18.1</code></pre>
+<hr>
+</section>
+<section id="create-.envrc-for-project-setup" class="level2">
+<h2 class="anchored" data-anchor-id="create-.envrc-for-project-setup"><strong>6. Create <code>.envrc</code> for Project Setup</strong></h2>
+<p>Set up Node.js, Python virtual environments, and environment variables using <code>direnv</code>.</p>
+<p><strong><code>.envrc</code></strong>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set NVM directory</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">NVM_DIR</span><span class="op">=</span><span class="st">"</span><span class="va">$HOME</span><span class="st">/.local/share/nvm"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Use Node.js version specified in .nvmrc</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="va">NODE_VERSION</span><span class="op">=</span><span class="va">$(</span><span class="fu">cat</span> .nvmrc<span class="va">)</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="va">NODE_BIN_PATH</span><span class="op">=</span><span class="st">"</span><span class="va">$NVM_DIR</span><span class="st">/versions/node/v</span><span class="va">$NODE_VERSION</span><span class="st">/bin"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-d</span> <span class="st">"</span><span class="va">$NODE_BIN_PATH</span><span class="st">"</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="st">"</span><span class="va">$NODE_BIN_PATH</span><span class="st">:</span><span class="va">$PATH</span><span class="st">"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">"Node version </span><span class="va">$NODE_VERSION</span><span class="st"> is not installed. Run: nvm install </span><span class="va">$NODE_VERSION</span><span class="st">"</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exit</span> 1</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate Python virtual environment</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .venv/bin/activate</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Load environment variables from .env</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="ex">dotenv</span> .env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Allow <code>direnv</code> to load the environment:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">direnv</span> allow</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="install-node-project-dependencies" class="level2">
+<h2 class="anchored" data-anchor-id="install-node-project-dependencies"><strong>7. Install Node Project Dependencies</strong></h2>
+<p>Install all project dependencies based on <code>package.json</code>:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="verify-dependencies" class="level2">
+<h2 class="anchored" data-anchor-id="verify-dependencies"><strong>8. Verify Dependencies</strong></h2>
+<p>List local project dependencies:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> list <span class="at">--depth</span><span class="op">=</span>0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Check for missing peer dependencies or vulnerabilities:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> audit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Fix missing peer dependencies:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="op">&lt;</span>package-name<span class="op">&gt;</span> --save-dev</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="run-and-test-the-project" class="level2">
+<h2 class="anchored" data-anchor-id="run-and-test-the-project"><strong>9. Run and Test the Project</strong></h2>
+<p>Start the development server:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> start</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Build the project:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> run build</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Verify Python setup:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span> python</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">--version</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="workflow-summary" class="level2">
+<h2 class="anchored" data-anchor-id="workflow-summary"><strong>Workflow Summary</strong></h2>
+<ol type="1">
+<li><p>Install NVM and Node versions:</p>
+<pre class="fish"><code>fisher install jorgebucaran/nvm.fish
+nvm install &lt;version&gt;</code></pre></li>
+<li><p>Set Node version in <code>.nvmrc</code>:</p>
+<pre class="plaintext"><code>12.18.1</code></pre></li>
+<li><p>Install Python version and create virtual environment:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pyenv</span> install 3.10.12</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pyenv</span> local 3.10.12</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> venv .venv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Activate the environment with <code>direnv</code>:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">direnv</span> allow</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Install dependencies:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> pip</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Verify and run:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> list <span class="at">--depth</span><span class="op">=</span>0</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> start</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">--version</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ol>
+<p>✅ <strong>Done</strong>: Your Node.js and Python project environment is ready!</p>
+</section>
+<section id="additional-notes" class="level2">
+<h2 class="anchored" data-anchor-id="additional-notes">Additional notes</h2>
+<section id="cleanout-and-re-install-node-packages" class="level3">
+<h3 class="anchored" data-anchor-id="cleanout-and-re-install-node-packages">Cleanout and re-install node packages</h3>
+<pre><code>rm -rf node_modules package-lock.json
+npm install</code></pre>
+</section>
+<section id="cleanout-python-packages" class="level3">
+<h3 class="anchored" data-anchor-id="cleanout-python-packages">Cleanout python packages</h3>
+<pre><code>rm -rf .venv</code></pre>
+<p>Unsource the environment and re-create with the correct python (see above)</p>
+<pre><code>python -m venv .venv</code></pre>
 
 
-
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->
