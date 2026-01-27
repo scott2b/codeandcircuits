@@ -109,7 +109,7 @@
     "href": "posts/index.html",
     "title": "All Posts",
     "section": "",
-    "text": "All Posts\n\nBrowse all articles and tutorials.\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Title\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\nDate\n\n\nTitle\n\n\nDescription\n\n\nCategories\n\n\n\n\n\n\nMay 10, 2025\n\n\nSpeed Up Typesense Startup in Production with Disk Persistence\n\n\n\n\n\ntypesense\n\n\n\n\nMay 9, 2025\n\n\nFixing Git LFS Integration in Obsidian’s Git Plugin on macOS\n\n\n\n\n\nmacos, obsidian, git\n\n\n\n\nMar 17, 2025\n\n\nSome ways to easily get news content\n\n\n\n\n\npython\n\n\n\n\nOct 11, 2022\n\n\nUsing urllib to wget a file in Python 3\n\n\nPost description\n\n\npython, io\n\n\n\n\nOct 11, 2022\n\n\nAdding Post content to Jekyll search\n\n\n\n\n\nweb, jekyll\n\n\n\n\nOct 11, 2022\n\n\nUse baseurl to specify the location of assets in Jekyll\n\n\n\n\n\nweb, jekyll\n\n\n\n\nOct 11, 2022\n\n\nSpecifying a custom Jekyll site location in GitHub pages\n\n\n\n\n\nweb, jekyll\n\n\n\n\nOct 10, 2022\n\n\nMy Publication Pipeline\n\n\n\n\n\nmisc\n\n\n\n\n\nNo matching items"
+    "text": "All Posts\n\nBrowse all articles and tutorials.\n\n\n\n   \n    \n    \n      Order By\n      Default\n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Title\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\nDate\n\n\n\nTitle\n\n\n\nDescription\n\n\n\nCategories\n\n\n\n\n\n\n\n\nMay 10, 2025\n\n\nSpeed Up Typesense Startup in Production with Disk Persistence\n\n\n\n\n\ntypesense\n\n\n\n\n\n\nMay 9, 2025\n\n\nFixing Git LFS Integration in Obsidian’s Git Plugin on macOS\n\n\n\n\n\nmacos, obsidian, git\n\n\n\n\n\n\nMar 17, 2025\n\n\nSome ways to easily get news content\n\n\n\n\n\npython\n\n\n\n\n\n\nOct 11, 2022\n\n\nUsing urllib to wget a file in Python 3\n\n\nPost description\n\n\npython, io\n\n\n\n\n\n\nOct 11, 2022\n\n\nAdding Post content to Jekyll search\n\n\n\n\n\nweb, jekyll\n\n\n\n\n\n\nOct 11, 2022\n\n\nUse baseurl to specify the location of assets in Jekyll\n\n\n\n\n\nweb, jekyll\n\n\n\n\n\n\nOct 11, 2022\n\n\nSpecifying a custom Jekyll site location in GitHub pages\n\n\n\n\n\nweb, jekyll\n\n\n\n\n\n\nOct 10, 2022\n\n\nMy Publication Pipeline\n\n\n\n\n\nmisc\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/2025-05-09-obsidian-git-lfs/index.html",
@@ -242,7 +242,7 @@
     "href": "index.html#latest-posts",
     "title": "\nMathematical Foundations\n",
     "section": "Latest Posts",
-    "text": "Latest Posts\n\n\n\n\n\n\n\nSpeed Up Typesense Startup in Production with Disk Persistence\n\n\n\n\n\n\nMay 10, 2025\n\n\n\n\n\n\n\n\n\n\n\nFixing Git LFS Integration in Obsidian’s Git Plugin on macOS\n\n\n\n\n\n\nMay 9, 2025\n\n\n\n\n\n\n\n\n\n\n\nSome ways to easily get news content\n\n\n\n\n\n\nMar 17, 2025\n\n\n\n\n\n\n\n\nNo matching items\n\n\nView All Posts →"
+    "text": "Latest Posts\n\n\n\n\n\n\n\nSpeed Up Typesense Startup in Production with Disk Persistence\n\n\n\n\n\n\nMay 10, 2025\n\n\n\n\n\n\n\n\n\n\nFixing Git LFS Integration in Obsidian’s Git Plugin on macOS\n\n\n\n\n\n\nMay 9, 2025\n\n\n\n\n\n\n\n\n\n\nSome ways to easily get news content\n\n\n\n\n\n\nMar 17, 2025\n\n\n\n\n\n\nNo matching items\n\nView All Posts →"
   },
   {
     "objectID": "index.html#featured-topics",

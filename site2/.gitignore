@@ -1,0 +1,12 @@
+/.quarto/
+**/*.quarto_ipynb
+
+# Python cache
+**/__pycache__/
+
+# Intermediate LaTeX/PDF rendering files
+**/*.tex
+**/*_files/
+
+# Generated images from plotly exports
+**/width_and_orientation.png
