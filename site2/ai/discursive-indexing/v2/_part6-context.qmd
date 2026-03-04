@@ -1,0 +1,129 @@
+## Part VI: Context and References
+
+### The Missing Unifying Term
+
+There is no canonical term for this phenomenon yet. The closest contenders:
+
+- **Style transfer** — too narrow and surface-level
+- **Prompt engineering** — ignores cultural origin
+- **Latent concept activation** — accurate but abstract
+- **Distributional steering** — good, but generic
+- **Semantic indexing** — close, but underspecified socially
+
+Proposed terms:
+
+> **Discursive indexing of latent distributions**
+
+or
+
+> **Cultural compression as model control**
+
+---
+
+### Related Research Areas
+
+**Latent concept representations and activation:**
+Research asks whether concepts like style, sentiment, or authorial voice exist as separable latent dimensions. Concepts are not symbols but _directions_ or _subspaces_ in embedding space. Tokens like "Hemingway" activate those subspaces.
+
+Relevant work includes concept activation vectors (Kim et al.), amnesic probing (Elazar et al.), and linear probes for style, genre, and persona. However, this work usually treats concepts, not discursive labels, and misses the cultural angle.
+
+**Feature superposition:**
+Mechanistic interpretability researchers study how multiple unrelated features share neurons and how high-level abstractions emerge from overlap rather than modular design. Style clusters are classic examples of superposed features. An author name doesn't toggle a module; it biases a mixture.
+
+**Distributional steering:**
+Some alignment research explicitly studies how prompts steer behavior without reasoning—steering vectors, control tokens, soft prompts, prefix tuning. This literature mostly focuses on engineering control, not why cultural labels work so well.
+
+**Discourse and compression:**
+In discourse analysis, sociology of knowledge, and semiotics, names like "Hemingway" are understood as socially stabilized shorthand for a complex, contested, but repeatable practice. LLMs inherit that shorthand because they ingest discourse. This connection is rarely made explicit in ML papers.
+
+---
+
+### Who Is Working on This
+
+Researchers whose work approaches these ideas (even if they don't frame it this way):
+
+- Chris Olah (feature superposition, abstraction)
+- Ethan Perez (steering, elicitation)
+- Yanai Elazar (amnesic probing)
+- Miles Turpin (faithfulness of reasoning)
+- Laria Reynolds (prompt programming)
+
+But none fully integrate cultural discourse, stylistic authority, prompt efficacy, and distributional geometry.
+
+---
+
+### Why This Is Under-Discussed
+
+1. It cuts across disciplines (ML + literary theory + sociology)
+2. It challenges the "reasoning" narrative people want LLMs to have
+3. It suggests models are mirrors of cultural compression, not agents
+
+That's an uncomfortable framing for both hype and critique.
+
+---
+
+### Why This Matters
+
+This framework explains:
+
+- Why some prompts feel "magical"
+- Why authority tokens work better than rules
+- Why pedagogy leaks into capability
+- Why models reproduce cultural canons so strongly
+- Why "style" is easier than "truth"
+
+And it suggests that **control over LLMs is partly control over discourse**, not architecture.
+
+Language models don't imitate authors. They reuse **compressed cultural descriptions of style**. Names work when they point to something humans have already agreed on. When that agreement is missing, models must either guess, ask, or refuse—depending on platform policy.
+
+Stylistic prompting isn't magic. It's navigation through a landscape shaped as much by human conversation as by neural networks.
+
+And that landscape—what gets named, taught, compared, and remembered—quietly determines what AI can do well.
+
+---
+
+## References
+
+### Distributional representations, concepts, and style
+
+- Mikolov, Tomas, et al. "Distributed Representations of Words and Phrases and Their Compositionality." _NeurIPS_, 2013.
+- Ethayarajh, Kawin. "How Contextual Are Contextualized Word Representations? Comparing the Geometry of BERT, ELMo, and GPT-2 Embeddings." _ACL_, 2019.
+
+### Latent concept activation and probing
+
+- Kim, Been, et al. "Interpretability Beyond Feature Attribution: Quantitative Testing with Concept Activation Vectors (TCAV)." _ICML_, 2018.
+- Elazar, Yanai, et al. "Amnesic Probing: Behavioral Explanation with Amnesia." _arXiv_, 2021.
+- Hewitt, John, and Christopher D. Manning. "A Structural Probe for Finding Syntax in Word Representations." _EMNLP_, 2019.
+
+### Interpretability, feature superposition, and emergent structure
+
+- Olah, Chris, et al. "Zoom In: An Introduction to Circuits." _Distill_, 2020.
+- Carter, Ben, et al. "Activating Neurons in Large Language Models with Precision." _ICLR Workshop_, 2021.
+
+### Prompting, steering, and latent control
+
+- Brown, Tom B., et al. "Language Models Are Few-Shot Learners." _NeurIPS_, 2020.
+- Reynolds, Laria, and Kyle McDonell. "Prompt Programming for Large Language Models: Beyond the Few-Shot Paradigm." _arXiv_, 2021.
+- Lester, Brian, et al. "The Power of Scale for Parameter-Efficient Prompt Tuning." _EMNLP_, 2021.
+
+### Chain-of-thought and behavior shaping
+
+- Wei, Jason, et al. "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models." _arXiv_, 2022.
+- Kojima, Takeshi, et al. "Large Language Models Are Zero-Shot Reasoners." _arXiv_, 2022.
+- Turpin, Miles, et al. "Language Models Don't Always Say What They Think: Consequences of Exposure Bias." _arXiv_, 2023.
+
+### Style, authorship, and generation behavior
+
+- Su, Daxiang, et al. "Linguistic Style Transfer with Continuous Latent Representations." _ACL_, 2020.
+- Ficler, Jessica, and Yoav Goldberg. "Controlling Linguistic Style Aspects in Neural Language Generation." _NAACL_, 2017.
+- Ippolito, Daniel, et al. "Automatic Detection of Generated Text Is Easiest When Humans Are Fooled." _ACL_, 2020.
+
+### Foundation models and learned culture
+
+- Bommasani, Rishi, et al. "On the Opportunities and Risks of Foundation Models." _arXiv_, 2021.
+- Bender, Emily M., et al. "On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?" _FAccT_, 2021.
+
+### Additional
+
+- Feldhus. "Interpreting Language Models Through Concept Descriptions." _BlackboxNLP_, 2025.
+- Narasimhan. "Towards Robust and Semantically Organised Latent Representations." _arXiv_, 2022.

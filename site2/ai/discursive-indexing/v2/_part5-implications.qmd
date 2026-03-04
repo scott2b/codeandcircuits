@@ -1,0 +1,137 @@
+## Part V: Implications
+
+### For Understanding AI Writing
+
+This phenomenon explains several common observations:
+
+- Why "write like Hemingway" works but "write like a random novelist" often doesn't
+- Why adding a short style description can outperform a name alone
+- Why genre labels ("legal brief," "noir detective," "fairy tale") are so effective
+- Why some systems ask clarifying questions instead of guessing
+
+It also reveals that **control over AI output is partly cultural, not just technical**. The styles that models reproduce most reliably are those that human discourse has already stabilized into clear labels.
+
+---
+
+### For Understanding Authorship and Voice
+
+- **Style is learned from discourse, not just text** — LLMs don't learn an author's voice only from their novels; they also learn it from how people _talk about_ that author.
+
+- **Author names function as compressed cultural labels** — "Hemingway" works because human discourse has already reduced a complex body of work into a reusable bundle of traits.
+
+- **Discourse stabilizes style into a callable handle** — Without sustained secondary discourse, an author's name may not reliably activate a specific stylistic pattern.
+
+- **Prompting is cultural navigation, not instruction** — When we prompt with names, we are steering the model toward socially stabilized regions of language use.
+
+- **Authors who write across genres are often flattened** — When an author operates in multiple stylistic registers, discourse tends to compress them into one dominant voice. LLMs reproduce that compression, not the author's full range.
+
+- **AI voice mirrors literary reception, not literary intent** — What models can "sound like" is shaped by what humans have collectively named, debated, and agreed to recognize as a style.
+
+- **This reframes concerns about bias and canon formation** — Voices that are heavily discussed, taught, and compared become easier for models to reproduce; marginalized or less canonized voices become harder—not because they are less "learnable," but because discourse did less compressive work.
+
+---
+
+### For Writers (Practical)
+
+::: {.content-visible when-format="html"}
+::: {.column-margin}
+**Key Takeaways for Writers**
+
+- Your "AI voice" is the most-discussed version, not your full range
+- Consistency increases imitability
+- Genre-hopping gets flattened
+- Reception matters more than intent
+- Descriptors beat names for complex styles
+- You can shape how AI sees you through interviews, essays, and criticism
+:::
+:::
+
+```{=typst}
+#import "@preview/wrap-it:0.1.1": wrap-content
+#let writers-sidebar = box(
+  width: 2.75in,
+  inset: 10pt,
+  fill: luma(245),
+  radius: 4pt,
+  stroke: luma(200),
+)[
+  *Key Takeaways for Writers*
+
+  - Your "AI voice" is the most-discussed version, not your full range
+  - Consistency increases imitability
+  - Genre-hopping gets flattened
+  - Reception matters more than intent
+  - Descriptors beat names for complex styles
+]
+#wrap-content(writers-sidebar, align: right)[
+```
+
+**Your "AI voice" is not your full voice.** When a model writes "like you," it reproduces the most-discussed version of your style, not the full range.
+
+**Consistency increases imitability.** Writers with a stable, nameable style are easier for models to mimic.
+
+**Genre-hopping gets flattened.** Models collapse multi-genre writers into a single dominant mode.
+
+**Reception matters more than intent.** Models reflect how critics describe your work, not how you understand it.
+
+**Caricature is the default failure mode.** Name-based prompting exaggerates surface traits.
+
+**Descriptors beat names for complex styles.** Concrete constraints work better than your name alone.
+
+**Avoiding a signature style reduces AI mimicry.** Resisting a consistent voice is an unintended form of stylistic protection.
+
+**You can shape how AI sees you—indirectly.** Essays, interviews, and criticism influence how your work gets reproduced.
+
+```{=typst}
+]
+```
+
+---
+
+### Using Cultural Archetypes
+
+Reynolds and McDonell note a practical consideration for authors working with LLMs: take advantage of mimetic proxy combined with cultural archetypes.
+
+Because the model has learned not just texts but discourse _about_ texts, it has internalized common cultural formats:
+
+- dialogue between teacher and student
+- Socratic questioning
+- genre conventions (noir interrogation, courtroom drama, fairy tale structure)
+- professional registers (legal brief, medical case report, academic abstract)
+
+These formats function as pre-compressed stylistic templates. Rather than specifying every feature of the desired output, you can invoke an archetype and let the model fill in the associated features from its learned distribution.
+
+For example, framing a prompt as a "discussion between a teacher and a curious student" activates:
+
+- question-and-answer structure
+- explanatory register
+- patience and scaffolding
+- accessible vocabulary
+
+This is more compact and often more effective than listing those features explicitly.
+
+---
+
+### For Unknown or Emerging Writers Supplying Samples
+
+When an author provides writing samples to an LLM to establish "their style," they are not teaching the model who they are in any durable sense. They are **temporarily constructing a local stylistic attractor** inside the current context.
+
+**You are not establishing a permanent style—only a local one.** Once the context window resets, the style disappears unless reintroduced.
+
+**The model learns patterns, not intention.** It absorbs surface regularities (sentence length, punctuation, cadence), not what you consider essential vs incidental.
+
+**Samples compress your voice—often aggressively.** Subtleties are lost; outliers are ignored. Choose samples that are internally consistent and representative of the specific register you want.
+
+**Mixing registers weakens the signal.** If your samples span multiple genres or tonal modes, the resulting "style" will blur. Treat each voice as a separate conditioning task.
+
+**Short, dense samples often outperform longer ones.** A few tightly focused paragraphs emphasize recurring features better than many pages of narrative variation.
+
+**The model will reproduce habits, not judgment.** Tics, defaults, and structural habits are more likely to be copied than high-level craft decisions. Edit samples to remove things you don't want amplified.
+
+**Explicit descriptors help stabilize what samples alone cannot.** Combining samples with brief stylistic constraints often produces better results than samples alone.
+
+**Expect caricature unless you intervene.** Iterative correction ("less clipped," "fewer metaphors") is part of the process, not a failure.
+
+**Think like an editor, not an author.** Success comes from curation, not self-description.
+
+> Supplying writing samples does not teach a model who you are; it teaches it how to sound like the most compressible version of what you've shown. Writers who understand this can use LLMs effectively—by shaping the compression rather than resisting it.

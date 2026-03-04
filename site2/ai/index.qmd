@@ -1,0 +1,84 @@
+---
+title: "Artificial Intelligence"
+page-layout: full
+aliases:
+  - ai
+format:
+  html:
+    css: ../assets/css/topic-layout.css
+---
+
+::: {.content-container}
+::: {.topic-intro .ai-topic}
+Large language models, prompt engineering, AI agents, and practical AI applications.
+:::
+
+
+::: {.subtopics-grid .ai-topic}
+
+
+::: {.topic .collapsed}
+### Language Models
+Understanding how large language models work and how to use them effectively.
+
+::: {.subtopics}
+#### Discursive Indexing
+How names, genres, and cultural labels function as control handles over learned distributions.
+
+[Discursive indexing of latent distributions and cultural compression as model control.](discursive-indexing)
+
+#### Prompt Engineering
+Techniques for eliciting desired behaviors from language models.
+
+#### Fine-tuning and Adaptation
+Methods for adapting pre-trained models to specific tasks.
+:::
+:::
+
+
+::: {.topic .collapsed}
+### AI Agents
+Building autonomous systems that use language models as reasoning engines.
+
+::: {.subtopics}
+#### Agent Architectures
+Design patterns for AI agents: ReAct, tool use, planning, and memory.
+
+#### Tool Integration
+Connecting language models to external systems and APIs.
+
+#### Multi-Agent Systems
+Coordination and collaboration between multiple AI agents.
+:::
+:::
+
+
+::: {.topic .collapsed}
+### Applications
+Practical applications of AI in engineering and software development.
+
+::: {.subtopics}
+#### Code Generation
+Using AI for writing, reviewing, and refactoring code.
+
+#### Knowledge Management
+AI-assisted organization and retrieval of information.
+
+#### Creative Applications
+AI for writing, design, and content generation.
+:::
+:::
+
+:::
+:::
+
+<script>
+window.addEventListener('load', function() {
+    document.querySelectorAll('.topic').forEach(topic => {
+        const header = topic.querySelector('h3');
+        header.addEventListener('click', () => {
+            topic.classList.toggle('collapsed');
+        });
+    });
+});
+</script>

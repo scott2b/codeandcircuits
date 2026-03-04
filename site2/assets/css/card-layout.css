@@ -197,12 +197,14 @@
 .cs-card .icon-container { color: #059669; }
 .data-card .icon-container { color: #7c3aed; }
 .complexity-card .icon-container { color: #ea580c; }
+.ai-card .icon-container { color: #0ea5e9; }
 
 .code-explore-card .card-header { border-top-color: #2563eb; }
 .eng-card .card-header { border-top-color: #dc2626; }
 .cs-card .card-header { border-top-color: #059669; }
 .data-card .card-header { border-top-color: #7c3aed; }
 .complexity-card .card-header { border-top-color: #ea580c; }
+.ai-card .card-header { border-top-color: #0ea5e9; }
 
 .listing-description {
     font-family: system-ui, -apple-system, sans-serif;

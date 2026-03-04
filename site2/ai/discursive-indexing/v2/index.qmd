@@ -1,0 +1,32 @@
+---
+title: "Discursive Indexing of Latent Distributions"
+subtitle: "Cultural Compression as Model Control"
+format:
+  html:
+    grid:
+      margin-width: 350px
+  typst:
+    papersize: us-letter
+    margin:
+      x: 0.75in
+      y: 0.75in
+format-links: false
+other-links:
+  - text: PDF
+    href: index.pdf
+    icon: file-pdf
+cache: false
+freeze: false
+---
+
+{{< include _part1-phenomenon.qmd >}}
+
+{{< include _part2-mechanism.qmd >}}
+
+{{< include _part3-discourse.qmd >}}
+
+{{< include _part4-demonstration.qmd >}}
+
+{{< include _part5-implications.qmd >}}
+
+{{< include _part6-context.qmd >}}

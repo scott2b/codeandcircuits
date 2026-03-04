@@ -1,0 +1,173 @@
+## Part II: The Mechanism
+
+### What Language Models Actually Do
+
+At a technical level, large language models (LLMs) do exactly one thing:
+
+> Given a sequence of tokens, predict a probability distribution over the next token.
+
+They do not contain:
+
+- a database of authors,
+- a library of writing styles,
+- or a module that applies stylistic rules.
+
+Everything that looks like "style" emerges from **statistical associations learned during training**.
+
+So when a model responds to "write like Hemingway," it is not retrieving rules about minimalism. Instead, the token _Hemingway_ nudges the model toward a region of its learned probability space where certain linguistic features co-occur more frequently.
+
+---
+
+### Semantic Conditioning: Names as Latent Space Selectors
+
+A naive understanding of language models as next-token predictors might suggest that, for stylistic markers to work, the training data would need to contain explicit prefixes like "write this like Hemingway."
+
+This is not required.
+
+Through what is often described as _semantic conditioning_, an author's name can itself function as a trigger into a region of the model's learned latent space:
+
+> "Hemingway" functions as a _high-density index into a learned stylistic cluster_, not as a literal instruction the model has seen prefixed to texts. The trigger works through **semantic conditioning**, not by matching an explicit training template.
+
+Reynolds and McDonell (2021) provide the theoretical grounding for why this works:
+
+> "Direct specifications [i.e. signifiers] can supervene on an infinity of implicit examples, like a closed-form expression on an infinite sequence, making them very powerful and compact." (p. 5)
+
+A stylistic marker like "Hemingway" operates as a _signifier_ that activates unnamed functions from an infinity of implicit examples. The name doesn't need to appear in training data as an instruction—it only needs to reliably point toward a region of the learned distribution.
+
+::: {.content-visible when-format="html"}
+::: {.column-margin}
+**Semantic Conditioning**
+
+Semantic conditioning involves guiding model outputs using structured semantic data. It transforms LLMs from generalists into context-aware tools by anchoring their probabilistic nature to defined data.
+
+Key aspects:
+
+- **Grounding**: Semantic models provide a trusted "source of truth"
+- **Enhanced Reasoning**: LLMs act as "in-context semantic reasoners"
+- **Prompting as Semantics**: Advanced prompt engineering can act as a "semantic layer"
+:::
+:::
+
+```{=typst}
+#import "@preview/wrap-it:0.1.1": wrap-content
+#let semantic-sidebar = box(
+  width: 2.75in,
+  inset: 10pt,
+  fill: luma(245),
+  radius: 4pt,
+  stroke: luma(200),
+)[
+  *Semantic Conditioning*
+
+  Semantic conditioning involves guiding model outputs using structured semantic data. It transforms LLMs from generalists into context-aware tools.
+
+  Key aspects:
+
+  - *Grounding*: Semantic models provide a trusted "source of truth"
+  - *Enhanced Reasoning*: LLMs act as "in-context semantic reasoners"
+  - *Prompting as Semantics*: Prompt engineering can act as a "semantic layer"
+]
+#wrap-content(semantic-sidebar, align: right)[
+```
+
+---
+
+### Mimetic Proxy: Specification by Cultural Compression
+
+Rather than indicative of an action or instruction, stylistic markers operate as compressed indexes to latent representations. Reynolds and McDonell call this _specification by mimetic proxy_:
+
+> "[Mimetic proxy] is mechanistically similar to direct [declarative] specification, except that the signifier keys behaviors from memespace/cultural consciousness instead of naming the behavior directly." (p. 5)
+
+This distinction is crucial. When you prompt "write like Hemingway," you are not issuing an instruction that the model follows. You are invoking a culturally compressed label that keys into behaviors absorbed from the "memespace"—the accumulated human discourse about what "Hemingway" means stylistically.
+
+The model has implicitly learned mappings like:
+
+> content × style → surface text
+
+So it can combine:
+
+- A genre it has seen (emails)
+- With a stylistic cluster it has seen (Hemingway)
+- Even if that exact combination never occurred.
+
+This is a consequence of **distributed representations**, not memorization.
+
+```{=typst}
+]
+```
+
+---
+
+### Why This Differs from "Think Step by Step"
+
+"Think step by step" works because it selects a _procedural regime_ correlated with correctness.
+
+"Write like Hemingway" works because it selects a _stylistic regime_ correlated with specific surface features.
+
+Both are instances of the same general phenomenon:
+
+> Tokens can act as selectors for latent subdistributions learned via co-occurrence, not via explicit instruction templates.
+
+But the mechanism differs:
+
+- "Think step by step" is a direct specification—it names the behavior explicitly
+- "Write like Hemingway" is mimetic proxy—it keys behavior from cultural consciousness
+
+---
+
+### Feature Superposition
+
+Mechanistic interpretability research helps explain why stylistic clusters behave as they do.
+
+Researchers like Chris Olah and collaborators study how:
+
+- Multiple unrelated features share neurons
+- High-level abstractions emerge from overlap, not modular design
+
+Style clusters are classic examples of **superposed features**:
+
+- syntax
+- cadence
+- lexical choices
+- affect
+
+An author name doesn't toggle a module; it **biases a mixture**.
+
+This explains why:
+
+- styles can blur into each other
+- parody happens easily
+- obscure authors don't resolve cleanly
+
+---
+
+### Why Author Names Are Especially Powerful
+
+Author names are unusually strong triggers because they are:
+
+- Repeated across many contexts
+- Associated with consistent stylistic commentary
+- Used contrastively ("X but not Y")
+- Treated as shorthand in human discourse
+
+In effect, an author name is a **compressed style descriptor**, far denser than any explicit list of rules.
+
+---
+
+### Why This Does _Not_ Imply True Understanding
+
+The model is not:
+
+- Applying rules about minimalism
+- Enforcing an iceberg theory
+- Evaluating literary quality
+
+It is:
+
+- Sampling from a region where those features co-occurred frequently
+
+That is why:
+
+- It can drift into parody
+- It can over-index on cliches
+- It can produce "Hemingway-ish" text that no editor would accept

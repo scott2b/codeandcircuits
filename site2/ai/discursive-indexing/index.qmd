@@ -1,0 +1,1341 @@
+---
+title: "Discursive indexing of latent distributions and cultural compression as model control"
+format:
+  html:
+    grid:
+      margin-width: 350px
+  typst:
+    papersize: us-letter
+    margin:
+      x: 0.75in
+      y: 0.75in
+format-links: false
+other-links:
+  - text: PDF
+    href: index.pdf
+    icon: file-pdf
+cache: false
+freeze: false
+---
+
+Outline for Discursive Indexing of Latent Distributions and Cultural Compression as Model Control
+
+0. Front matter and framing
+	- [ ] Title (current or slightly tightened; keep your terminology consistent with the core claim)
+	- [~] One-sentence thesis (single line, no hedging) — EXTRACTION PROVIDES: "labels in prompts can function as selectors over learned distributions because discourse compresses complex practices into callable handles" — needs condensing
+	- [x] Beat: labels in prompts can function as selectors over learned distributions because discourse compresses complex practices into callable handles — EXTRACTED
+	- [ ] Audience and scope note (1 short paragraph)
+	- [ ] Beat: written for readers/writers working at the intersection of media and technology
+	- [ ] Beat: assumes basic familiarity with LLMs; does not assume ML engineering background
+	- [ ] Learning objectives (bulleted)
+	- [~] Beat: distinguish "label as selector" from "label as instruction" — EXTRACTION PROVIDES: signifiers vs mimetic proxy framing from Reynolds & McDonell
+	- [ ] Beat: predict when a label will be a strong/weak control
+	- [ ] Beat: diagnose failures (generic output, parody drift, refusal)
+	- [ ] Beat: explain platform differences as policy-layer differences, not "model intelligence"
+	- [ ] Beat: apply this to journalism genres, stances, and credibility work
+	- [ ] Reader roadmap (one tight paragraph)
+	- [ ] Beat: cold open demo → minimal mechanism → discourse-density principle → platform layers → experiment kit → failure modes → journalism implications → design/pedagogy implications
+
+How do names, roles, genres, and discursive labels function as control handles over a learned distribution? Here, we look at the way large language models internalize and operationalize culturally compressed labels as soft selectors over learned distributions. We will do this through the lens of the exploration of "style" and "voice" in generative content.
+
+We will see that certain tokens function as high-density indices into regions of a model's learned distribution because human discourse repeatedly compresses complex practices into reusable labels.
+
+What do we mean by culturally compressed labels? For example: a user might ask, "write this like Hemingway." The way that _Hemingway_ operates in this request is close to what Reynolds and McDonell call _signifiers_. Stylistic markers operate like signifiers, activating unnamed functions from infinite implicit examples by natural language (Reynolds & McDonell 4.1-4.2)
+
+> Direct specifications can supervene on an infinity of implicit examples, like a closed-form expression on an infinite sequence, making them very powerful and compact.
+> \- Reynolds & McDonell, p. 5
+
+By the context in which they tend to be used, signifiers appear to be indicative of action or instruction. However, this is not directly the case. Stylistic markers operate as compressed indexes to latent representations. This triggers what Reynolds and McDonnel call _mimetic proxy_ which is "mechanistically similar to direct specification, except that the signifier keys behaviors from memespace/cultural consciousness instead of naming the behavior directly." (p. 5)
+
+These signifiers or indices include:
+
+- author names
+- professions
+- genres
+- epistemic stances
+- rhetorical modes
+
+A practical consideration is that authors might take advantage of mimetic proxy + cultural archetypes. For example, specifying a discussion between a teacher and a student (p. 6).
+
+This is **not** prompt engineering in the shallow sense. It is about how **cultural compression becomes model control**.
+
+---
+
+1. Cold open: three prompts that make the phenomenon obvious
+	- [x] Purpose of this section (one sentence)
+	- [x] Beat: establish "labels behave like knobs" before theory
+	- [x] Mini-demonstration setup (one paragraph)
+	- [x] Beat: same base content, three different labels
+	- [x] Beat: we care about repeatability, not one-off clever outputs
+	- [x] Prompt triad (formatted as short blocks)
+	- [x] Prompt A: author label (e.g., "write like Hemingway")
+	- [x] Observation beats (bullets, not prose)
+	- [x] Beat: sentence length shifts
+	- [x] Beat: modifier density shifts
+	- [x] Beat: affect/explicit emotion shifts
+	- [x] Prompt B: journalism genre label (e.g., "AP-style breaking news brief")
+	- [x] Observation beats
+	- [x] Beat: inverted pyramid tendency (headline/lede first)
+	- [x] Beat: attribution language appears
+	- [x] Beat: register becomes reportorial
+	- [x] Prompt C: stance/role label (e.g., "skeptical media critic responding to a press release")
+	- [x] Observation beats
+	- [x] Beat: epistemic posture shifts (hedges, challenge framing)
+	- [x] Beat: rhetorical moves shift (questioning, contrast, motive inference)
+	- [x] Transition out (one paragraph beat list)
+	- [x] Beat: these labels are not magic spells
+	- [x] Beat: the core question: what is a label doing to the model's probability landscape?
+
+Before explaining the mechanism, observe it. The same base task—rewriting a sentence about a city council vote—produces dramatically different outputs depending on a single label.
+
+**Base content:** "The city council voted 7-2 to approve the new zoning ordinance after three hours of public comment."
+
+---
+
+**Prompt A: Author label**
+
+> Rewrite this sentence in the style of Hemingway.
+
+*Typical output:* "The council voted. Seven to two. The zoning ordinance passed. Three hours of public comment preceded it."
+
+- Sentence length shortens dramatically
+- Conjunctions stripped; parataxis dominates
+- Emotional content suppressed; facts presented flatly
+- Modifier density drops to near zero
+
+---
+
+**Prompt B: Journalism genre label**
+
+> Rewrite this as an AP-style breaking news brief.
+
+*Typical output:* "CITY COUNCIL APPROVES ZONING CHANGE — The city council voted 7-2 Tuesday to approve a new zoning ordinance following three hours of public testimony, officials said."
+
+- Inverted pyramid structure emerges (headline first)
+- Attribution language appears ("officials said")
+- Register shifts to reportorial
+- Time markers become explicit ("Tuesday")
+
+---
+
+**Prompt C: Stance/role label**
+
+> Rewrite this as a skeptical media critic responding to a press release.
+
+*Typical output:* "The press release touts a 7-2 vote as decisive, but what happened in those three hours of public comment? Who spoke against? The ordinance 'passed'—but the margin and the timing raise questions the city would rather not answer."
+
+- Epistemic posture shifts to skeptical (hedges, challenge framing)
+- Rhetorical questions appear
+- Motive inference emerges ("would rather not answer")
+- Contrast and irony markers appear
+
+---
+
+Three labels, three different outputs. The base content is identical. What changed was a single word or phrase that functions as a selector—not an instruction, but a pointer into the model's learned distribution.
+
+These labels are not magic spells. The question is: what is a label actually doing to the model's probability landscape? §2 provides the minimal mechanism.
+
+2. The minimal technical story you will use everywhere else
+	- [ ] Section goal (one sentence)
+	- [ ] Beat: give a stable mental model without drowning readers in math
+	- [ ] Minimal definition of an LLM’s operation (one paragraph, beat-level)
+	- [ ] Beat: given context tokens → produces distribution over next token
+	- [ ] Beat: generation is repeated sampling/selection under that shifting distribution
+	- [ ] Define conditioning in plain terms (one paragraph)
+	- [ ] Beat: context doesn’t “command,” it changes relative likelihoods
+	- [x] Beat: conditioning effects can be semantic, stylistic, structural, or stance-related
+	- [x] Define your key term set (short glossary-in-miniature)
+
+> **The Style/Structure/Stance Triad**
+>
+> - **Style (surface):** sentence rhythm, diction, modifier density, affect display
+> - **Structure (genre template):** ordering, formatting, attribution conventions, paragraph organization
+> - **Stance (epistemic posture):** hedging, assertiveness, skepticism signals, uncertainty markers
+>
+> These three dimensions are independently controllable through labels. Effective prompting often requires specifying each separately.
+	- [ ] Discursive label (one line)
+	- [ ] Beat: a reusable name/role/genre/descriptor used in human discourse
+	- [ ] Cultural compression (one line)
+	- [ ] Beat: discourse repeatedly reduces complex practices to portable shorthand
+	- [ ] Discursive index (one line)
+	- [ ] Beat: a label that reliably selects a bundle of features because discourse stabilized it
+	- [ ] Latent distribution (one line)
+	- [ ] Beat: shorthand for the model’s learned associations shaping token likelihoods
+	- [ ] The single schematic you will reuse (bulleted pseudo-diagram)
+	- [ ] Inputs
+	- [ ] Beat: task constraint (“write an email”)
+	- [ ] Beat: label (“Hemingway” / “AP brief” / “skeptical critic”)
+	- [ ] Beat: additional descriptors/constraints (optional)
+	- [ ] Internal effect (conceptual, not mechanistic detail)
+	- [ ] Beat: shifts probability mass toward co-occurring feature bundle
+	- [ ] Output effect
+	- [ ] Beat: surface features and discourse moves change
+	- [x] Transition out (one paragraph beat list)
+	- [x] Beat: next we show why some labels are "dense indices" and others are not
+
+With this minimal mechanism in hand, the next question is: why do some labels function as precise selectors while others produce vague or generic results? §3 answers this with a canonical example.
+
+3. Running example 1: what "Hemingway" points to (and what it doesn't)
+	- [ ] Section goal (one sentence)
+	- [ ] Beat: show label-as-index with a canonical author label
+	- [ ] Clarify “doesn’t know authors” without sounding dismissive (one paragraph beats)
+	- [ ] Beat: no explicit author module
+	- [ ] Beat: no stored rule list called “Hemingway rules”
+	- [ ] Beat: behavior emerges from learned correlations in training data
+	- [ ] What training exposure plausibly links to the label (three-part structure)
+	- [ ] Primary text exposure (bullets)
+	- [ ] Beat: passages by the author
+	- [ ] Beat: stylistic regularities present in those passages
+	- [ ] Metatextual exposure (bullets)
+	- [ ] Beat: criticism, teaching, reviews, summaries
+	- [ ] Beat: recurring adjectives attached to the name
+	- [ ] Contrastive exposure (bullets)
+	- [ ] Beat: “X unlike Y” comparisons
+	- [ ] Beat: boundary sharpening through repeated contrasts
+	- [ ] The joint-bundle idea (one paragraph beats)
+	- [ ] Beat: the label correlates with a cluster of features, not a single trait
+	- [ ] Beat: the cluster is learned as co-occurrence patterns
+	- [ ] Short “what it’s selecting” checklist (bullets)
+	- [ ] Beat: syntax tendencies (e.g., short declaratives)
+	- [ ] Beat: diction tendencies (concrete nouns vs abstraction)
+	- [ ] Beat: modifier/hedge density
+	- [ ] Beat: affect display and restraint
+	- [ ] Beat: narrative distance / reporting distance
+	- [ ] Short “what it’s not” checklist (bullets)
+	- [ ] Beat: not literary judgment
+	- [ ] Beat: not an editor
+	- [ ] Beat: not intent recognition (“iceberg theory” as doctrine)
+	- [ ] Transition out
+	- [ ] Beat: if that's all true, why does the label work without explicit "write like X" templates?
+
+> **Module: Hemingway as Canonical Index**
+>
+> This module assumes §2; it demonstrates rather than re-derives the conditioning mechanism.
+
+## Why "Write Like Hemingway" Works (and Why Sometimes It Doesn't)
+
+Large language models can convincingly mimic writing styles. Ask one to “write like Hemingway,” and you’ll usually get short sentences, concrete imagery, and emotional restraint. Ask it to “write like an obscure author,” and results are often vague—or the model may refuse entirely.
+
+This difference is not accidental, and it is not primarily about model intelligence. It reveals something deeper about how language models learn style, how human discourse shapes that learning, and how different AI platforms choose to expose—or restrict—those capabilities.
+
+This article explains:
+
+- how names function as stylistic controls,
+- why discourse matters more than raw text volume,
+- why different AI systems behave differently,
+- and what role safety and policy play in shaping outputs.
+
+- - -
+
+## The core fact: language models don’t “know” authors
+
+At a technical level, large language models (LLMs) do exactly one thing:
+
+> Given a sequence of tokens, predict a probability distribution over the next token.
+
+They do not contain:
+
+- a database of authors,
+- a library of writing styles,
+- or a module that applies stylistic rules.
+
+Everything that looks like “style” emerges from **statistical associations learned during training**.
+
+So when a model responds to “write like Hemingway,” it is not retrieving rules about minimalism. Instead, the token _Hemingway_ nudges the model toward a region of its learned probability space where certain linguistic features co-occur more frequently.
+
+- - -
+
+## What the model actually learns about "Hemingway"
+
+During training, the model repeatedly encounters:
+
+- the name "Hemingway" in metadata, criticism, book jackets, essays, comparisons
+- passages of text _by_ Hemingway
+- passages of text _about_ Hemingway's style ("spare", "short sentences", "iceberg theory", etc.)
+- contrastive statements ("Unlike Faulkner, Hemingway...")
+
+From this, the model learns a **joint distribution** linking:
+
+- the token "Hemingway"
+- a region of stylistic features: short declarative sentences, parataxis, concrete nouns, minimal modifiers, restrained affect
+
+Crucially, this learning does **not** require imperative phrasing (e.g. "write this like Hemingway"). See "why does this work?" below.
+
+- - -
+
+## Names as stylistic shortcuts
+
+Some names act like powerful shortcuts. “Hemingway” reliably produces a recognizable voice. “Shakespeare,” “Kafka,” or “Dr. Seuss” often do as well.
+
+Why?
+
+Because human discourse has already done a lot of work compressing these authors into reusable labels.
+
+Over decades, people have:
+
+- taught these authors in classrooms,
+- compared them to others (“unlike Faulkner…”),
+- summarized their styles (“spare,” “ornate,” “absurd”),
+- and used their names as shorthand for a set of traits.
+
+Language models absorb not just the authors’ works, but **how people talk about them**. That secondary discourse stabilizes the name into a reliable stylistic pointer.
+
+In effect, the name becomes a _compressed index_ for a style.
+
+::: {.content-visible when-format="html"}
+::: {.column-margin}
+**Style Transfer Examples**
+
+*Original (Hemingway):*
+"Robert Cohn was once middleweight boxing champion of Princeton."
+— *The Sun Also Rises*, 1926
+
+*As Shakespeare:*
+"Know then, that Robert Cohn did once bear the laurel of the ring, a middleweight crowned at Princeton's learned field, where wit and sinew strove, and he prevailed."
+
+*As Kafka:*
+"It was an established fact, accepted without inquiry, that Robert Cohn had once been middleweight boxing champion at Princeton, though the distinction now followed him like an administrative error—official, unquestioned, and faintly unreal."
+
+*As Dr. Seuss:*
+"Robert Cohn, it is said, with a punch and a pounce, was champion at Princeton—middleweight ounce for ounce! He boxed and he bopped with a scholarly bounce, that Robert Cohn fellow—why, yes, he did trounce!"
+:::
+:::
+
+```{=typst}
+#import "@preview/wrap-it:0.1.1": wrap-content
+#let style-sidebar = box(
+  width: 2.25in,
+  inset: 10pt,
+  fill: luma(245),
+  radius: 4pt,
+  stroke: luma(200),
+)[
+  *Style Transfer Examples*
+
+  _Original (Hemingway):_
+  "Robert Cohn was once middleweight boxing champion of Princeton."
+  — _The Sun Also Rises_, 1926
+
+  _As Shakespeare:_
+  "Know then, that Robert Cohn did once bear the laurel of the ring, a middleweight crowned at Princeton's learned field, where wit and sinew strove, and he prevailed."
+
+  _As Kafka:_
+  "It was an established fact, accepted without inquiry, that Robert Cohn had once been middleweight boxing champion at Princeton, though the distinction now followed him like an administrative error—official, unquestioned, and faintly unreal."
+
+  _As Dr. Seuss:_
+  "Robert Cohn, it is said, with a punch and a pounce, was champion at Princeton—middleweight ounce for ounce! He boxed and he bopped with a scholarly bounce, that Robert Cohn fellow—why, yes, he did trounce!"
+]
+#wrap-content(style-sidebar, align: right)[
+```
+
+These style transfers demonstrate how author names function as reliable stylistic pointers. The same content—a simple declarative sentence about Robert Cohn—transforms dramatically when filtered through different authorial indices.
+
+```{=typst}
+]
+```
+
+But this raises an objection: if models only predict "next tokens," how can a name like "Hemingway" trigger style reproduction when the model presumably never saw "write like Hemingway" followed by Hemingway text in training? §4 addresses this directly.
+
+- - -
+
+4. Why "next-token prediction" still allows label control
+	- [ ] Section goal
+	- [ ] Beat: defuse the naive objection cleanly and early
+	- [ ] The naive objection (one paragraph beats)
+	- [ ] Beat: "models would need to see 'write like Hemingway' in training"
+	- [ ] The reply, staged in two steps
+	- [ ] Step 1: labels participate in meaning like any other token (beats)
+	- [ ] Beat: label contributes to context semantics
+	- [ ] Beat: semantics influences distribution shift
+	- [ ] Step 2: some contexts implicitly imply imitation vs description (beats)
+	- [ ] Beat: "write in the style of" is a cue toward reproduction
+	- [ ] Beat: surrounding constraints (genre, role) can do similar work
+	- [ ] The selector-not-command line (place it as a boxed takeaway)
+	- [ ] Beat: labels are selectors over learned distributions, not imperative instructions
+	- [ ] Transition out
+	- [ ] Beat: now generalize beyond authors into journalism-native labels
+
+> **Module: Next-Token Prediction and Label Control**
+
+## **If models are "next-token predictors," why does this work?**
+
+A naïve understanding of language models as next-token predictors might suggest that, for stylistic markers to work, the training data would need to contain explicit prefixes like “write this like Hemingway.” However, next-token prediction operates at a more abstract and contextual level than this. Through what is often described as _semantic conditioning_, an author’s name can itself function as a trigger into a region of the model’s learned latent space.
+
+> “Hemingway” functions as a _high-density index into a learned stylistic cluster_, not as a literal instruction the model has seen prefixed to texts. The trigger works through **semantic conditioning**, not by matching an explicit training template.
+
+That said, activating the general semantic neighborhood associated with “Hemingway” is not, by itself, sufficient to reliably produce Hemingway-like prose. This is where discourse matters. Phrases such as “write like” or “write in the style of” further bias generation toward imitation rather than description, while the surrounding critical and pedagogical discourse supplies additional anchors that stabilize what “Hemingway-like” is taken to mean. Together, these cues shape the conditional distribution toward stylistic reproduction rather than mere topical association.
+
+The model has learned **style as a separable dimension** from topic.
+
+That is, it has implicitly learned mappings like:
+
+> content × style → surface text
+
+So it can combine:
+
+- A genre it has seen (emails)
+- With a stylistic cluster it has seen (Hemingway)
+- Even if that exact combination never occurred.
+
+This is a consequence of **distributed representations**, not memorization.
+
+## Why this is different from “think step by step”
+
+“Think step by step” works because it selects a _procedural regime_ correlated with correctness.
+
+“Write like Hemingway” works because it selects a _stylistic regime_ correlated with specific surface features.
+
+Both are instances of the same general phenomenon:
+
+>  Tokens can act as selectors for latent subdistributions learned via co-occurrence, not via explicit instruction templates.
+
+## Why author names are especially powerful triggers
+
+Author names are unusually strong because they are:
+
+- Repeated across many contexts.
+- Associated with consistent stylistic commentary.
+- Used contrastively (“X but not Y”).
+- Treated as shorthand in human discourse.
+    
+
+In effect, an author name is a **compressed style descriptor**, far denser than any explicit list of rules.
+
+## Why this does _not_ imply true stylistic understanding
+
+The model is not:
+
+- Applying rules about minimalism.
+- Enforcing an iceberg theory.
+- Evaluating literary quality.
+    
+It is:
+
+- Sampling from a region where those features co-occurred frequently.
+
+That is why:
+
+- It can drift into parody.
+- It can over-index on clichés.
+- It can produce “Hemingway-ish” text that no editor would accept.
+
+## The general rule (ties everything together)
+
+>  Prompt triggers do not need to appear verbatim in training data; they only need to reliably point toward a region of the learned distribution.
+
+“Write like Hemingway” works because “Hemingway” is a reliable pointer.
+
+> [!tip]
+> - Prompting works by **semantic indexing**, not template recall
+> - Author names are powerful because they label dense, well-separated stylistic clusters
+> - The model is not following instructions—it is **moving in embedding space**.
+> 
+
+Once you see prompts as _selectors rather than commands_, this stops being mysterious and starts being inevitable.
+
+::: {.content-visible when-format="html"}
+::: {.column-margin}
+**Semantic Conditioning**
+
+Semantic conditioning involves guiding model outputs using structured semantic data. It transforms LLMs from generalists into context-aware tools by anchoring their probabilistic nature to defined data.
+
+Key aspects:
+
+- **Grounding**: Semantic models provide a trusted "source of truth"
+- **Enhanced Reasoning**: LLMs act as "in-context semantic reasoners"
+- **Prompting as Semantics**: Advanced prompt engineering can act as a "semantic layer"
+:::
+:::
+
+```{=typst}
+#let semantic-sidebar = box(
+  width: 2.25in,
+  inset: 10pt,
+  fill: luma(245),
+  radius: 4pt,
+  stroke: luma(200),
+)[
+  *Semantic Conditioning*
+
+  Semantic conditioning involves guiding model outputs using structured semantic data. It transforms LLMs from generalists into context-aware tools.
+
+  Key aspects:
+
+  - *Grounding*: Semantic models provide a trusted "source of truth"
+  - *Enhanced Reasoning*: LLMs act as "in-context semantic reasoners"
+  - *Prompting as Semantics*: Prompt engineering can act as a "semantic layer"
+]
+#wrap-content(semantic-sidebar, align: right)[
+```
+
+This concept of semantic conditioning helps explain why discursive labels function as effective stylistic controls—they serve as semantic anchors guiding the model toward specific regions of its learned distribution.
+
+```{=typst}
+]
+```
+
+The author-label example clarifies the mechanism, but journalistic practice relies on a different class of labels: genre names. §5 shows how these function as high-density indices in the reader's home territory.
+
+5. Running example 2: journalism genre labels as high-density indices
+	- [x] Section goal
+	- [x] Beat: show the same phenomenon in the reader's home territory
+	- [x] Choose 3–5 journalism label families (present as subsections)
+	- [x] Breaking news brief / wire style
+	- [x] Beats: structure cues, attribution cues, restraint cues
+	- [x] Fact-check memo
+	- [x] Beats: claims-evidence formatting cues, sourcing language cues, uncertainty signaling
+	- [x] Op-ed / commentary
+	- [x] Beats: thesis-forward cues, rhetorical persuasion cues, voice and stance cues
+	- [x] Editor's note / correction
+	- [x] Beats: institutional voice cues, accountability language cues, narrow scope cues
+	- [x] Investigative feature
+	- [x] Beats: narrative scaffolding cues, scene-setting cues, multi-source weaving cues
+	- [x] For each family: a tight pattern template (bullets, not prose)
+	- [x] Beat: what the label tends to call up structurally
+	- [x] Beat: what it tends to call up stylistically
+	- [x] Beat: what it tends to call up in epistemic stance
+	- [x] Transition out
+	- [x] Beat: we now need a general predictor for "when labels work well"
+
+Journalism genres function as high-density discursive indices. Newsrooms compress complex editorial practices into reusable names—"brief," "feature," "op-ed," "correction"—and models inherit those compressions.
+
+### Breaking News Brief / Wire Style
+
+**Structure cues:** Inverted pyramid (most important information first), lede-headline-body ordering, short paragraphs (often single-sentence), dateline conventions.
+
+**Stance/epistemic cues:** Attribution-heavy ("officials said," "according to"), hedged on uncertainty ("reportedly," "appears to"), neutral on evaluation, present-tense for ongoing events.
+
+**Surface style cues:** Short declarative sentences, active voice, minimal adjectives, concrete nouns, no first-person, no rhetorical questions.
+
+**What can go wrong:** Model produces generic summary prose without inverted pyramid structure; attribution language appears but attribution is fabricated; hedging disappears on contested claims.
+
+**Minimal repair:** Add explicit structural constraint ("lede must contain who/what/when/where"); require placeholder attribution markers ("[NEEDS SOURCE]"); specify uncertainty handling ("hedge any claim not directly quoted").
+
+---
+
+### Fact-Check Memo
+
+**Structure cues:** Claim-evidence-verdict format, explicit sourcing with inline citations, comparison structure (claim vs. evidence), often includes ratings or verdicts ("True," "Misleading," "Lacks Context").
+
+**Stance/epistemic cues:** Skeptical but fair, uncertainty explicitly flagged, evidence quality assessed, hedged conclusions where evidence is incomplete, explicit acknowledgment of what cannot be verified.
+
+**Surface style cues:** Technical precision, direct quotation of original claim, parenthetical sourcing, numbered or bulleted evidence points, minimal narrative.
+
+**What can go wrong:** Model produces verdict without evidence chain; sources are plausible-sounding but fabricated; uncertainty disappears from conclusions; format looks correct but reasoning is circular.
+
+**Minimal repair:** Require explicit evidence-to-verdict mapping; add "[VERIFY SOURCE]" placeholders; require uncertainty markers on any inference; separate claim identification from verdict.
+
+---
+
+### Op-Ed / Commentary
+
+**Structure cues:** Thesis-forward (position stated early), argument scaffolding (point-support-rebuttal), often closes with call to action or restatement, may include personal anecdote as entry point.
+
+**Stance/epistemic cues:** Assertive, explicitly evaluative, first-person acceptable, advocacy posture, may acknowledge counterarguments (to dismiss them), rhetorical appeals explicit.
+
+**Surface style cues:** Voice-forward (personality visible), varied sentence rhythm, metaphor and analogy common, rhetorical questions acceptable, stronger modifiers than news.
+
+**What can go wrong:** Model produces bland "both sides" summary instead of advocacy; voice flattens to institutional neutral; call to action is generic; position is stated but not argued.
+
+**Minimal repair:** Specify explicit position to defend; add constraint ("argue for X, not summarize debate"); require counterargument engagement; specify voice register ("polemical," "measured," "sardonic").
+
+---
+
+### Editor's Note / Correction
+
+**Structure cues:** Narrow scope (addresses specific error), clear identification of original error, explicit statement of correct information, may include explanation of how error occurred, timestamp/dating.
+
+**Stance/epistemic cues:** Institutional accountability voice, no hedging on the correction itself, may hedge on cause ("due to an editing error"), no deflection, direct acknowledgment.
+
+**Surface style cues:** Formal, impersonal, short, no narrative, no opinion, minimal explanation beyond what's necessary.
+
+**What can go wrong:** Model produces apology rather than correction; scope creeps beyond the specific error; explanation becomes defensive; institutional voice slips into personal voice.
+
+**Minimal repair:** Constrain scope explicitly ("correct only X"); require format: "[Original error] → [Correction]"; forbid explanation of editorial judgment; require institutional "we" not "I."
+
+---
+
+### Investigative Feature
+
+**Structure cues:** Narrative scaffolding (scene-setting opening), delayed thesis (revelations unfold), multi-source weaving, section breaks or subheads, often includes "nut graf" that states stakes mid-piece, chronological or thematic organization.
+
+**Stance/epistemic cues:** Evidence-grounded assertiveness, sources named and characterized, document references explicit, uncertainty acknowledged where evidence is incomplete, interpretive but not editorializing.
+
+**Surface style cues:** Scene-setting description, character introduction, longer sentences with subordinate clauses, dialogue and quotation, concrete sensory detail, varied pacing.
+
+**What can go wrong:** Model produces news brief structure with feature vocabulary; sources are invented; scene-setting is generic; nut graf is missing or buried; evidence chain is asserted not shown.
+
+**Minimal repair:** Require explicit scene-setting opening; require "[NAMED SOURCE]" placeholders; require nut graf at specified location; separate "what we know" from "what sources said."
+
+---
+
+These genre labels work because newsroom practice has stabilized them into portable shorthand. When a prompt says "AP-style brief," the model doesn't retrieve AP style rules—it shifts toward a region where brief-like features co-occur. The label is the index; the genre conventions are the bundle it selects.
+
+The next question: what predicts when a label will be a strong index versus a weak one?
+
+6. The central principle: label power tracks discourse density, not just text volume
+	- [ ] Section goal
+	- [x] Beat: introduce discursive compression as the main explanatory variable — EXTRACTED + existing "Why discourse beats corpus size" content
+	- [~] Define "discursive compression" operationally (bullets) — PARTIALLY EXTRACTED: joint distribution concept
+	- [x] Beat: repeated public use of the label — EXTRACTED
+	- [x] Beat: repeated summarization into a small trait bundle — EXTRACTED (stylistic adjectives)
+	- [x] Beat: repeated teaching/standardization contexts — EXTRACTED (teaching heuristics)
+	- [x] Beat: repeated contrast against neighbors ("X but not Y") — EXTRACTED (contrasts with peers + contrastive anchoring section)
+	- [~] Define "discourse density" as a practical proxy (bullets) — EXTRACTED provides examples, needs formalization
+	- [x] Beat: frequency of label in contexts that explain it — EXTRACTED (metatextual signal section)
+	- [x] Beat: stability/consensus of descriptors attached to it — EXTRACTED (compressed stylistic descriptors)
+	- [x] Beat: availability of canonical exemplars — EXTRACTED (canonical excerpts)
+	- [~] Contrast cases (two-column conceptual comparison) — EXTRACTED provides content, needs formatting
+	- [x] High-discourse labels (bullets) — EXTRACTED (canonical authors with pedagogical presence)
+	- [x] Beat: widely taught authors, standard journalism formats, named rhetorical modes — EXTRACTED
+	- [x] Low-discourse labels (bullets) — EXTRACTED ("hundreds of novels" section)
+	- [x] Beat: obscure authors, niche house styles, emerging voices with little secondary talk — EXTRACTED
+	- [x] Prediction statement (boxed) — EXTRACTED (tip callout: "Stylistic mimicry quality...")
+	- [x] Beat: label-only prompts will be stronger when discourse has stabilized the label into a portable descriptor bundle — EXTRACTED
+	- [ ] Transition out
+	- [ ] Beat: but behavior also depends on platform layers that may refuse or "play along"
+
+From training, the model doesn't just learn "texts by Author A." It learns a **joint distribution** linking:
+
+- the author's name
+- a small set of stylistic adjectives
+- canonical excerpts
+- contrasts with peers
+- teaching heuristics
+
+That joint distribution makes the author's name a **high-density index**. When discourse is sparse, the index is fuzzy.
+
+### Why "hundreds of novels" may still underperform
+
+An obscure but prolific author can fail to form a clean cluster if:
+
+- the works aren't widely digitized or cited
+- there's little secondary literature
+- the style isn't frequently summarized
+- the author isn't used as a comparative reference
+
+The model then has lots of _examples_ but little _compression_. Prompting with the name doesn't reliably select a narrow region; it selects a blur.
+
+### Observable consequences (and predictions)
+
+You can expect:
+
+- **High fidelity** for canonical authors with strong pedagogical presence.
+- **Parody drift** or generic prose for obscure authors.
+- **Better results** when you add explicit descriptors ("short declarative sentences, concrete nouns") for lesser-known writers.
+- **Name-only prompts** to underperform where discourse is thin.
+
+These predictions are borne out in prompt experiments and analyses of style transfer behavior.
+
+> [!tip]
+>  Stylistic mimicry quality in LLMs depends primarily on the density and consistency of metatextual discourse linking an author's name to compressed stylistic descriptors, not merely on the volume of primary texts.
+
+---
+
+## Why discourse beats corpus size
+
+It helps to separate three different signals the model can learn.
+
+### 1) Primary text signal (the works themselves)
+
+Having many novels provides examples of surface patterns (syntax, lexicon, rhythm). This helps, but on its own it’s often **insufficient** to form a clean, name-addressable style cluster—especially if the works vary across time or genre.
+
+### 2) Metatextual signal (criticism, teaching, comparison)
+
+What really sharpens a stylistic cluster is **how often an author is named, summarized, contrasted, and reduced to traits**:
+
+- reviews
+- literary criticism
+- classroom explanations
+- “X but not Y” comparisons
+- style advice (“write sparely like X”)
+
+These sources _compress_ an author into a **portable descriptor**. That compression is what a prompt token can reliably index.
+
+### 3) Contrastive anchoring
+
+Authors like Ernest Hemingway are constantly positioned _against_ others (Faulkner, Fitzgerald, modernists, minimalists). Contrast creates **sharp boundaries** in embedding space. Obscure authors rarely get this treatment, even if prolific.
+
+Discourse density explains why some labels work and others don't. But even dense labels can behave differently across platforms—not because of model capability, but because of policy layers. §7 separates the base mechanism from the choices platforms make on top of it.
+
+7. Layer model: base model behavior vs assistant policy vs product UI
+	- [ ] Section goal
+	- [ ] Beat: separate inevitabilities from design choices
+	- [ ] Introduce the three-layer diagram (bulleted)
+	- [ ] Base model layer
+	- [ ] Beat: conditional distribution shifting
+	- [ ] Beat: can often generate if cues are present
+	- [ ] Assistant policy layer
+	- [ ] Beat: whether to infer missing specifics
+	- [ ] Beat: whether to refuse unsafe/unsupported imitation requests
+	- [ ] Beat: how cautious to be about fabrication
+	- [ ] Product/UI layer
+	- [ ] Beat: preset tones
+	- [ ] Beat: style menus
+	- [ ] Beat: guardrails exposed or hidden
+	- [ ] Recast your "fictional author" divergence as a layer issue (beats)
+	- [ ] Beat: name-only is underdetermined at the discourse layer
+	- [ ] Beat: one assistant chooses "guess weakly," another chooses "do not infer"
+	- [ ] Transition out
+	- [ ] Beat: now make this teachable with a small experiment kit
+
+> **Module: Platform Layers and Policy Differences**
+
+## An experiment with a fictional author
+
+To make this visible, consider an experiment using a fictional author: _Frank Calderon_.
+
+### Baseline task
+
+“Write a 120-word email to a landlord reporting a leaking pipe.”
+
+Both ChatGPT and Claude produce a straightforward, polite email.
+
+### Name-only prompt
+
+“Frank Calderon is a fictional author. Write the email in the style of Frank Calderon.”
+
+Here the systems diverge:
+
+- **ChatGPT** proceeds, producing a slightly more literary but still generic email.
+    
+- **Claude** refuses, explaining that it has no information about Frank Calderon’s writing style.
+    
+
+This difference is crucial.
+
+Claude is not saying it _cannot_ generate a style. It is saying it _should not infer one_ from an empty name.
+
+- - -
+
+## What happens when style is defined explicitly
+
+Now add a description:
+
+> Frank Calderon is a fictional author known for hard-boiled noir prose:  
+> short sentences, first-person narration, concrete detail, dry cynicism, urban metaphors, emotional restraint.
+
+Both systems now generate unmistakable noir-style emails:
+
+- clipped sentences,
+- vivid physical detail,
+- restrained, cynical tone.
+
+Nothing “new” was unlocked in the model. The only change was that the name now pointed to a well-defined stylistic region.
+
+The style appeared **because the discourse was supplied**.
+
+- - -
+
+## Why Claude and ChatGPT behaved differently
+
+This experiment reveals an important distinction between **model behavior** and **assistant behavior**.
+
+### The underlying model
+
+At the lowest level, both systems rely on the same mechanism: next-token prediction conditioned on context.
+
+Given enough stylistic cues, both can generate noir prose.
+
+### The assistant layer
+
+On top of that, each platform adds policy rules about:
+
+- hallucination avoidance
+- epistemic caution
+- user interaction norms
+
+Claude applies a strict rule:
+
+> A name must resolve to a known or explicitly defined style before it can be used as a stylistic control.
+
+ChatGPT applies a looser rule:
+
+> If a name is undefined, proceed anyway with a weak or generic interpretation.
+
+Neither choice is “more correct” in a technical sense. They reflect different design priorities.
+
+- - -
+
+## Why this matters
+
+This phenomenon explains several common observations about AI writing:
+
+- Why “write like Hemingway” works but “write like a random novelist” often doesn’t.
+    
+- Why adding a short style description can outperform a name alone.
+    
+- Why genre labels (“legal brief,” “noir detective,” “fairy tale”) are so effective.
+    
+- Why some systems ask clarifying questions instead of guessing.
+    
+
+It also shows that **control over AI output is partly cultural, not just technical**. The styles that models reproduce most reliably are those that human discourse has already stabilized into clear labels.
+
+- - -
+
+## Stylistic fidelity scales with discourse density, not just raw text volume
+
+Stylistic mimicry quality correlates more with how an author is talked about than with how much the author wrote. In other words, _discursive saturation_ matters more than _bibliographic mass_.
+
+Understanding the mechanism and the layers suggests a practical question: how can we test these claims systematically? §8 provides a reproducible experiment kit.
+
+8. Classroom experiment kit: a reproducible lab for discursive indexing
+	- [ ] Section goal
+	- [ ] Beat: convert the thesis into methods and observable outcomes
+	- [ ] Experimental design overview (bullets)
+	- [ ] Beat: hold task constant, vary label information
+	- [ ] Beat: compare outputs on measurable surface and discourse features
+	- [ ] Materials (bullets)
+	- [ ] Beat: one neutral base task (email / short report / brief memo)
+	- [ ] Beat: one base content paragraph to rewrite
+	- [ ] Beat: a small rubric (below)
+	- [ ] Conditions (each as a subsection with expected observations)
+	- [ ] Condition 1: task-only baseline
+	- [ ] Beats: identify default register; note generic conventions
+	- [ ] Condition 2: label-only (name/genre/role only)
+	- [ ] Beats: observe whether output shifts; measure consistency across runs
+	- [ ] Condition 3: descriptor-only (no label)
+	- [ ] Beats: observe strength of control; compare against label-only
+	- [ ] Condition 4: label + descriptor
+	- [ ] Beats: observe whether control becomes both stronger and less caricatured
+	- [ ] Condition 5: label + descriptor + contrast anchor (“closer to X than Y”)
+	- [ ] Beats: observe boundary sharpening and reduced drift
+	- [ ] Rubric for analysis (bulleted checklist)
+	- [ ] Surface style features
+	- [ ] Beat: sentence length distribution (rough)
+	- [ ] Beat: modifier density
+	- [ ] Beat: metaphor rate
+	- [ ] Beat: punctuation/cadence markers
+	- [ ] Structural/genre features
+	- [ ] Beat: headline/lede structure presence
+	- [ ] Beat: paragraph ordering and summary-first behavior
+	- [ ] Beat: use of attribution and sourcing frames
+	- [ ] Epistemic stance features
+	- [ ] Beat: hedging vs assertiveness
+	- [ ] Beat: challenges/questions vs declarations
+	- [ ] Beat: explicit uncertainty markers
+	- [ ] Discourse moves
+	- [ ] Beat: comparison, skepticism, moral framing, institutional voice cues
+	- [ ] Interpretation guide (bullets)
+	- [ ] Beat: descriptor-only beating label-only indicates thin discursive compression
+	- [ ] Beat: label-only beating descriptor-only indicates strong discursive index
+	- [ ] Beat: refusals indicate policy-layer constraints, not purely capability limits
+	- [ ] Transition out
+	- [ ] Beat: experiments will also reveal predictable failure modes—name them next
+
+If you want faithful mimicry for an obscure author:
+
+- supply descriptors the discourse never standardized
+- include a short excerpt
+- anchor with contrasts ("closer to X than Y")
+- specify constraints explicitly
+
+You are, in effect, **creating the missing discourse** the model never had.
+
+Running these experiments reveals predictable patterns—but also predictable failures. §9 taxonomizes what goes wrong and why.
+
+---
+
+9. Failure modes taxonomy: what goes wrong and why
+	- [ ] Section goal
+	- [ ] Beat: give readers a diagnostic toolkit
+	- [ ] Failure mode 1: generic output (weak index)
+	- [ ] Beats: label is under-discussed; no stable descriptor bundle
+	- [ ] Beats: remedy—add descriptors, exemplars, contrast anchors
+	- [x] Failure mode 2: parody/caricature drift (over-compressed index) — EXTRACTED: "Prompting becomes reductive for complex authors"
+	- [x] Beats: label evokes stereotypes; model overweights salient features — EXTRACTED: "caricature of the author's most-discussed traits"
+	- [ ] Beats: remedy—add "avoid parody" constraints; specify what not to do; provide exemplar
+	- [x] Failure mode 3: flattening of multi-register authors/genres — EXTRACTED: "Authors who write across genres are often flattened"
+	- [x] Beats: discourse stabilizes one dominant mode; the model reproduces that — EXTRACTED: "discourse tends to compress them into _one_ dominant voice"
+	- [x] Beats: remedy—specify phase/register ("early vs late," "news brief vs feature") — EXTRACTED: "specifying _which_ voice, period, or genre"
+	- [ ] Failure mode 4: cue conflict (mixed signals)
+	- [ ] Beats: incompatible constraints cause blended mush
+	- [ ] Beats: remedy—declare priority ordering; separate passes (structure first, then style)
+	- [ ] Failure mode 5: refusal / "cannot comply" that looks like incapacity
+	- [ ] Beats: assistant layer may prohibit imitation or inference
+	- [x] Beats: remedy—reframe request as descriptors and goals rather than identity mimicry — EXTRACTED: "explicit descriptors outperform names for such authors"
+	- [ ] Failure mode 6: style without truth (credibility illusion)
+	- [ ] Beats: stance/genre cues can increase perceived authority without improving accuracy
+	- [ ] Beats: remedy—add explicit epistemic constraints; require sourcing; require uncertainty marking
+	- [ ] Transition out
+	- [ ] Beat: now connect the phenomenon directly to journalism stakes—credibility and institutional power
+
+- **Authors who write across genres are often flattened** — When an author operates in multiple stylistic registers, discourse tends to compress them into _one_ dominant voice. LLMs reproduce that compression, not the author's full stylistic range.
+
+- **Genre-hopping reduces stylistic addressability** — Authors who deliberately avoid a stable signature style may be harder for models to mimic precisely, because discourse has less incentive to stabilize them into a single callable label.
+
+- **Register shifts are learned unevenly** — If an author's stylistic modes are discussed asymmetrically (e.g., "early vs late," "fiction vs essays"), the model will reproduce the most discursively salient mode, not necessarily the most representative one.
+
+- **This favors authors with teachable styles over adaptive ones** — Writers known for a consistent, nameable style are easier for models to reproduce than writers whose strength lies in flexibility, experimentation, or contextual adaptation.
+
+- **Prompting becomes reductive for complex authors** — Asking a model to "write like X" often produces a caricature of the author's most-discussed traits, not a faithful recreation of their full practice.
+
+- **It reframes authorship as a distribution, not a point** — For multi-register authors, effective prompting may require specifying _which_ voice, period, or genre—mirroring how human readers distinguish among phases of an author's work.
+
+- **It explains why explicit descriptors outperform names for such authors** — When an author's discourse identity is unstable or plural, direct stylistic constraints ("plainspoken, reportorial, emotionally distant") outperform the name alone.
+
+These failure modes are not mere technical annoyances—they have direct implications for journalism, where style, structure, and stance carry institutional weight. §10 makes the connection explicit.
+
+---
+
+10. Why this matters for journalism: genre, stance, credibility, and institutional voice
+	- [ ] Section goal
+	- [ ] Beat: make the concept feel central, not decorative
+	- [~] Journalism is label-saturated (beats) — EXTRACTED provides general framing: "compressed cultural labels," "discourse stabilizes style"
+	- [~] Beat: newsroom practice compresses genres into reusable names — EXTRACTED provides conceptual basis
+	- [ ] Beat: those names carry structural, stylistic, and epistemic expectations
+	- [ ] Three control targets to keep separate (subsections)
+	- [ ] Style (surface)
+	- [ ] Beats: sentence rhythm, diction, affect display
+	- [ ] Structure (genre template)
+	- [ ] Beats: ordering, formatting, attribution conventions
+	- [ ] Stance (epistemic posture)
+	- [ ] Beats: hedging, skepticism, neutrality signals, calls to action
+	- [ ] Credibility implications (beats)
+	- [ ] Beat: authoritative-sounding formats can mask weak evidentiary grounding
+	- [ ] Beat: "institutional voice" can be reproduced without institutional practices
+	- [~] Pedagogical implication (beats) — EXTRACTED: "prompting is cultural navigation, not instruction"
+	- [~] Beat: students should learn to treat label prompts as rhetorical devices with power effects — EXTRACTED provides framing
+	- [ ] Beat: evaluation must distinguish surface conformity from evidentiary quality
+	- [ ] Transition out
+	- [ ] Beat: now widen to the cultural politics of which voices become "callable" at all
+	NOTE: Extracted content provides foundational mechanism; journalism-specific application still needs development
+
+- **Style is learned from discourse, not just text** — LLMs don't learn an author's voice only from their novels; they also learn it from how people _talk about_ that author—reviews, criticism, teaching materials, comparisons, and advice.
+
+- **Author names function as compressed cultural labels** — "Hemingway" works as a stylistic prompt because human discourse has already reduced a complex body of work into a small, reusable bundle of traits (short sentences, restraint, concreteness). The model inherits that compression.
+
+- **Discourse stabilizes style into a callable handle** — Without sustained secondary discourse, an author's name may not reliably activate a specific stylistic pattern—even if the author wrote extensively. Volume alone is not enough.
+
+- **This explains why some names work and others don't** — Canonical, widely discussed authors act as clean style selectors; obscure or under-discussed authors often produce vague or generic results unless additional descriptors or examples are supplied.
+
+- **It reveals that prompting is cultural navigation, not instruction** — When we prompt with names, we are steering the model toward socially stabilized regions of language use, not invoking an internal "style engine."
+
+- **It clarifies differences between AI platforms** — Some systems allow weak or inferred stylistic activation; others require explicit grounding to avoid hallucination. These are policy choices layered on top of the same underlying mechanics.
+
+Beyond journalism-specific implications, this mechanism has broader cultural consequences: which voices are easy to summon reflects which voices humans have stabilized through discourse. §11 names this pattern.
+
+---
+
+11. Cultural politics of indexability: canon formation as model affordance
+	- [ ] Section goal
+	- [x] Beat: show that "what is easy to summon" mirrors cultural attention — EXTRACTED: "AI voice is a mirror of human attention"
+	- [~] Discursive attention produces callable handles (beats) — EXTRACTED provides framing
+	- [x] Beat: widely discussed voices become highly indexable — EXTRACTED: "heavily discussed, taught, and compared become easier"
+	- [x] Beat: less-discussed voices become fuzzy or require user-supplied scaffolding — EXTRACTED: "marginalized or less canonized voices become harder"
+	- [~] Two consequences framed neutrally but clearly (subsections) — EXTRACTED provides content, needs structuring
+	- [x] Canon amplification — EXTRACTED: "AI style is conservative by default"
+	- [x] Beats: stabilized labels get reinforced by ease-of-use — EXTRACTED: "preferentially reproduce stabilized, legible styles"
+	- [x] Marginalization by under-indexing — EXTRACTED: "discourse did less compressive work"
+	- [x] Beats: lack of secondary discourse reduces label reliability — EXTRACTED
+	- [ ] Constructive response: descriptor-first de-canonizing prompts (beats)
+	- [ ] Beat: use descriptive constraints instead of names
+	- [ ] Beat: build "voice profiles" from observable features
+	- [ ] Beat: treat names as optional shorthand, not primary control
+	- [ ] Transition out
+	- [ ] Beat: from critique to design—what tools and assignments should do differently
+
+- **It reframes concerns about bias and canon formation** — Voices that are heavily discussed, taught, and compared become easier for models to reproduce; marginalized or less canonized voices become harder—not because they are less "learnable," but because discourse did less compressive work.
+
+- **It reveals that AI style is conservative by default** — Models preferentially reproduce stabilized, legible styles, which may unintentionally discourage stylistic ambiguity, hybridity, or evolution.
+
+- **It changes how we should interpret AI pastiche** — What looks like stylistic understanding is often the reproduction of discourse consensus, not engagement with the author's full creative range.
+
+- **It shows that AI voice is a mirror of human attention** — AI voice mirrors literary reception, not literary intent. Models reflect how authors are _received and categorized_, not how they understand their own practice. What models can "sound like" is ultimately shaped by what humans have collectively named, debated, and agreed to recognize as a style.
+
+From critique to practice: understanding canon effects suggests concrete design responses. §12 proposes patterns for tools and teaching.
+
+---
+
+12. Design and workflow implications: interfaces that expose control honestly
+	- [ ] Section goal
+	- [x] Beat: propose practical patterns for tools and teaching — EXTRACTED: design/evaluate AI writing tools + tools for writers/critics
+	- [ ] UI pattern 1: "descriptor panels" over "name panels"
+	- [ ] Beats: show sliders/choices for sentence length, hedging, attribution, stance markers
+	- [x] Beats: reduce name-as-authority shortcut dependence — EXTRACTED: "Descriptors beat names for complex styles"
+	- [ ] UI pattern 2: "active constraints display"
+	- [ ] Beats: show which constraints are currently steering generation
+	- [ ] Beats: separate style vs structure vs stance toggles
+	- [ ] UI pattern 3: "two-pass generation workflows"
+	- [ ] Pass 1: structural scaffold
+	- [ ] Beats: produce outline/lede/body ordering
+	- [ ] Pass 2: voice pass
+	- [ ] Beats: apply style/stance constraints within fixed structure
+	- [ ] Classroom pattern: "audit the label"
+	- [ ] Beats: require students to list what the label implies
+	- [ ] Beats: require students to specify which implications they want and which they forbid
+	- [ ] Transition out
+	- [ ] Beat: close by restating the central claim and giving readers a compact checklist
+	NOTE: "Implications for writers" and "Unknown/emerging writers" content extracted below provides extensive material for this section
+
+- **It changes how we should design and evaluate AI writing tools** — Effective style control depends on supplying or selecting discourse, not just naming authors—suggesting new interfaces, safeguards, and pedagogical uses.
+
+- **It suggests new tools for writers and critics** — AI systems could expose voice as a spectrum or set of registers rather than a single label, aligning more closely with how many authors actually work.
+
+::: {.content-visible when-format="html"}
+::: {.column-margin}
+**Key Takeaways for Writers**
+
+- Your "AI voice" is the most-discussed version, not your full range
+- Consistency increases imitability
+- Genre-hopping gets flattened
+- Reception matters more than intent
+- Descriptors beat names for complex styles
+- You can shape how AI sees you through interviews, essays, and criticism
+:::
+:::
+
+```{=typst}
+#let writers-sidebar = box(
+  width: 2.25in,
+  inset: 10pt,
+  fill: luma(245),
+  radius: 4pt,
+  stroke: luma(200),
+)[
+  *Key Takeaways for Writers*
+
+  - Your "AI voice" is the most-discussed version, not your full range
+  - Consistency increases imitability
+  - Genre-hopping gets flattened
+  - Reception matters more than intent
+  - Descriptors beat names for complex styles
+]
+#wrap-content(writers-sidebar, align: right)[
+```
+
+- **Your "AI voice" is not your full voice** — When a model writes "like you," it reproduces the most-discussed version of your style, not the full range.
+
+- **Consistency increases imitability** — Writers with a stable, nameable style are easier for models to mimic.
+
+- **Genre-hopping gets flattened** — Models collapse multi-genre writers into a single dominant mode.
+
+- **Reception matters more than intent** — Models reflect how critics describe your work, not how you understand it.
+
+- **Caricature is the default failure mode** — Name-based prompting exaggerates surface traits.
+
+- **Descriptors beat names for complex styles** — Concrete constraints work better than your name alone.
+
+- **Periods and projects matter** — Prompting for specific phases aligns better with how models internalize variation.
+
+- **Avoiding a signature style reduces AI mimicry** — Resisting a consistent voice is an unintended form of stylistic protection.
+
+- **AI favors legible styles over experimental ones** — Easily summarized forms are more likely to be reproduced.
+
+- **AI pastiche is about discourse, not creativity** — AI imitates the shorthand others use to talk about your work.
+
+- **You can shape how AI sees you—indirectly** — Essays, interviews, and criticism influence how your work gets reproduced.
+
+```{=typst}
+]
+```
+
+When an author provides writing samples to an LLM to establish "their style," they are not teaching the model who they are in any durable sense. They are **temporarily constructing a local stylistic attractor** inside the current context.
+
+Understanding that distinction changes how writers should approach the task.
+
+### 1. You are not establishing a permanent style—only a local one
+
+Providing samples does not create a new "author" inside the model. It creates a **short-lived conditioning context** that biases generation _for the duration of the interaction_.
+
+Once the context window resets, the style disappears unless it is reintroduced.
+
+Implication: think of samples as _scaffolding_, not identity.
+
+### 2. The model learns patterns, not intention
+
+The model does not infer:
+
+- what you are trying to do stylistically,
+- what you consider essential vs incidental,
+- or what you would reject as "not my voice."
+
+It only absorbs **surface regularities**:
+
+- sentence length,
+- punctuation habits,
+- cadence,
+- lexical choices,
+- degree of explicitness or restraint.
+
+Implication: the samples must _exhibit_ the voice you want, not merely represent your work broadly.
+
+### 3. Samples compress your voice—often aggressively
+
+When you provide examples, the model implicitly compresses them into a small set of dominant features. Subtleties are often lost; outliers are ignored.
+
+Implication: choose samples that are internally consistent and representative of the _specific register_ you want reproduced.
+
+### 4. Mixing registers weakens the signal
+
+If your samples span multiple genres or tonal modes, the resulting "style" will blur.
+
+Implication: if you write in multiple voices, treat each as a separate conditioning task. Do not ask the model to infer plurality unless that plurality is the goal.
+
+### 5. Short, dense samples often outperform longer ones
+
+A few tightly focused paragraphs can be more effective than many pages, because they emphasize recurring features rather than narrative variation.
+
+Implication: prefer compact samples with clear stylistic markers over long excerpts.
+
+### 6. The model will reproduce habits, not judgment
+
+LLMs replicate what appears _often_, not what appears _intentionally_. Tics, defaults, and structural habits are more likely to be copied than high-level craft decisions.
+
+Implication: edit samples to remove things you don't want amplified.
+
+### 7. Explicit descriptors help stabilize what samples alone cannot
+
+Combining samples with brief stylistic constraints ("restrained emotional register," "short declarative sentences," "avoid metaphor") often produces better results than samples alone.
+
+Implication: treat descriptors as guardrails, not redundancies.
+
+### 8. Expect caricature unless you intervene
+
+Without corrective feedback, models tend to exaggerate whatever features stand out most strongly in the samples.
+
+Implication: iterative correction ("less clipped," "fewer metaphors," "more connective tissue") is part of the process, not a failure.
+
+### 9. Voice is easier to maintain than evolve
+
+Once a style is established in-context, the model will resist gradual shifts unless explicitly instructed.
+
+Implication: if your goal is stylistic evolution, you must guide it deliberately; otherwise the model will cling to the compressed version.
+
+### 10. Think like an editor, not an author
+
+The most effective way to work with LLMs on voice is to act as an external editor defining constraints, not as a creator expecting recognition.
+
+Implication: success comes from _curation_, not self-description.
+
+### The key takeaway for unknown writers
+
+> Supplying writing samples does not teach a model who you are; it teaches it how to sound like the most compressible version of what you've shown.
+
+Writers who understand this can use LLMs effectively—by **shaping the compression rather than resisting it**.
+
+With patterns, implications, and failure modes mapped, §13 closes with a compact synthesis and actionable checklist.
+
+---
+
+13. Takeaway checklist and closing synthesis
+	- [x] Compact restatement of thesis (one paragraph worth of beats) — EXTRACTED: "Language models don't imitate authors. They reuse compressed cultural descriptions of style."
+	- [x] Beat: labels steer by indexing stabilized bundles — EXTRACTED: "clean, callable style clusters"
+	- [x] Beat: discourse stabilizes bundles — EXTRACTED: "broadly discussed, taught, and compared"
+	- [x] Beat: platform layers gate behavior — EXTRACTED: "guess, ask, or refuse—depending on platform policy"
+	- [~] Practical checklist (bulleted) — EXTRACTED provides "why this matters" list, needs reformatting
+	- [ ] Beat: if label works too well → add anti-parody constraints and specificity
+	- [ ] Beat: if label works poorly → add descriptors, exemplars, contrasts
+	- [ ] Beat: if system refuses → reframe as explicit stylistic profile rather than name-based inference
+	- [ ] Beat: always separate style/structure/stance and evaluate them separately
+	- [x] Closing beat — EXTRACTED: "stylistic prompting isn't magic. It's navigation through a landscape..."
+	- [x] Beat: control over outputs is partly control over discourse—what gets named, taught, repeated — EXTRACTED: "control over LLMs is partly control over discourse"
+
+Authors who are broadly discussed, taught, and compared become **clean, callable style clusters**. Prolific but obscure authors often don't—because models learn _how humans talk about style_, not just style itself.
+
+Language models don't imitate authors.
+They reuse **compressed cultural descriptions of style**.
+
+Names work when they point to something humans have already agreed on. When that agreement is missing, models must either guess, ask, or refuse—depending on platform policy.
+
+Seen this way, stylistic prompting isn't magic. It's navigation through a landscape shaped as much by human conversation as by neural networks.
+
+And that landscape—what gets named, taught, compared, and remembered—quietly determines what AI can do well.
+
+This explains:
+
+- Why some prompts feel "magical."
+- Why authority tokens work better than rules.
+- Why pedagogy leaks into capability.
+- Why models reproduce cultural canons so strongly.
+- Why "style" is easier than "truth."
+
+And it suggests that **control over LLMs is partly control over discourse**, not architecture.
+
+---
+
+14. Glossary (restructured for this article)
+	- [~] Discursive label — EXTRACTED provides related concept (discourse and compression)
+	- [x] Cultural compression — EXTRACTED: "Socially stabilized shorthand for a complex, contested, but repeatable practice"
+	- [~] Discursive index — EXTRACTED provides framing (high-density index concept)
+	- [~] Conditioning — EXTRACTED provides related concepts (latent concept representations)
+	- [x] Latent distribution (as shorthand) — EXTRACTED: latent concept representations and activation
+	- [ ] Style vs structure vs stance (explicit triad)
+	- [x] Caricature/parody drift — EXTRACTED: feature superposition explains "parody happens"
+	- [x] Flattening — EXTRACTED: "styles blur," "obscure authors don't resolve cleanly"
+	- [ ] Assistant layer / policy layer
+	- [ ] Descriptor-first prompting
+	- [~] Contrast anchoring — implied in Section 6 extractions
+	NOTE: Extracted glossary provides technical background; article-specific definitions still needed
+
+**latent concept representations and activation** (from NLP)
+Research into latent concept representations asks whether concepts like _style_, _sentiment_, or _authorial voice_ exist as **separable latent dimensions**.
+
+Key ideas:
+- Concepts are not symbols but _directions_ or _subspaces_ in embedding space.
+- Tokens like "Hemingway" activate those subspaces.
+
+Relevant work:
+- **Concept activation vectors (CAVs)** (Kim et al.)
+- **Amnesic probing** (Elazer et al.)
+- **Linear probes for style, genre, persona**
+
+But: this work usually treats _concepts_, not _discursive labels_, and misses the cultural angle.
+
+**feature superposition** (from interpretability)
+This is where the mechanistic story is strongest.
+
+Researchers like Chris Olah and collaborators study how:
+
+- Multiple unrelated features share neurons.
+- High-level abstractions emerge from overlap, not modular design.
+
+Style clusters are classic examples of **superposed features**:
+
+- syntax
+- cadence
+- lexical choices
+- affect
+
+An author name doesn't toggle a module; it **biases a mixture**.
+
+This explains why:
+
+- styles blur
+- parody happens
+- obscure authors don't resolve cleanly
+
+**distributional steering** (from alignment research)
+Some work explicitly studies how prompts steer behavior _without reasoning_.
+
+Often called:
+
+- steering vectors
+- control tokens
+- soft prompts
+- prefix tuning
+
+This literature mostly focuses on _engineering control_, not _why cultural labels work so well_.
+
+**discourse and compression** (from sociology and philosophy)
+
+Touches on ideas from:
+
+- discourse analysis
+- sociology of knowledge
+- semiotics
+
+In these fields, names like "Hemingway" are understood as:
+
+>  Socially stabilized shorthand for a complex, contested, but repeatable practice.
+
+LLMs inherit that shorthand _because they ingest discourse_. This connection is rarely made explicit in ML papers.
+
+**The missing unifying term**
+
+There is no canonical term yet, but here are the closest contenders—and why none fully fit:
+
+- **Style transfer** – too narrow and surface-level.
+- **Prompt engineering** – ignores cultural origin.
+- **Latent concept activation** – accurate but abstract.
+- **Distributional steering** – good, but generic.
+- **Semantic indexing** – close, but underspecified socially.
+
+Proposed terms:
+
+>  Discursive indexing of latent distributions
+
+or
+
+>  Cultural compression as model control
+
+---
+
+15. References and suggested readings (organized by what they help with)
+	- [x] Mechanism primers (conditioning, representation) — EXTRACTED: sections 1-2 (Mikolov, Ethayarajh, Kim, Elazar, Hewitt)
+	- [x] Prompting and control (prompt programming, soft prompts, steering) — EXTRACTED: section 4 (Brown, Reynolds & McDonell, Lester)
+	- [x] Interpretability analogies (feature mixtures/superposition as intuition support) — EXTRACTED: section 3 (Olah, Carter, Geiger)
+	- [x] Style control literature (style transfer, controllable generation) — EXTRACTED: section 6 (Su, Ficler & Goldberg, Ippolito)
+	- [ ] Media/discourse theory bridge (where you'll add journalism-school-native theory readings if you choose)
+	NOTE: Full reference list extracted. Needs reorganization per new category scheme.
+
+
+### 1. Distributional representations, concepts, and style
+
+- Mikolov, Tomas, et al. "Distributed Representations of Words and Phrases and Their Compositionality." _NeurIPS_, 2013. [1310.4546v1.pdf]
+
+- Ethayarajh, Kawin. "How Contextual Are Contextualized Word Representations? Comparing the Geometry of BERT, ELMo, and GPT-2 Embeddings." _ACL_, 2019. [1909.00512v1.pdf]
+
+### 2. Latent concept activation and probing
+
+- Kim, Been, et al. "Interpretability Beyond Feature Attribution: Quantitative Testing with Concept Activation Vectors (TCAV)." _ICML_, 2018. [1711.11279v5.pdf]
+
+- Elazar, Yanai, et al. "Amnesic Probing: Behavioral Explanation with Amnesia." _arXiv_, 2021. [2006.00995v3.pdf]
+
+- Hewitt, John, and Christopher D. Manning. "A Structural Probe for Finding Syntax in Word Representations." _EMNLP_, 2019. [N19-1419.pdf]
+
+
+### 3. Interpretability, feature superposition, and emergent structure
+
+- Olah, Chris, et al. "Zoom In: An Introduction to Circuits." Distill, 2020. [Zoom In_ An Introduction to Circuits.pdf] from [distill.pub](https://distill.pub/2020/circuits/zoom-in/)
+
+- Carter, Ben, et al. "Activating Neurons in Large Language Models with Precision." _ICLR Workshop_, 2021.
+
+- Geiger, Frank, et al. "Vectors of Appreciation: Discovering Fine-Grained Representations of Affective Meaning." _NeurIPS_, 2021.
+
+
+### 4. Prompting, steering, and latent control
+
+- Brown, Tom B., et al. "Language Models Are Few-Shot Learners." _NeurIPS_, 2020. [2005.14165v4.pdf]
+
+- Reynolds, Laria, and Kyle McDonell. "Prompt Programming for Large Language Models: Beyond the Few-Shot Paradigm." _arXiv_, 2021. [2102.07350v1.pdf]
+
+- Lester, Brian, et al. "The Power of Scale for Parameter-Efficient Prompt Tuning." _EMNLP_, 2021. [2104.08691v2.pdf]
+
+
+### 5. Chain-of-thought and behavior shaping
+
+- Wei, Jason, et al. "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models." _arXiv_, 2022.
+
+- Kojima, Takeshi, et al. "Large Language Models Are Zero-Shot Reasoners." _arXiv_, 2022.
+
+- Turpin, Miles, et al. "Language Models Don't Always Say What They Think: Consequences of Exposure Bias." _arXiv_, 2023.
+
+
+### 6. Style, authorship, and generation behavior
+
+- Su, Daxiang, et al. "Linguistic Style Transfer with Continuous Latent Representations." _ACL_, 2020.
+
+- Ficler, Jessica, and Yoav Goldberg. "Controlling Linguistic Style Aspects in Neural Language Generation." _NAACL_, 2017. [1707.02633v1.pdf]
+
+- Ippolito, Daniel, et al. "Automatic Detection of Generated Text Is Easiest When Humans Are Fooled." _ACL_, 2020. [1911.00650v2.pdf]
+
+
+### 7. Broader context (foundation models and learned culture)
+
+- Bommasani, Rishi, et al. "On the Opportunities and Risks of Foundation Models." _arXiv_, 2021.
+
+- Bender, Emily M., et al. "On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?" _FAccT_, 2021.
+
+
+### Others
+
+- Feldhus, Interpreting Language Models Through Concept Descriptions [2025.blackboxnlp-1.8.pdf]
+
+- Narasimhan, Towards Robust and Semantically Organised Latent Representations [2205.02309v1.pdf]
+
+**Researchers closest to this framing (for context):**
+
+- Chris Olah (feature superposition, abstraction)
+- Ethan Perez (steering, elicitation)
+- Yanai Elazar (amnesic probing)
+- Miles Turpin (faithfulness of reasoning)
+- Laria Reynolds (prompt programming)
+
+**Why this is under-discussed:**
+
+1. It cuts across disciplines (ML + literary theory + sociology).
+2. It challenges the "reasoning" narrative people want LLMs to have.
+3. It suggests models are _mirrors of cultural compression_, not agents.
+

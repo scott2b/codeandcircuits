@@ -1,0 +1,99 @@
+## Introduction
+
+Ask a large language model to "write like Hemingway," and you'll usually get short sentences, concrete imagery, and emotional restraint. Ask it to "write like an obscure author," and results are often vague—or the model may refuse entirely.
+
+This difference is not accidental, and it is not primarily about model intelligence. It reveals something deeper about how language models learn style, how human discourse shapes that learning, and how different AI platforms choose to expose—or restrict—those capabilities.
+
+This article explains:
+
+- how names, roles, genres, and discursive labels function as control handles over a learned distribution,
+- why discourse matters more than raw text volume,
+- why different AI systems behave differently,
+- and what role safety and policy play in shaping outputs.
+
+The core claim:
+
+> Certain tokens function as high-density indices into regions of a model's learned distribution because human discourse repeatedly compresses complex practices into reusable labels.
+
+Such tokens include author names, professions, genres, epistemic stances, and rhetorical modes. This is **not** prompt engineering in the shallow sense. It is about how **cultural compression becomes model control**.
+
+---
+
+## The Puzzle: Why "Hemingway" Works
+
+"Hemingway" reliably produces a recognizable voice. So do "Shakespeare," "Kafka," and "Dr. Seuss."
+
+But consider an author who wrote many books, has a distinctive voice to human readers, yet is rarely discussed, taught, or summarized. Even with a large body of work, that author's name may not function as a strong stylistic handle.
+
+Why?
+
+Because human discourse has already done the work of compressing canonical authors into reusable labels. Over decades, people have:
+
+- taught these authors in classrooms,
+- compared them to others ("unlike Faulkner..."),
+- summarized their styles ("spare," "ornate," "absurd"),
+- and used their names as shorthand for a set of traits.
+
+Language models absorb not just the authors' works, but **how people talk about them**. That secondary discourse stabilizes the name into a reliable stylistic pointer.
+
+In effect, the name becomes a _compressed index_ for a style.
+
+::: {.content-visible when-format="html"}
+::: {.column-margin}
+**Style Transfer Examples**
+
+*Original (Hemingway):*
+"Robert Cohn was once middleweight boxing champion of Princeton."
+— *The Sun Also Rises*, 1926
+
+*As Shakespeare:*
+"Know then, that Robert Cohn did once bear the laurel of the ring, a middleweight crowned at Princeton's learned field, where wit and sinew strove, and he prevailed."
+
+*As Kafka:*
+"It was an established fact, accepted without inquiry, that Robert Cohn had once been middleweight boxing champion at Princeton, though the distinction now followed him like an administrative error—official, unquestioned, and faintly unreal."
+
+*As Dr. Seuss:*
+"Robert Cohn, it is said, with a punch and a pounce, was champion at Princeton—middleweight ounce for ounce! He boxed and he bopped with a scholarly bounce, that Robert Cohn fellow—why, yes, he did trounce!"
+:::
+:::
+
+```{=typst}
+#import "@preview/wrap-it:0.1.1": wrap-content
+#let style-sidebar = box(
+  width: 2.75in,
+  inset: 10pt,
+  fill: luma(245),
+  radius: 4pt,
+  stroke: luma(200),
+)[
+  *Style Transfer Examples*
+
+  _Original (Hemingway):_
+  "Robert Cohn was once middleweight boxing champion of Princeton."
+  — _The Sun Also Rises_, 1926
+
+  _As Shakespeare:_
+  "Know then, that Robert Cohn did once bear the laurel of the ring, a middleweight crowned at Princeton's learned field..."
+
+  _As Kafka:_
+  "It was an established fact, accepted without inquiry, that Robert Cohn had once been middleweight boxing champion at Princeton, though the distinction now followed him like an administrative error..."
+]
+#wrap-content(style-sidebar, align: right)[
+```
+
+The model has learned:
+
+- the name "Hemingway" in metadata, criticism, book jackets, essays, comparisons
+- passages of text _by_ Hemingway
+- passages of text _about_ Hemingway's style ("spare", "short sentences", "iceberg theory", etc.)
+- contrastive statements ("Unlike Faulkner, Hemingway...")
+
+From this, the model learns a **joint distribution** linking the token "Hemingway" to a region of stylistic features: short declarative sentences, parataxis, concrete nouns, minimal modifiers, restrained affect.
+
+For obscure authors, the model has text but no stable label. "Write like X" produces generic prose, or the model asks for clarification, or different systems behave inconsistently.
+
+This is why raw output volume matters less than **how an author is talked about**.
+
+```{=typst}
+]
+```

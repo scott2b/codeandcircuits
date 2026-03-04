@@ -215,5 +215,30 @@ Study of complex systems, emergence, and network science.
 [Explore Complexity →]{.explore-link}
 </div>
 
+::: {.content-visible when-profile="dev"}
+<div class="card ai-card">
+<div class="card-header">
+<div class="icon-container">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 4.5a2.5 2.5 0 0 0-4.96-.46 2.5 2.5 0 0 0-1.98 3 2.5 2.5 0 0 0 1.32 4.24 3 3 0 0 0 .34 5.58 2.5 2.5 0 0 0 2.96 3.08A2.5 2.5 0 0 0 12 19.5a2.5 2.5 0 0 0 2.32.94 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0 1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 12 4.5"/>
+    <path d="M15.7 10.4a.5.5 0 0 1 0 .8l-2.5 2a.5.5 0 0 1-.8-.4v-4a.5.5 0 0 1 .8-.4l2.5 2z"/>
+    <path d="M8.3 13.6a.5.5 0 0 1 0-.8l2.5-2a.5.5 0 0 1 .8.4v4a.5.5 0 0 1-.8.4l-2.5-2z"/>
+  </svg>
+</div>
+<h1 class="card-title">Artificial Intelligence</h1>
+</div>
+
+Large language models, prompt engineering, AI agents, and practical AI applications.
+
+<div class="tag-container">
+<span class="tag">LLMs</span>
+<span class="tag">Agents</span>
+<span class="tag">Prompt Engineering</span>
+</div>
+
+[Explore AI →](/ai){.explore-link}
+</div>
+:::
+
 ::::
 

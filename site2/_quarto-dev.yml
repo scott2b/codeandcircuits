@@ -1,0 +1,5 @@
+project:
+  render:
+    - "*.qmd"
+    - "posts/**/*.qmd"
+    - "ai/**/*.qmd"

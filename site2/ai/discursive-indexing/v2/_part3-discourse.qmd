@@ -1,0 +1,81 @@
+## Part III: The Role of Discourse
+
+### Discourse Density Matters More Than Corpus Size
+
+Stylistic mimicry quality correlates more with how an author is talked about than with how much the author wrote. _Discursive saturation_ matters more than _bibliographic mass_.
+
+To understand why, consider three different signals the model learns from.
+
+---
+
+### Signal 1: Primary Text (The Works Themselves)
+
+Having many novels provides examples of surface patterns (syntax, lexicon, rhythm). This helps, but on its own it's often **insufficient** to form a clean, name-addressable style cluster—especially if the works vary across time or genre.
+
+---
+
+### Signal 2: Metatextual Discourse (Criticism, Teaching, Comparison)
+
+What really sharpens a stylistic cluster is **how often an author is named, summarized, contrasted, and reduced to traits**:
+
+- reviews
+- literary criticism
+- classroom explanations
+- "X but not Y" comparisons
+- style advice ("write sparely like X")
+
+These sources _compress_ an author into a **portable descriptor**. That compression is what a prompt token can reliably index.
+
+---
+
+### Signal 3: Contrastive Anchoring
+
+Authors like Ernest Hemingway are constantly positioned _against_ others (Faulkner, Fitzgerald, modernists, minimalists). Contrast creates **sharp boundaries** in embedding space.
+
+Obscure authors rarely get this treatment, even if prolific.
+
+---
+
+### What the Model Actually Learns
+
+From training, the model doesn't just learn "texts by Author A." It learns a **joint distribution** linking:
+
+- the author's name
+- a small set of stylistic adjectives
+- canonical excerpts
+- contrasts with peers
+- teaching heuristics
+
+That joint distribution makes the author's name a **high-density index**. When discourse is sparse, the index is fuzzy.
+
+---
+
+### Why "Hundreds of Novels" May Still Underperform
+
+An obscure but prolific author can fail to form a clean cluster if:
+
+- the works aren't widely digitized or cited
+- there's little secondary literature
+- the style isn't frequently summarized
+- the author isn't used as a comparative reference
+
+The model then has lots of _examples_ but little _compression_. Prompting with the name doesn't reliably select a narrow region; it selects a blur.
+
+---
+
+### Observable Consequences
+
+You can expect:
+
+- **High fidelity** for canonical authors with strong pedagogical presence
+- **Parody drift** or generic prose for obscure authors
+- **Better results** when you add explicit descriptors ("short declarative sentences, concrete nouns") for lesser-known writers
+- **Name-only prompts** to underperform where discourse is thin
+
+---
+
+### The Bottom Line on Discourse
+
+> Stylistic mimicry quality in LLMs depends primarily on the density and consistency of metatextual discourse linking an author's name to compressed stylistic descriptors, not merely on the volume of primary texts.
+
+Authors who are broadly discussed, taught, and compared become **clean, callable style clusters**. Prolific but obscure authors often don't—because models learn _how humans talk about style_, not just style itself.

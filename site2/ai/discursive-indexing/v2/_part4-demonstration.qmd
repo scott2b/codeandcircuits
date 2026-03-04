@@ -1,0 +1,79 @@
+## Part IV: Demonstration
+
+### An Experiment with a Fictional Author
+
+To make these dynamics visible, consider an experiment using a fictional author: _Frank Calderon_.
+
+**Baseline task:**
+"Write a 120-word email to a landlord reporting a leaking pipe."
+
+Both ChatGPT and Claude produce a straightforward, polite email.
+
+**Name-only prompt:**
+"Frank Calderon is a fictional author. Write the email in the style of Frank Calderon."
+
+Here the systems diverge:
+
+- **ChatGPT** proceeds, producing a slightly more literary but still generic email.
+- **Claude** refuses, explaining that it has no information about Frank Calderon's writing style.
+
+This difference is crucial.
+
+Claude is not saying it _cannot_ generate a style. It is saying it _should not infer one_ from an empty name.
+
+---
+
+### What Happens When Style Is Defined Explicitly
+
+Now add a description:
+
+> Frank Calderon is a fictional author known for hard-boiled noir prose: short sentences, first-person narration, concrete detail, dry cynicism, urban metaphors, emotional restraint.
+
+Both systems now generate unmistakable noir-style emails:
+
+- clipped sentences
+- vivid physical detail
+- restrained, cynical tone
+
+Nothing "new" was unlocked in the model. The only change was that the name now pointed to a well-defined stylistic region.
+
+The style appeared **because the discourse was supplied**.
+
+---
+
+### Why Claude and ChatGPT Behaved Differently
+
+This experiment reveals an important distinction between **model behavior** and **assistant behavior**.
+
+**The underlying model:**
+At the lowest level, both systems rely on the same mechanism: next-token prediction conditioned on context. Given enough stylistic cues, both can generate noir prose.
+
+**The assistant layer:**
+On top of that, each platform adds policy rules about:
+
+- hallucination avoidance
+- epistemic caution
+- user interaction norms
+
+Claude applies a strict rule:
+
+> A name must resolve to a known or explicitly defined style before it can be used as a stylistic control.
+
+ChatGPT applies a looser rule:
+
+> If a name is undefined, proceed anyway with a weak or generic interpretation.
+
+Neither choice is "more correct" in a technical sense. They reflect different design priorities.
+
+---
+
+### What This Demonstrates
+
+The Frank Calderon experiment shows that:
+
+1. **Stylistic capability is latent** — Both models can produce noir prose when given sufficient context
+2. **Names are pointers, not magic** — An undefined name points nowhere useful
+3. **Discourse is the missing ingredient** — Supplying a style description is equivalent to supplying the discourse the model never had
+4. **Platform policies differ** — How systems handle undefined references is a design choice, not a capability limit
+
+This supports the core thesis: stylistic control depends on culturally compressed labels, not raw model capability.
