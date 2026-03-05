@@ -122,7 +122,7 @@ Deep dives into programming concepts, algorithms, and software design patterns.
 <span class="tag">System Design</span>
 </div>
 
-[Explore Code →]{.explore-link}
+[Explore Code →](/code-explorations){.explore-link}
 </div>
 
 <div class="card eng-card">

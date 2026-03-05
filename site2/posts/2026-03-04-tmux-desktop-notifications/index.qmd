@@ -1,0 +1,244 @@
+---
+title: "Native Desktop Notifications for tmux Events"
+description: "Building click-to-source navigation for tmux using native OS notification APIs in Rust"
+date: 2026-03-04
+categories:
+  - rust
+  - tmux
+  - code-explorations
+---
+
+When you're deep in a tmux session with multiple windows, you lose visibility into
+background activity. A build finishes in one window, a process crashes in another, and
+you don't notice until you manually cycle through tabs. Desktop notifications solve this
+--- but getting them to work well, with click-to-navigate-to-source, turned out to be a
+multi-day exploration across five different approaches.
+
+The result is
+[tmux-notify](https://github.com/scott2b/notifications-demo), a standalone Rust binary
+that sends native desktop notifications for tmux events and opens a new terminal window
+at the source when you click them.
+
+This post walks through the exploration: what didn't work, why, and what ultimately did.
+
+## The Goal
+
+Wire tmux hooks (bell, pane-died, etc.) to desktop notifications. When the user clicks a
+notification, navigate them to the tmux session and window where the event occurred.
+
+The ideal flow:
+
+1. Event fires in a background tmux window
+2. System notification appears (visible regardless of which app is focused)
+3. User clicks the notification
+4. A terminal opens, attached to the source session, on the correct window
+
+## Attempt 1: OSC Terminal Escape Sequences
+
+Terminal emulators support OSC (Operating System Command) escape sequences for
+notifications --- OSC 777, OSC 9, OSC 99, depending on the emulator. The appeal is
+obvious: no external dependencies, just echo a magic string to the terminal.
+
+```bash
+# OSC 777 notification
+printf '\e]777;notify;Build Failed;See window cargo\e\\'
+```
+
+This doesn't work for two reasons. First, Ghostty (and other emulators) suppresses
+notification banners when the terminal is focused. The assumption is that if you're
+looking at the terminal, you don't need a notification about it. But tmux multiplexes ---
+a background window event while you're focused on a foreground one is exactly when you
+need a notification.
+
+Second, OSC notifications are fire-and-forget. There's no click callback mechanism.
+You can't navigate to the source.
+
+## Attempt 2: System Notifications via External Tools
+
+The next approach used system-level notification tools: `alerter` and
+`terminal-notifier` on macOS, `notify-send` on Linux. These produce real OS
+notifications that appear regardless of which application has focus.
+
+`alerter` was the strongest option on macOS:
+
+```bash
+alerter --title "Build Failed" \
+        --message "exit code 1" \
+        --timeout 30 \
+        --actions "Go to source" \
+        --json
+```
+
+It blocks until click/dismiss/timeout and returns JSON indicating what the user did.
+On click, we run `tmux select-window` and then open a terminal.
+
+This worked well. The drawback was requiring users to install external tools.
+
+## The "Find Existing Window" Dead End
+
+Before settling on the click handler design, we spent time trying to find and activate
+the user's *existing* terminal window containing the tmux session. The idea seems
+intuitive --- why open a new window when there's already one right there?
+
+It's fundamentally broken:
+
+- **No universal API.** Each terminal emulator has different (or no) window management
+  IPC. Ghostty has no programmatic window control at all.
+- **Tab identification is impossible.** Even if you can enumerate windows, there's no
+  reliable way to determine which tab is attached to which tmux session.
+- **Focus stealing.** Activating the wrong window is worse than doing nothing.
+- **Race conditions.** The window may have closed between identification and activation.
+
+The breakthrough: **always open a new terminal window.** `tmux attach -t <session>` is
+instant for an existing session. The user gets a fresh window showing exactly the right
+content. Close it with Cmd+W when done. Simple, reliable, predictable.
+
+## Attempt 3: Native macOS Notifications with objc2
+
+With the notification mechanism and click-handler strategy validated, the final step was
+eliminating the external tool dependency on macOS by going native.
+
+macOS provides `UNUserNotificationCenter` for rich notifications with action buttons and
+click callbacks. The [objc2](https://crates.io/crates/objc2) crate provides safe-ish
+Rust bindings to Objective-C frameworks, including UserNotifications.
+
+The core pattern: define a notification delegate class in Rust using `define_class!`,
+implement the `UNUserNotificationCenterDelegate` protocol, and run a `CFRunLoop` to
+receive callbacks.
+
+```rust
+define_class!(
+    #[unsafe(super = NSObject)]
+    #[name = "TmuxNotifyDelegate"]
+    #[ivars = DelegateIvars]
+    struct NotificationDelegate;
+
+    unsafe impl NSObjectProtocol for NotificationDelegate {}
+
+    unsafe impl UNUserNotificationCenterDelegate for NotificationDelegate {
+        // Show banner+sound even when foreground
+        #[unsafe(method(userNotificationCenter:willPresentNotification:withCompletionHandler:))]
+        fn will_present(&self, _center: &UNUserNotificationCenter,
+                        _notification: &UNNotification,
+                        handler: &DynBlock<dyn Fn(UNNotificationPresentationOptions)>) {
+            handler.call((
+                UNNotificationPresentationOptions::Banner
+                    | UNNotificationPresentationOptions::Sound,
+            ));
+        }
+
+        // Handle click → navigate to source
+        #[unsafe(method(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:))]
+        fn did_receive(&self, _center: &UNUserNotificationCenter,
+                       response: &UNNotificationResponse,
+                       handler: &DynBlock<dyn Fn()>) {
+            // ... select window, open terminal, stop run loop
+            handler.call(());
+        }
+    }
+);
+```
+
+The event flow is entirely callback-driven:
+
+1. Initialize `NSApplication` (required for the permission dialog)
+2. Set the delegate on `UNUserNotificationCenter`
+3. Request authorization (prompts on first run)
+4. Auth callback sends the notification
+5. `CFRunLoop::run()` blocks until click/dismiss/timeout
+6. Click callback fires `handle_click()`, then stops the run loop
+
+### Bugs Encountered Along the Way
+
+Several non-obvious issues came up during integration:
+
+**Static notification IDs.** Using a fixed identifier like `"tmux-notify"` causes macOS
+to coalesce notifications --- replacing the old one instead of adding a new one.
+Fix: timestamp-based unique IDs.
+
+```rust
+let req_id = NSString::from_str(&format!(
+    "tmux-notify-{}",
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_millis())
+        .unwrap_or(0)
+));
+```
+
+**`.status()` vs `.spawn()`.** Using `.status()` to launch the terminal process blocks
+the notification binary until the terminal window closes. The notification process should
+fire-and-forget. Use `.spawn()`.
+
+**Missing `-n` on `open`.** On macOS, `open -a Ghostty.app` activates an existing
+instance. `open -na Ghostty.app` opens a *new* instance. Without `-n`, clicking a
+notification just focuses an existing Ghostty window instead of opening a new one with
+the tmux attach command.
+
+**The .app bundle requirement.** `UNUserNotificationCenter` requires the binary to
+live inside a signed `.app` bundle. Without it, authorization requests silently fail.
+The bundle needs an `Info.plist` with a `CFBundleIdentifier`, `LSUIElement = true`
+(no dock icon), and an ad-hoc code signature.
+
+## Terminal Dispatch
+
+The click handler needs to open a terminal attached to the right tmux session.
+Each emulator has different invocation patterns, and macOS requires `open -na` for
+GUI apps.
+
+| Terminal | macOS | Linux |
+|----------|-------|-------|
+| Ghostty | `open -na Ghostty.app --args --command=<cmd>` | `ghostty -e bash -c <cmd>` |
+| Alacritty | `open -na Alacritty.app --args -e <tmux> attach` | `alacritty -e <tmux> attach` |
+| Kitty | `open -na kitty.app --args bash -c <cmd>` | `kitty -e bash -c <cmd>` |
+| WezTerm | `open -na WezTerm.app --args start -- bash -c` | `wezterm start -- bash -c` |
+| iTerm2 | osascript `create window with command` | --- |
+| Terminal.app | osascript `do script` | --- |
+| foot | --- | `foot -e bash -c <cmd>` |
+
+Ghostty's `--quit-after-last-window-closed=true` flag ensures the spawned instance
+exits cleanly when the user closes the window.
+
+## Linux: notify-send
+
+Linux support is straightforward. `notify-send` from libnotify 0.8+ supports
+`--action` and `--wait`:
+
+```bash
+notify-send "Build Failed" "exit code 1" \
+    --action=source="Go to source" \
+    --wait
+```
+
+The process blocks until interaction. If the user clicks "Go to source", stdout contains
+`source`, and we proceed with the same select-window + open-terminal flow.
+
+## Wiring It Up with tmux Hooks
+
+The final piece is tmux hook installation. Two hooks cover the most useful events:
+
+```bash
+# Bell: fires when a program sends BEL (e.g., build tools on completion)
+tmux set-hook -t $SESSION alert-bell \
+    "run-shell -b 'tmux-notify \
+        \"Bell: #{session_name} ▸ #{window_name}\" \"\" \
+        --session #{session_name} --window #{window_name}'"
+
+# Pane exit: fires when a pane's process terminates
+tmux set-option -w -t $SESSION remain-on-exit on
+tmux set-hook -w -t $SESSION pane-died \
+    "run-shell -b 'tmux-notify \
+        \"Exited: #{session_name} ▸ #{window_name}\" \
+        \"exit #{pane_dead_status}\" \
+        --session #{session_name} --window #{window_name}'"
+```
+
+The `run-shell -b` flag is critical --- without it, the blocking notification process
+freezes the tmux hook.
+
+## Repository
+
+The full implementation is at
+[github.com/scott2b/notifications-demo](https://github.com/scott2b/notifications-demo).
+It includes setup scripts for the macOS .app bundle, a tmux hook installer, an
+end-to-end demo, and detailed architecture and retrospective documentation.

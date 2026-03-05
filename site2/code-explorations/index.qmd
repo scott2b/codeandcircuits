@@ -1,0 +1,29 @@
+---
+title: ""
+page-layout: full
+listing:
+  contents:
+    - ../posts/*/index.qmd
+  sort: "date desc"
+  type: table
+  categories: true
+  sort-ui: true
+  filter-ui: true
+  fields: [date, title, description, categories]
+  include:
+    categories: "code-explorations"
+format:
+  html:
+    css: ../assets/css/styles.css
+---
+
+::: {.content-container}
+# Code Explorations
+
+::: {.section-description}
+Deep dives into programming concepts, algorithms, and software design patterns.
+:::
+
+::: {#listing}
+:::
+:::
