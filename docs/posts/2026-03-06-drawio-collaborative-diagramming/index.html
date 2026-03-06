@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-03-06">
+<meta name="description" content="How adding a screenshot feedback loop to draw.io’s official Claude Code skill enables true collaborative iteration between human and AI">
 
-<title>index – Code &amp; Circuits</title>
+<title>Collaborative Diagramming with AI: Adding Visual Feedback to draw.io – Code &amp; Circuits</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,30 +22,63 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<link href="../assets/images/favicon.png" rel="icon" type="image/png">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ac1a48248070c8bfbae4244efd7728e4.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-f4dc91966684f5d181cee8f2cc90d529.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/images/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ac1a48248070c8bfbae4244efd7728e4.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f4dc91966684f5d181cee8f2cc90d529.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -71,79 +106,21 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-title-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="../assets/css/styles.css">
+<link rel="stylesheet" href="../../assets/css/styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-fixed fullcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo light-content">
-    <img src="../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo dark-content">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo light-content">
+    <img src="../../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo dark-content">
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -153,19 +130,19 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../posts/index.html" aria-current="page"> 
+    <a class="nav-link" href="../../posts/index.html"> 
 <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../notebooks/index.html"> 
+    <a class="nav-link" href="../../notebooks/index.html"> 
 <span class="menu-text">Notebooks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../about/index.html"> 
+    <a class="nav-link" href="../../about/index.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
@@ -176,238 +153,122 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(10)</span></div><div class="category" data-category="Y29kZS1leHBsb3JhdGlvbnM=">code-explorations <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Z2l0">git <span class="quarto-category-count">(1)</span></div><div class="category" data-category="aW8=">io <span class="quarto-category-count">(1)</span></div><div class="category" data-category="amVreWxs">jekyll <span class="quarto-category-count">(3)</span></div><div class="category" data-category="bWFjb3M=">macos <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bWlzYw==">misc <span class="quarto-category-count">(1)</span></div><div class="category" data-category="b2JzaWRpYW4=">obsidian <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHl0aG9u">python <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cnVzdA==">rust <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dG11eA==">tmux <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dHlwZXNlbnNl">typesense <span class="quarto-category-count">(1)</span></div><div class="category" data-category="d2Vi">web <span class="quarto-category-count">(3)</span></div></div></div>
+    
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
 
-
-
-
-<section id="all-posts" class="level1 content-container">
-<h1>All Posts</h1>
-<div class="section-description">
-<p>Browse all articles and tutorials.</p>
-</div>
-<div id="listing-listing" class="quarto-listing quarto-listing-container-table">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-    <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-    <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-      <option value="" disabled="" selected="" hidden="">Order By</option>
-      <option value="index" data-direction="asc">Default</option>
-      <option value="listing-date-sort" data-direction="asc">
-        Date - Oldest
-      </option>
-      <option value="listing-date-sort" data-direction="desc">
-        Date - Newest
-      </option>
-      <option value="listing-title-sort" data-direction="asc">
-        Title
-      </option>
-    </select>
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Collaborative Diagramming with AI: Adding Visual Feedback to draw.io</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">code-explorations</div>
   </div>
-    <div class="input-group input-group-sm quarto-listing-filter">
-      <span class="input-group-text"><i class="bi bi-search"></i></span>
-      <input type="text" class="search form-control" placeholder="Filter">
+  </div>
+
+<div>
+  <div class="description">
+    How adding a screenshot feedback loop to draw.io’s official Claude Code skill enables true collaborative iteration between human and AI
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 6, 2026</p>
     </div>
-</div>
-<table class="quarto-listing-table table">
-<thead>
-<tr>
+  </div>
+  
+    
+  </div>
+  
 
-<th>
-<a class="sort" data-sort="listing-date-sort" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Date</a>
-</th>
 
-<th>
-<a class="sort" data-sort="listing-title-sort" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Title</a>
-</th>
+</header>
 
-<th>
-Description
-</th>
 
-<th>
-Categories
-</th>
-
-</tr>
-</thead>
-<tbody class="list">
-
-<tr data-index="0" data-categories="Y29kZS1leHBsb3JhdGlvbnM=" data-listing-date-sort="1772776800000" data-listing-file-modified-sort="1772839173520" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="972" data-listing-title-sort="Collaborative Diagramming with AI: Adding Visual Feedback to draw.io" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Mar 6, 2026</span>
-</td>
-<td>
-<a href="../posts/2026-03-06-drawio-collaborative-diagramming/index.html" class="title listing-title">Collaborative Diagramming with AI: Adding Visual Feedback to draw.io</a>
-</td>
-<td>
-<span class="listing-description">How adding a screenshot feedback loop to draw.io’s official Claude Code skill enables true collaborative iteration between human and AI</span>
-</td>
-<td>
-<span class="listing-categories">code-explorations</span>
-</td>
-
-</tr>
-
-<tr data-index="1" data-categories="cnVzdCUyQ3RtdXglMkNjb2RlLWV4cGxvcmF0aW9ucw==" data-listing-date-sort="1772604000000" data-listing-file-modified-sort="1772669404742" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1489" data-listing-title-sort="Native Desktop Notifications for tmux Events" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Mar 4, 2026</span>
-</td>
-<td>
-<a href="../posts/2026-03-04-tmux-desktop-notifications/index.html" class="title listing-title">Native Desktop Notifications for tmux Events</a>
-</td>
-<td>
-<span class="listing-description">Building click-to-source navigation for tmux using native OS notification APIs in Rust</span>
-</td>
-<td>
-<span class="listing-categories">rust, tmux, code-explorations</span>
-</td>
-
-</tr>
-
-<tr data-index="2" data-categories="dHlwZXNlbnNl" data-listing-date-sort="1746853200000" data-listing-file-modified-sort="1763513684345" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="279" data-listing-title-sort="Speed Up Typesense Startup in Production with Disk Persistence" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">May 10, 2025</span>
-</td>
-<td>
-<a href="../posts/2025-05-10-typesense-in-production/index.html" class="title listing-title">Speed Up Typesense Startup in Production with Disk Persistence</a>
-</td>
-<td>
-<span class="listing-description">If you’re running Typesense in production with large collections or semantic search, startup time can become a bottleneck. By default, Typesense rebuilds its in-memory index…</span>
-</td>
-<td>
-<span class="listing-categories">typesense</span>
-</td>
-
-</tr>
-
-<tr data-index="3" data-categories="bWFjb3MlMkNvYnNpZGlhbiUyQ2dpdA==" data-listing-date-sort="1746766800000" data-listing-file-modified-sort="1763513684345" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="418" data-listing-title-sort="Fixing Git LFS Integration in Obsidian’s Git Plugin on macOS" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">May 9, 2025</span>
-</td>
-<td>
-<a href="../posts/2025-05-09-obsidian-git-lfs/index.html" class="title listing-title">Fixing Git LFS Integration in Obsidian’s Git Plugin on macOS</a>
-</td>
-<td>
-<span class="listing-description">If you’re using the Obsidian Git plugin with Git LFS (Large File Storage) on macOS, you may run into a frustrating issue: <code>git-lfs</code> works fine in your terminal, but Obsidian…</span>
-</td>
-<td>
-<span class="listing-categories">macos, obsidian, git</span>
-</td>
-
-</tr>
-
-<tr data-index="4" data-categories="cHl0aG9u" data-listing-date-sort="1742226452000" data-listing-file-modified-sort="1763513684344" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="236" data-listing-title-sort="Some ways to easily get news content" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Mar 17, 2025</span>
-</td>
-<td>
-<a href="../posts/2025-03-17-getting-news-content/index.html" class="title listing-title">Some ways to easily get news content</a>
-</td>
-<td>
-<span class="listing-description">It is a common scenario in the lab to need to get ahold of some news content to work with for experimenting with and building projects. Here are some go-to approaches that I…</span>
-</td>
-<td>
-<span class="listing-categories">python</span>
-</td>
-
-</tr>
-
-<tr data-index="5" data-categories="cHl0aG9uJTJDaW8=" data-listing-date-sort="1665522000000" data-listing-file-modified-sort="1763513684344" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="100" data-listing-title-sort="Using urllib to wget a file in Python 3" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 11, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-11-using-urllib-to-wget-a-file-in-python/index.html" class="title listing-title">Using urllib to wget a file in Python 3</a>
-</td>
-<td>
-<span class="listing-description">Post description</span>
-</td>
-<td>
-<span class="listing-categories">python, io</span>
-</td>
-
-</tr>
-
-<tr data-index="6" data-categories="d2ViJTJDamVreWxs" data-listing-date-sort="1665503700000" data-listing-file-modified-sort="1763513684344" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="179" data-listing-title-sort="Adding Post content to Jekyll search" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 11, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-11-adding-post-content-to-jekyll-search/index.html" class="title listing-title">Adding Post content to Jekyll search</a>
-</td>
-<td>
-<span class="listing-description">I used this tutorial at webjeda.com to add simple search capabilities to my Jekyll site.</span>
-</td>
-<td>
-<span class="listing-categories">web, jekyll</span>
-</td>
-
-</tr>
-
-<tr data-index="7" data-categories="d2ViJTJDamVreWxs" data-listing-date-sort="1665503100000" data-listing-file-modified-sort="1763513684344" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="78" data-listing-title-sort="Use baseurl to specify the location of assets in Jekyll" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 11, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-11-use-baseurl-for-jekyll-assets/index.html" class="title listing-title">Use baseurl to specify the location of assets in Jekyll</a>
-</td>
-<td>
-<span class="listing-description">Jekyll’s <code>baseurl</code> parameter is a path prefix (i.e.&nbsp;the subpath of your site) which is specified in the <code>_config.yml</code> file. Specify this parameter, for example, for GitHub…</span>
-</td>
-<td>
-<span class="listing-categories">web, jekyll</span>
-</td>
-
-</tr>
-
-<tr data-index="8" data-categories="d2ViJTJDamVreWxs" data-listing-date-sort="1665499800000" data-listing-file-modified-sort="1763513684344" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="291" data-listing-title-sort="Specifying a custom Jekyll site location in GitHub pages" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 11, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-11-custom-jekyll-location-github-pages/index.html" class="title listing-title">Specifying a custom Jekyll site location in GitHub pages</a>
-</td>
-<td>
-<span class="listing-description">If you move the root of your Jekyll project to a subdirectory of a Github Pages enabled repository, you will need to be sure to change the <code>source</code> and <code>destination</code> locations…<code></code></span>
-</td>
-<td>
-<span class="listing-categories">web, jekyll</span>
-</td>
-
-</tr>
-
-<tr data-index="9" data-categories="bWlzYw==" data-listing-date-sort="1665416852000" data-listing-file-modified-sort="1763513684343" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="134" data-listing-title-sort="My Publication Pipeline" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 10, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-10-my-publication-pipeline/index.html" class="title listing-title">My Publication Pipeline</a>
-</td>
-<td>
-<span class="listing-description">Here is a rough outline of how my content makes its way to publication.</span>
-</td>
-<td>
-<span class="listing-categories">misc</span>
-</td>
-
-</tr>
-
-</tbody>
-</table>
-<div class="listing-no-matching d-none">No matching items</div>
-</div>
+<p>Diagramming with an AI assistant should be straightforward: describe what you want, get a diagram, iterate. The <a href="https://github.com/jgraph/drawio-mcp">official draw.io MCP repository</a> offers four approaches to this problem, but they all share a blind spot: Claude can generate diagrams it can never see. Adding a screenshot feedback loop turns one of those approaches into a genuinely collaborative workflow.</p>
+<section id="the-official-approaches" class="level2">
+<h2 class="anchored" data-anchor-id="the-official-approaches">The official approaches</h2>
+<p>The <a href="https://github.com/jgraph/drawio-mcp">jgraph/drawio-mcp</a> repo provides four integration paths:</p>
+<ol type="1">
+<li><strong>MCP App Server</strong> — Renders diagrams inline in chat as interactive iframes. Designed for Claude.ai and VS Code, not the CLI.</li>
+<li><strong>MCP Tool Server</strong> — Compresses diagram XML into a draw.io URL and opens it in the browser editor. Supports XML, CSV, and Mermaid input. One-way: Claude sends a diagram out but has no mechanism to read back edits or see the rendered result.</li>
+<li><strong>Skill + CLI</strong> — A Claude Code skill that generates <code>.drawio</code> XML files directly and opens them in the draw.io desktop app. Optional export to PNG/SVG/PDF via the desktop
+<ol start="151" type="I">
+<li>No MCP setup required.</li>
+</ol></li>
+<li><strong>Project Instructions</strong> — Uses Python code execution in Claude.ai Projects to generate shareable draw.io URLs. Not applicable to CLI workflows.</li>
+</ol>
+<p>Approach #3 is the closest to what we wanted — it works in Claude Code, produces real <code>.drawio</code> files, and opens them in the desktop app where both human and AI can work with them. We used the MCP Tool Server (#2) initially but found the same core limitation: Claude generates XML and opens it in the editor, but the workflow is effectively one-way. There is no mechanism for Claude to observe the rendered result or pick up changes the human makes in the GUI.</p>
 </section>
+<section id="the-missing-piece-visual-feedback" class="level2">
+<h2 class="anchored" data-anchor-id="the-missing-piece-visual-feedback">The missing piece: visual feedback</h2>
+<p>All four approaches share a fundamental gap. Claude generates diagram XML — explicit x/y coordinates, dimensions, edge waypoints — but is blind to what that XML looks like when rendered. The workflow becomes:</p>
+<ol type="1">
+<li>Claude generates a diagram</li>
+<li>Human opens the file, looks at it</li>
+<li>Human describes what’s wrong in natural language</li>
+<li>Claude regenerates, blind to the actual visual result</li>
+<li>Repeat</li>
+</ol>
+<p>This works for trivial diagrams but breaks down for anything requiring spatial reasoning — node positioning, alignment, edge routing, visual balance. Claude is placing shapes at coordinates it can never see the result of.</p>
+<p>We also tried using the draw.io web UI as the shared surface, but it fought the workflow. Every external file modification triggered disruptive modal dialogs about unsaved changes, making the frequent-write iteration loop untenable.</p>
+</section>
+<section id="adding-the-feedback-loop" class="level2">
+<h2 class="anchored" data-anchor-id="adding-the-feedback-loop">Adding the feedback loop</h2>
+<p>The official Skill + CLI approach (#3) gets the foundation right: generate <code>.drawio</code> XML directly, open it in the desktop app, no MCP overhead. What it lacks is a way for Claude to close the loop — to see the rendered result and pick up human edits.</p>
+<p>Our skill extends that approach with two additions:</p>
+<p><strong>Screenshot capture.</strong> A small Swift script enumerates draw.io windows via CoreGraphics, and macOS <code>screencapture -l &lt;windowID&gt;</code> grabs the window without bringing it to the foreground. Claude reads the screenshot to assess the visual result.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the draw.io window ID (outputs: windowID|windowTitle)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">swift</span> find_drawio_window.swift</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 97345|SearchMinutes Sequence Diagram.drawio</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Capture without foregrounding</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">screencapture</span> <span class="at">-l</span> 97345 <span class="at">-x</span> /tmp/drawio_screenshot.png</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Round-trip XML reading.</strong> Before each edit, Claude re-reads the <code>.drawio</code> file from disk. If the human made adjustments in the GUI and saved, Claude picks up those changes rather than overwriting them. draw.io silently reformats XML on save (reordering attributes, changing whitespace), so the re-read is essential — Claude cannot assume its last-written version is current.</p>
+<p>Together, the iteration loop becomes:</p>
+<ol type="1">
+<li>Claude creates or edits the <code>.drawio</code> XML file directly</li>
+<li>The human opens or reloads the file in draw.io desktop</li>
+<li>Claude captures a screenshot to assess the visual result</li>
+<li>Claude re-reads the XML, makes targeted edits, and the loop repeats</li>
+</ol>
+<p>This gives both human and AI shared visibility into the diagram’s actual state. Claude can see whether nodes are properly aligned, whether edge routing makes sense, whether labels are readable.</p>
+</section>
+<section id="what-this-workflow-actually-looks-like" class="level2">
+<h2 class="anchored" data-anchor-id="what-this-workflow-actually-looks-like">What this workflow actually looks like</h2>
+<p>A typical iteration:</p>
+<ol type="1">
+<li>“Draw a system architecture diagram with three services and a message queue”</li>
+<li>Claude writes the <code>.drawio</code> XML — explicit coordinates for every shape, edge, label</li>
+<li>Human opens the file. Claude screenshots and sees the result.</li>
+<li>“The queue node overlaps the auth service. Move it down and add a label to the edge.”</li>
+<li>Claude reads the current XML (the human may have tweaked something), edits the coordinates, writes the file</li>
+<li>Human reloads. Claude screenshots. Checks alignment, adjusts.</li>
+</ol>
+<p>The <code>.drawio</code> format works well for this because everything is explicit — unlike Mermaid or PlantUML, where an auto-layout engine decides positioning, draw.io XML specifies exact x/y coordinates, dimensions, and edge waypoints. Claude has full spatial control.</p>
+</section>
+<section id="the-trade-off" class="level2">
+<h2 class="anchored" data-anchor-id="the-trade-off">The trade-off</h2>
+<p>The main inconvenience is the explicit sync step. After Claude edits the file, the human needs to reload in draw.io. The desktop app sometimes shows a yellow “file modified” banner that triggers a reload on click; other times the file needs to be closed and reopened. There’s no File &gt; Revert in draw.io desktop, which is a minor irritant.</p>
+<p>Going the other direction — human edits to Claude — requires the human to save in the GUI before Claude reads the file.</p>
+<p>These are real friction points, but they’re predictable and manageable. The alternative is friction that’s either invisible (Claude generating blind) or actively hostile (web UI fighting external edits).</p>
+</section>
+<section id="takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="takeaways">Takeaways</h2>
+<p>The official draw.io integrations solve the generation problem well. What they don’t address is the iteration problem — refining a diagram together, which requires shared visual state. The Skill + CLI approach provides the right foundation (direct XML, desktop app, no MCP overhead), and adding screenshot capture closes the feedback loop.</p>
+<p>Screenshot-based feedback is an underappreciated pattern for AI tool integration. Any desktop application becomes a collaborative surface if the AI can capture and read its window. The approach generalizes beyond draw.io to any GUI tool where the AI manipulates underlying files while observing rendered output.</p>
+<p>The explicit sync step, while mildly inconvenient, enforces a useful discipline: both parties always work from the same saved state. There’s no drift between what Claude thinks the diagram looks like and what the human sees. That alignment turns out to matter more than seamless automatic sync would.</p>
 
 
-
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

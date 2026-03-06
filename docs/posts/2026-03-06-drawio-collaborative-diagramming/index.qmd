@@ -1,0 +1,125 @@
+---
+title: "Collaborative Diagramming with AI: From MCP Export to Screenshot-Driven Iteration"
+description: "How a draw.io MCP server's limitations led to a desktop-app workflow where human and AI edit the same diagram through XML manipulation and screenshot feedback"
+date: 2026-03-06
+categories:
+  - code-explorations
+---
+
+Diagramming with an AI assistant should be straightforward: describe what you want, get
+a diagram, iterate. In practice, the tooling for this is immature. After working through
+three different approaches to draw.io integration with Claude Code, the one that stuck
+was also the least obvious — direct XML editing with screenshot-based visual feedback.
+
+## The starting point: draw.io MCP server
+
+The [draw.io MCP server](https://github.com/italomaia/drawio-mcp) gives Claude tools to
+create and manipulate diagrams programmatically. On paper, this is the ideal integration
+— structured API calls that produce diagram files.
+
+The problem is that the MCP is essentially a one-way export pipe. Claude can create a
+diagram and dump it to a `.drawio` file, but there's no mechanism for collaborative
+iteration. The human can't make changes in a GUI and have Claude pick up those changes.
+Claude can't see what the diagram actually looks like after rendering. The workflow is:
+
+1. Claude generates a diagram via MCP tools
+2. Human opens the file, looks at it
+3. Human describes what's wrong in natural language
+4. Claude regenerates, blind to the actual visual result
+5. Repeat
+
+This works for trivial diagrams but breaks down quickly for anything that requires
+spatial reasoning — node positioning, alignment, edge routing, visual balance. Claude is
+generating XML coordinates it can never see the result of.
+
+## The web UI detour
+
+The draw.io web application seemed like it could close the loop. The idea was to use the
+web UI as the shared visual surface — Claude edits the underlying XML, the human views
+and edits in the browser.
+
+Two problems killed this approach. First, the same fundamental issue: there was no
+efficient way for Claude to see the rendered diagram. The human would have to describe
+the visual state or take manual screenshots and feed them back.
+
+Second, the web UI itself was unstable for this kind of workflow. It constantly popped up
+alerts about unsaved changes — every external file modification triggered a disruptive
+modal dialog. When the iteration loop involves frequent file writes from outside the
+browser, this becomes untenable. The UI fought the workflow instead of supporting it.
+
+## The solution: desktop app + screenshots
+
+The approach that works uses the draw.io desktop application with a screenshot-based
+feedback loop:
+
+1. Claude creates or edits the `.drawio` XML file directly using file editing tools
+2. The human opens or reloads the file in the draw.io desktop app
+3. Claude captures a screenshot of the draw.io window using macOS `screencapture`
+4. Claude reads the screenshot image to assess the visual result
+5. Claude makes targeted XML edits, and the loop repeats
+
+The key enabler is background window capture. A small Swift script finds the draw.io
+window by ID, and `screencapture -l <windowID>` grabs it without bringing it to the
+foreground — no need to switch windows or interrupt whatever else is happening on screen.
+
+```bash
+# Find the draw.io window ID
+swift find_drawio_window.swift
+# Output: 12345|mydiagram.drawio
+
+# Capture without foregrounding
+screencapture -l 12345 -x /tmp/drawio_screenshot.png
+```
+
+This gives both human and AI shared visibility into the diagram's actual state. Claude
+can see whether nodes are properly aligned, whether edge routing makes sense, whether
+labels are readable. The human can make manual adjustments in the GUI, save, and Claude
+picks up those changes by re-reading the XML before its next edit.
+
+## What this workflow actually looks like
+
+A typical iteration:
+
+1. "Draw a system architecture diagram with three services and a message queue"
+2. Claude writes the `.drawio` XML — explicit coordinates for every shape, edge, label
+3. Human opens the file. Claude screenshots and sees the result.
+4. "The queue node overlaps the auth service. Move it down and add a label to the edge."
+5. Claude reads the current XML (the human may have tweaked something), edits the
+   coordinates, writes the file
+6. Human reloads. Claude screenshots. Checks alignment, adjusts.
+
+The `.drawio` format works well for this because everything is explicit — unlike Mermaid
+or PlantUML, where an auto-layout engine decides positioning, draw.io XML specifies
+exact x/y coordinates, dimensions, and edge waypoints. Claude has full spatial control.
+
+## The trade-off
+
+The main inconvenience is the explicit sync step. After Claude edits the file, the human
+needs to reload in draw.io. The desktop app sometimes shows a yellow "file modified"
+banner that triggers a reload on click; other times the file needs to be closed and
+reopened. There's no File > Revert in draw.io desktop, which is a minor irritant.
+
+Going the other direction — human edits to Claude — requires the human to save in the
+GUI before Claude reads the file. draw.io can silently reformat the XML on save
+(reordering attributes, changing whitespace), so Claude needs to re-read the full file
+rather than assuming its last-written version is current.
+
+These are real friction points, but they're predictable and manageable. The alternative
+approaches had friction that was either invisible (Claude generating blind) or actively
+hostile (web UI fighting external edits).
+
+## Takeaways
+
+The MCP approach optimized for the wrong thing — programmatic access to diagram creation
+rather than collaborative iteration. The value isn't in generating a diagram; it's in
+refining one together, which requires shared visual state.
+
+Screenshot-based feedback is an underappreciated pattern for AI tool integration. Any
+desktop application becomes a collaborative surface if the AI can capture and read its
+window. The approach generalizes beyond draw.io to any GUI tool where the AI manipulates
+underlying files while observing rendered output.
+
+The explicit sync step, while mildly inconvenient, enforces a useful discipline: both
+parties always work from the same saved state. There's no drift between what Claude
+thinks the diagram looks like and what the human sees. That alignment turns out to matter
+more than seamless automatic sync would.
