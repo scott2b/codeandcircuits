@@ -1,0 +1,140 @@
+---
+title: "Muster: A Tmux Session Manager, Now on crates.io"
+description: "Publishing a Rust CLI for tmux session management — profiles, theming, lifecycle management, and what it takes to ship a crate"
+date: 2026-03-18
+categories:
+  - rust
+  - code-explorations
+---
+
+## The Problem
+
+Anyone who uses tmux seriously ends up with the same mess: a dozen sessions with cryptic names, no color distinction, tabs opened ad-hoc that disappear when the session dies, and no way to recreate a working layout without manually re-running the same commands. You develop muscle memory for `tmux ls` followed by squinting at session names trying to remember which one has your dev server.
+
+Muster fixes this. It is a Rust CLI that sits on top of tmux and adds saved profiles, color-coded theming, and a proper session lifecycle — without replacing tmux or fighting its model.
+
+## What Muster Does
+
+Muster organizes terminal sessions into named, color-coded groups backed by saved profiles. A profile is a template: it defines tabs (tmux windows), their working directories, optional startup commands, a color, environment variables, and tmux options. When you `muster up myproject`, it creates a tmux session from that profile — or reattaches if it is already running. When you `muster down myproject`, it tears down the session. The profile persists.
+
+Sessions get visual identity through runtime theming. Each muster session has a distinct status bar color, and tabs that belong to the profile show colored markers. Tabs you opened ad-hoc (not in the profile) show red dots — a visual reminder that they will not survive a `muster down`.
+
+## Key Features
+
+**Saved profiles with tabs.** Define your session layout once. Each tab has a name, working directory, and optional command. Profiles live in `~/.config/muster/profiles.json` and survive reboots.
+
+```bash
+muster profile save myproject \
+  --tab 'Shell:~/work/myproject' \
+  --tab 'Server:~/work/myproject:npm run dev' \
+  --tab 'Logs:~/work/myproject/logs:tail -f app.log' \
+  --color blue
+```
+
+**Color-coded theming.** Every session gets a color applied to the tmux status bar, with dimmed variants for inactive panes. Muster ships a named color system with Tailwind shade variants and CSS named colors. Change it live with `muster color myproject teal`.
+
+**Adopt and release.** Existing plain tmux sessions can be brought under muster management without disruption:
+
+```bash
+muster adopt work --name "Work" --color orange --save
+```
+
+This renames the session, applies theming, snapshots the current tabs into a profile, and pins all windows — in one command. Going the other direction, `muster release` strips all muster theming and metadata, returning a session to plain tmux while keeping it alive.
+
+**Shell integration.** `muster shell-init fish | source` hooks your `cd` command. When you enter a directory that matches a saved profile, muster suggests `muster up <name>`. Available for fish, bash, and zsh.
+
+**Environment variables and tmux options in profiles.** The `env` field sets key-value environment variables on the tmux session at launch via `set-environment`. The `tmux_options` field applies session-level tmux options like `mouse` or `history-limit` via `set-option`. These travel with the profile.
+
+**Native macOS notifications.** The `muster-notify` helper crate delivers Notification Center alerts when a pane exits or a bell fires. Clicking a notification opens the relevant session in your terminal. It supports Ghostty, Kitty, WezTerm, Alacritty, iTerm2, and Terminal.app.
+
+## The Session Lifecycle
+
+Muster supports two main entry points into a managed session.
+
+**Profile-first:** you define the profile, then launch from it. This is the common path for projects with a known layout.
+
+```bash
+muster profile save api --tab 'Code:~/work/api' --tab 'Server:~/work/api:cargo run' --color green
+muster up api
+# ... work ...
+muster down api
+```
+
+**Session-first:** you start working ad-hoc, then save what you have. Create a session with `muster new scratch`, open tabs as needed, then snapshot:
+
+```bash
+muster profile save myproject --from-session scratch
+```
+
+This saves the current windows as a profile and pins them in the live session. The red dots clear immediately.
+
+**Adopting plain tmux sessions** bridges the gap for pre-existing work. `muster adopt` renames the session, applies theming, and optionally saves a profile. The session keeps running — no restart required.
+
+**Formalizing ephemeral sessions** handles the case where you have a muster-managed session (it has the `muster_` prefix) but no saved profile. `muster profile save <name> --from-session <session>` snapshots and pins.
+
+**Releasing** is the reverse of adopting. `muster release myproject` strips all muster metadata and returns the session to plain tmux. The profile file is preserved — `muster up myproject` will create a fresh managed session later if needed.
+
+The full lifecycle forms a bidirectional bridge between plain tmux and managed sessions, with profiles as the persistent anchor.
+
+## Usage at a Glance
+
+```bash
+# Install
+cargo install muster-cli
+
+# Create a profile and launch
+muster profile save myproject --tab 'Shell:~/work/myproject' --color '#f97316'
+muster up myproject
+
+# Check what's running
+muster list
+
+# Adopt an existing tmux session
+muster adopt dev-server --name "DevServer" --color cyan --save
+
+# Release back to plain tmux
+muster release DevServer
+
+# Tear down
+muster down myproject
+```
+
+## The Tech
+
+Muster is a Cargo workspace with three crates:
+
+- **`muster`** — the library. Tmux bindings (command execution, output parsing, control mode event streaming), profile management, session lifecycle, theming. No external tmux crate dependency; the bindings are written in-house because the only existing Rust tmux library has control mode listed as unimplemented, and control mode is the core value here.
+- **`muster-cli`** — the binary. CLI dispatch built on `clap`, with one module per command. This is what `cargo install muster-cli` installs.
+- **`muster-notify`** — a macOS binary for Notification Center delivery via `objc2` bindings to `UNUserNotificationCenter`. No dependency on the muster library. Runs inside a `.app` bundle with codesigning, invoked by tmux hooks on session events.
+
+Rust 2024 edition, MSRV 1.85. `clippy::pedantic` across the workspace. Error handling via `thiserror` with typed error variants covering tmux interaction, config, and session management. Snapshot testing with `insta`, integration tests with `assert_cmd`. Around 109 tests — 60 unit, 26 integration (gated on tmux availability), and the rest in the CLI and notify crates.
+
+The tmux interface uses control mode for push-based state synchronization — window lifecycle events, name changes, and active window changes arrive as structured notifications rather than being polled. tmux hooks handle fire-and-forget actions like notification delivery.
+
+## Publishing to crates.io
+
+This was my first time publishing a crate. Some notes on the process.
+
+**The mechanics are straightforward.** `cargo login` stores an API token. `cargo publish` uploads the source, builds docs on docs.rs, and makes the crate available for `cargo install`. For a workspace, you publish each crate separately, dependency-first — `muster` before `muster-cli`, since the CLI depends on the library.
+
+**The namespace is flat.** Unlike npm's scoped packages (`@org/name`), crates.io is a single global namespace with no organization scoping. First come, first served. `muster` was available. There is no organization scoping mechanism.
+
+**Published versions are permanent.** You can yank a version (mark it as unfit so new projects will not use it), but you cannot delete or overwrite it. The source stays on crates.io. This is by design — it prevents supply chain attacks where an attacker republishes a modified version of a popular crate. It also means you should be deliberate about what you publish.
+
+**Verified email is required.** Your crates.io account needs a verified email before you can publish. Minor, but it will block you if you have not done it.
+
+**Source is uploaded directly.** There is no binary distribution step for library crates. `cargo install muster-cli` compiles from source on the user's machine. This is fine for a Rust tool (compilation is the expected install path), but it means install time depends on the user's hardware and internet connection. For faster installs, binary distribution via `cargo-dist` or GitHub Releases is the next step.
+
+**One gotcha with workspaces.** Internal workspace dependencies need explicit version specifiers for crates.io. If `muster-cli` depends on `muster` via a path dependency without a version, `cargo publish` will reject it. This was the only thing that required a post-tagging fix (v0.5.1).
+
+## Links
+
+- Crates: [crates.io/crates/muster](https://crates.io/crates/muster), [crates.io/crates/muster-cli](https://crates.io/crates/muster-cli)
+- Documentation: [scott2b.github.io/muster/](https://scott2b.github.io/muster/)
+- Source: [github.com/scott2b/muster](https://github.com/scott2b/muster)
+
+## What's Next
+
+Binary distribution is the immediate priority. `cargo install` works, but compiling from source is slow for end users. `cargo-dist` can generate GitHub Release binaries for each tagged version — prebuilt for macOS (ARM and x86) and Linux. That cuts install time from minutes to seconds.
+
+Beyond that: more terminal integrations (the library is designed to support a GUI frontend in addition to the CLI), and expanding the shell integration beyond `cd`-based suggestions.
