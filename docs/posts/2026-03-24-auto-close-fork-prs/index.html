@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-03-24">
+<meta name="description" content="GitHub has no switch to disable pull requests on public repos — here’s a workflow that auto-closes them from forks while allowing collaborator PRs">
 
-<title>index – Code &amp; Circuits</title>
+<title>Auto-Closing Fork PRs on Public GitHub Repos – Code &amp; Circuits</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,30 +22,63 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<link href="../assets/images/favicon.png" rel="icon" type="image/png">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ac1a48248070c8bfbae4244efd7728e4.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-f4dc91966684f5d181cee8f2cc90d529.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/images/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ac1a48248070c8bfbae4244efd7728e4.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f4dc91966684f5d181cee8f2cc90d529.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -71,79 +106,21 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-title-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="../assets/css/styles.css">
+<link rel="stylesheet" href="../../assets/css/styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-fixed fullcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo light-content">
-    <img src="../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo dark-content">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo light-content">
+    <img src="../../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo dark-content">
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -153,19 +130,19 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../posts/index.html" aria-current="page"> 
+    <a class="nav-link" href="../../posts/index.html"> 
 <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../notebooks/index.html"> 
+    <a class="nav-link" href="../../notebooks/index.html"> 
 <span class="menu-text">Notebooks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../about/index.html"> 
+    <a class="nav-link" href="../../about/index.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
@@ -176,270 +153,131 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(12)</span></div><div class="category" data-category="Y29kZS1leHBsb3JhdGlvbnM=">code-explorations <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Z2l0">git <span class="quarto-category-count">(1)</span></div><div class="category" data-category="aW8=">io <span class="quarto-category-count">(1)</span></div><div class="category" data-category="amVreWxs">jekyll <span class="quarto-category-count">(3)</span></div><div class="category" data-category="bWFjb3M=">macos <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bWlzYw==">misc <span class="quarto-category-count">(2)</span></div><div class="category" data-category="b2JzaWRpYW4=">obsidian <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHl0aG9u">python <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cnVzdA==">rust <span class="quarto-category-count">(2)</span></div><div class="category" data-category="dG11eA==">tmux <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dHlwZXNlbnNl">typesense <span class="quarto-category-count">(1)</span></div><div class="category" data-category="d2Vi">web <span class="quarto-category-count">(3)</span></div></div></div>
+    
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
 
-
-
-
-<section id="all-posts" class="level1 content-container">
-<h1>All Posts</h1>
-<div class="section-description">
-<p>Browse all articles and tutorials.</p>
-</div>
-<div id="listing-listing" class="quarto-listing quarto-listing-container-table">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-    <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-    <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-      <option value="" disabled="" selected="" hidden="">Order By</option>
-      <option value="index" data-direction="asc">Default</option>
-      <option value="listing-date-sort" data-direction="asc">
-        Date - Oldest
-      </option>
-      <option value="listing-date-sort" data-direction="desc">
-        Date - Newest
-      </option>
-      <option value="listing-title-sort" data-direction="asc">
-        Title
-      </option>
-    </select>
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Auto-Closing Fork PRs on Public GitHub Repos</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">misc</div>
   </div>
-    <div class="input-group input-group-sm quarto-listing-filter">
-      <span class="input-group-text"><i class="bi bi-search"></i></span>
-      <input type="text" class="search form-control" placeholder="Filter">
-    </div>
+  </div>
+
+<div>
+  <div class="description">
+    GitHub has no switch to disable pull requests on public repos — here’s a workflow that auto-closes them from forks while allowing collaborator PRs
+  </div>
 </div>
-<table class="quarto-listing-table table">
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 24, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>GitHub does not have a setting to disable pull request creation on public repositories. Anyone with read access can fork and open a PR, and there is no permanent way to turn that off. Branch protection rules control whether PRs can be <em>merged</em>, not whether they can be <em>opened</em>. Interaction limits exist but are temporary (max 6 months). Archiving the repo blocks PRs but also blocks everything else.</p>
+<p>With AI-generated spam PRs becoming increasingly common, “just ignore them” is not a great answer. The practical solution is a GitHub Actions workflow that auto-closes PRs from forks while allowing PRs from branches inside the repo — which means collaborators you’ve explicitly granted write access can still contribute normally.</p>
+<section id="the-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="the-workflow">The workflow</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># .github/workflows/close-external-prs.yml</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> Close external PRs</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">on</span><span class="kw">:</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pull_request_target</span><span class="kw">:</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">types</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">opened</span><span class="kw">]</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">permissions</span><span class="kw">:</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pull-requests</span><span class="kw">:</span><span class="at"> write</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">issues</span><span class="kw">:</span><span class="at"> write</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">close</span><span class="kw">:</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">runs-on</span><span class="kw">:</span><span class="at"> ubuntu-latest</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Close PR if from fork</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/github-script@v7</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">          script</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            const pr = context.payload.pull_request;</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>            const owner = context.repo.owner;</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>            const repo = context.repo.repo;</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>            if (pr.head.repo.fork) {</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>              await github.rest.issues.createComment({</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>                owner,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>                repo,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>                issue_number: pr.number,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>                body: "This repository does not accept public pull requests."</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>              });</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>              await github.rest.pulls.update({</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                owner,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>                repo,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>                pull_number: pr.number,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>                state: "closed"</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>              });</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>            }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The result:</p>
+<table class="caption-top table">
 <thead>
-<tr>
-
-<th>
-<a class="sort" data-sort="listing-date-sort" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Date</a>
-</th>
-
-<th>
-<a class="sort" data-sort="listing-title-sort" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Title</a>
-</th>
-
-<th>
-Description
-</th>
-
-<th>
-Categories
-</th>
-
+<tr class="header">
+<th>Who</th>
+<th>Can open PR</th>
+<th>Stays open</th>
 </tr>
 </thead>
-<tbody class="list">
-
-<tr data-index="0" data-categories="bWlzYw==" data-listing-date-sort="1774328400000" data-listing-file-modified-sort="1774372806433" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="659" data-listing-title-sort="Auto-Closing Fork PRs on Public GitHub Repos" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Mar 24, 2026</span>
-</td>
-<td>
-<a href="../posts/2026-03-24-auto-close-fork-prs/index.html" class="title listing-title">Auto-Closing Fork PRs on Public GitHub Repos</a>
-</td>
-<td>
-<span class="listing-description">GitHub has no switch to disable pull requests on public repos — here’s a workflow that auto-closes them from forks while allowing collaborator PRs</span>
-</td>
-<td>
-<span class="listing-categories">misc</span>
-</td>
-
+<tbody>
+<tr class="odd">
+<td>You</td>
+<td>Yes</td>
+<td>Yes</td>
 </tr>
-
-<tr data-index="1" data-categories="cnVzdCUyQ2NvZGUtZXhwbG9yYXRpb25z" data-listing-date-sort="1773810000000" data-listing-file-modified-sort="1773872639070" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1295" data-listing-title-sort="Muster: A Tmux Session Manager, Now on crates.io" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Mar 18, 2026</span>
-</td>
-<td>
-<a href="../posts/2026-03-18-muster-tmux-session-manager/index.html" class="title listing-title">Muster: A Tmux Session Manager, Now on crates.io</a>
-</td>
-<td>
-<span class="listing-description">Publishing a Rust CLI for tmux session management — profiles, theming, lifecycle management, and what it takes to ship a crate</span>
-</td>
-<td>
-<span class="listing-categories">rust, code-explorations</span>
-</td>
-
+<tr class="even">
+<td>Collaborator (write access)</td>
+<td>Yes</td>
+<td>Yes</td>
 </tr>
-
-<tr data-index="2" data-categories="Y29kZS1leHBsb3JhdGlvbnM=" data-listing-date-sort="1772776800000" data-listing-file-modified-sort="1772839382236" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="972" data-listing-title-sort="Collaborative Diagramming with AI: Adding Visual Feedback to draw.io" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Mar 6, 2026</span>
-</td>
-<td>
-<a href="../posts/2026-03-06-drawio-collaborative-diagramming/index.html" class="title listing-title">Collaborative Diagramming with AI: Adding Visual Feedback to draw.io</a>
-</td>
-<td>
-<span class="listing-description">How adding a screenshot feedback loop to draw.io’s official Claude Code skill enables true collaborative iteration between human and AI</span>
-</td>
-<td>
-<span class="listing-categories">code-explorations</span>
-</td>
-
+<tr class="odd">
+<td>Public user (fork)</td>
+<td>Yes</td>
+<td>Auto-closed</td>
 </tr>
-
-<tr data-index="3" data-categories="cnVzdCUyQ3RtdXglMkNjb2RlLWV4cGxvcmF0aW9ucw==" data-listing-date-sort="1772604000000" data-listing-file-modified-sort="1772669404742" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1489" data-listing-title-sort="Native Desktop Notifications for tmux Events" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Mar 4, 2026</span>
-</td>
-<td>
-<a href="../posts/2026-03-04-tmux-desktop-notifications/index.html" class="title listing-title">Native Desktop Notifications for tmux Events</a>
-</td>
-<td>
-<span class="listing-description">Building click-to-source navigation for tmux using native OS notification APIs in Rust</span>
-</td>
-<td>
-<span class="listing-categories">rust, tmux, code-explorations</span>
-</td>
-
-</tr>
-
-<tr data-index="4" data-categories="dHlwZXNlbnNl" data-listing-date-sort="1746853200000" data-listing-file-modified-sort="1763513684345" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="279" data-listing-title-sort="Speed Up Typesense Startup in Production with Disk Persistence" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">May 10, 2025</span>
-</td>
-<td>
-<a href="../posts/2025-05-10-typesense-in-production/index.html" class="title listing-title">Speed Up Typesense Startup in Production with Disk Persistence</a>
-</td>
-<td>
-<span class="listing-description">If you’re running Typesense in production with large collections or semantic search, startup time can become a bottleneck. By default, Typesense rebuilds its in-memory index…</span>
-</td>
-<td>
-<span class="listing-categories">typesense</span>
-</td>
-
-</tr>
-
-<tr data-index="5" data-categories="bWFjb3MlMkNvYnNpZGlhbiUyQ2dpdA==" data-listing-date-sort="1746766800000" data-listing-file-modified-sort="1763513684345" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="418" data-listing-title-sort="Fixing Git LFS Integration in Obsidian’s Git Plugin on macOS" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">May 9, 2025</span>
-</td>
-<td>
-<a href="../posts/2025-05-09-obsidian-git-lfs/index.html" class="title listing-title">Fixing Git LFS Integration in Obsidian’s Git Plugin on macOS</a>
-</td>
-<td>
-<span class="listing-description">If you’re using the Obsidian Git plugin with Git LFS (Large File Storage) on macOS, you may run into a frustrating issue: <code>git-lfs</code> works fine in your terminal, but Obsidian…</span>
-</td>
-<td>
-<span class="listing-categories">macos, obsidian, git</span>
-</td>
-
-</tr>
-
-<tr data-index="6" data-categories="cHl0aG9u" data-listing-date-sort="1742226452000" data-listing-file-modified-sort="1763513684344" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="236" data-listing-title-sort="Some ways to easily get news content" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Mar 17, 2025</span>
-</td>
-<td>
-<a href="../posts/2025-03-17-getting-news-content/index.html" class="title listing-title">Some ways to easily get news content</a>
-</td>
-<td>
-<span class="listing-description">It is a common scenario in the lab to need to get ahold of some news content to work with for experimenting with and building projects. Here are some go-to approaches that I…</span>
-</td>
-<td>
-<span class="listing-categories">python</span>
-</td>
-
-</tr>
-
-<tr data-index="7" data-categories="cHl0aG9uJTJDaW8=" data-listing-date-sort="1665522000000" data-listing-file-modified-sort="1763513684344" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="100" data-listing-title-sort="Using urllib to wget a file in Python 3" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 11, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-11-using-urllib-to-wget-a-file-in-python/index.html" class="title listing-title">Using urllib to wget a file in Python 3</a>
-</td>
-<td>
-<span class="listing-description">Post description</span>
-</td>
-<td>
-<span class="listing-categories">python, io</span>
-</td>
-
-</tr>
-
-<tr data-index="8" data-categories="d2ViJTJDamVreWxs" data-listing-date-sort="1665503700000" data-listing-file-modified-sort="1763513684344" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="179" data-listing-title-sort="Adding Post content to Jekyll search" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 11, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-11-adding-post-content-to-jekyll-search/index.html" class="title listing-title">Adding Post content to Jekyll search</a>
-</td>
-<td>
-<span class="listing-description">I used this tutorial at webjeda.com to add simple search capabilities to my Jekyll site.</span>
-</td>
-<td>
-<span class="listing-categories">web, jekyll</span>
-</td>
-
-</tr>
-
-<tr data-index="9" data-categories="d2ViJTJDamVreWxs" data-listing-date-sort="1665503100000" data-listing-file-modified-sort="1763513684344" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="78" data-listing-title-sort="Use baseurl to specify the location of assets in Jekyll" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 11, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-11-use-baseurl-for-jekyll-assets/index.html" class="title listing-title">Use baseurl to specify the location of assets in Jekyll</a>
-</td>
-<td>
-<span class="listing-description">Jekyll’s <code>baseurl</code> parameter is a path prefix (i.e.&nbsp;the subpath of your site) which is specified in the <code>_config.yml</code> file. Specify this parameter, for example, for GitHub…</span>
-</td>
-<td>
-<span class="listing-categories">web, jekyll</span>
-</td>
-
-</tr>
-
-<tr data-index="10" data-categories="d2ViJTJDamVreWxs" data-listing-date-sort="1665499800000" data-listing-file-modified-sort="1763513684344" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="291" data-listing-title-sort="Specifying a custom Jekyll site location in GitHub pages" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 11, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-11-custom-jekyll-location-github-pages/index.html" class="title listing-title">Specifying a custom Jekyll site location in GitHub pages</a>
-</td>
-<td>
-<span class="listing-description">If you move the root of your Jekyll project to a subdirectory of a Github Pages enabled repository, you will need to be sure to change the <code>source</code> and <code>destination</code> locations…<code></code></span>
-</td>
-<td>
-<span class="listing-categories">web, jekyll</span>
-</td>
-
-</tr>
-
-<tr data-index="11" data-categories="bWlzYw==" data-listing-date-sort="1665416852000" data-listing-file-modified-sort="1763513684343" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="134" data-listing-title-sort="My Publication Pipeline" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">Oct 10, 2022</span>
-</td>
-<td>
-<a href="../posts/2022-10-10-my-publication-pipeline/index.html" class="title listing-title">My Publication Pipeline</a>
-</td>
-<td>
-<span class="listing-description">Here is a rough outline of how my content makes its way to publication.</span>
-</td>
-<td>
-<span class="listing-categories">misc</span>
-</td>
-
-</tr>
-
 </tbody>
 </table>
-<div class="listing-no-matching d-none">No matching items</div>
-</div>
 </section>
+<section id="two-things-that-wont-work" class="level2">
+<h2 class="anchored" data-anchor-id="two-things-that-wont-work">Two things that won’t work</h2>
+<p><strong><code>pull_request</code> trigger with permissions.</strong> The obvious approach is to use the <code>pull_request</code> event and set <code>permissions: pull-requests: write</code>. This fails with a 403 because GitHub gives workflows triggered by <code>pull_request</code> from forks a read-only <code>GITHUB_TOKEN</code>. The workflow runs but cannot comment on or close the PR.</p>
+<p><strong><code>pull_request_target</code> with checkout.</strong> The fix is <code>pull_request_target</code>, which runs in the context of the base repository and gets a token with write access. But do not add a checkout step — <code>pull_request_target</code> workflows should not execute code from the PR branch, since that code is untrusted. For this use case there’s nothing to check out anyway; the workflow just needs the API.</p>
+</section>
+<section id="the-fork-detection" class="level2">
+<h2 class="anchored" data-anchor-id="the-fork-detection">The fork detection</h2>
+<p>The condition <code>pr.head.repo.fork</code> cleanly separates public PRs from collaborator PRs. Public users must fork to open a PR, so <code>fork === true</code>. Collaborators with write access push branches directly to the repo, so <code>fork === false</code>. This maps exactly to the access boundary: only people you’ve explicitly authorized can submit PRs that stay open.</p>
+</section>
+<section id="supplementary-optional" class="level2">
+<h2 class="anchored" data-anchor-id="supplementary-optional">Supplementary (optional)</h2>
+<p>Adding a <code>CONTRIBUTING.md</code> and <code>.github/pull_request_template.md</code> that state PRs are not accepted reduces noise but doesn’t enforce anything. The workflow is the enforcement; the docs are courtesy.</p>
 
 
-
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -1,0 +1,95 @@
+---
+title: "Auto-Closing Fork PRs on Public GitHub Repos"
+description: "GitHub has no switch to disable pull requests on public repos — here's a workflow that auto-closes them from forks while allowing collaborator PRs"
+date: 2026-03-24
+categories:
+  - misc
+---
+
+GitHub does not have a setting to disable pull request creation on public repositories.
+Anyone with read access can fork and open a PR, and there is no permanent way to turn
+that off. Branch protection rules control whether PRs can be *merged*, not whether they
+can be *opened*. Interaction limits exist but are temporary (max 6 months). Archiving
+the repo blocks PRs but also blocks everything else.
+
+With AI-generated spam PRs becoming increasingly common, "just ignore them" is not a
+great answer. The practical solution is a GitHub Actions workflow that auto-closes PRs
+from forks while allowing PRs from branches inside the repo — which means collaborators
+you've explicitly granted write access can still contribute normally.
+
+## The workflow
+
+```yaml
+# .github/workflows/close-external-prs.yml
+name: Close external PRs
+
+on:
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  close:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close PR if from fork
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            if (pr.head.repo.fork) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: pr.number,
+                body: "This repository does not accept public pull requests."
+              });
+
+              await github.rest.pulls.update({
+                owner,
+                repo,
+                pull_number: pr.number,
+                state: "closed"
+              });
+            }
+```
+
+The result:
+
+| Who | Can open PR | Stays open |
+|-----|-------------|------------|
+| You | Yes | Yes |
+| Collaborator (write access) | Yes | Yes |
+| Public user (fork) | Yes | Auto-closed |
+
+## Two things that won't work
+
+**`pull_request` trigger with permissions.** The obvious approach is to use the
+`pull_request` event and set `permissions: pull-requests: write`. This fails with a 403
+because GitHub gives workflows triggered by `pull_request` from forks a read-only
+`GITHUB_TOKEN`. The workflow runs but cannot comment on or close the PR.
+
+**`pull_request_target` with checkout.** The fix is `pull_request_target`, which runs in
+the context of the base repository and gets a token with write access. But do not add a
+checkout step — `pull_request_target` workflows should not execute code from the PR
+branch, since that code is untrusted. For this use case there's nothing to check out
+anyway; the workflow just needs the API.
+
+## The fork detection
+
+The condition `pr.head.repo.fork` cleanly separates public PRs from collaborator PRs.
+Public users must fork to open a PR, so `fork === true`. Collaborators with write access
+push branches directly to the repo, so `fork === false`. This maps exactly to the access
+boundary: only people you've explicitly authorized can submit PRs that stay open.
+
+## Supplementary (optional)
+
+Adding a `CONTRIBUTING.md` and `.github/pull_request_template.md` that state PRs are not
+accepted reduces noise but doesn't enforce anything. The workflow is the enforcement; the
+docs are courtesy.
