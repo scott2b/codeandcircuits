@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/2026-06-03-curriculum-pipeline-diagrams/index.html",
       "/posts/2026-06-03-programmatic-circuit-schematics/index.html",
       "/posts/2026-03-24-auto-close-fork-prs/index.html",
       "/posts/2026-03-18-muster-tmux-session-manager/index.html",
@@ -20,6 +21,7 @@
   {
     "listing": "/posts/index.html",
     "items": [
+      "/posts/2026-06-03-curriculum-pipeline-diagrams/index.html",
       "/posts/2026-06-03-programmatic-circuit-schematics/index.html",
       "/posts/2026-03-24-auto-close-fork-prs/index.html",
       "/posts/2026-03-18-muster-tmux-session-manager/index.html",

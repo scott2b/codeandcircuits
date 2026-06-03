@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-06-03">
+<meta name="description" content="d2 for architecture flows, PlantUML for UML standards, draw.io for domain-specific process diagrams. Three tools, each doing what it’s designed for.">
 
-<title>Code &amp; Circuits</title>
+<title>Curriculum Pipeline Part 2: Diagrams Beyond Circuit Schematics – Code &amp; Circuits</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,27 +25,25 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./assets/images/favicon.png" rel="icon" type="image/png">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ac1a48248070c8bfbae4244efd7728e4.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-f4dc91966684f5d181cee8f2cc90d529.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/images/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ac1a48248070c8bfbae4244efd7728e4.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f4dc91966684f5d181cee8f2cc90d529.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -71,81 +71,21 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-recent-posts-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      page: 3,
-    pagination: { item: "<li class='page-item'><a class='page page-link' href='#'></a></li>" },
-      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-recent-posts-listing'] = new List('listing-recent-posts-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="assets/css/styles.css">
-<link rel="stylesheet" href="assets/css/card-layout.css">
+<link rel="stylesheet" href="../../assets/css/styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-fixed fullcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo light-content">
-    <img src="./assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo dark-content">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo light-content">
+    <img src="../../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo dark-content">
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -155,19 +95,19 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./posts/index.html"> 
+    <a class="nav-link" href="../../posts/index.html"> 
 <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./notebooks/index.html"> 
+    <a class="nav-link" href="../../notebooks/index.html"> 
 <span class="menu-text">Notebooks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about/index.html"> 
+    <a class="nav-link" href="../../about/index.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
@@ -178,210 +118,188 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content column-page" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Curriculum Pipeline Part 2: Diagrams Beyond Circuit Schematics</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">circuits</div>
+    <div class="quarto-category">tooling</div>
+    <div class="quarto-category">education</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    d2 for architecture flows, PlantUML for UML standards, draw.io for domain-specific process diagrams. Three tools, each doing what it’s designed for.
+  </div>
+</div>
 
 
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 3, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
 
 
-<div class="content-container">
-<p><img src="assets/images/logo.svg" class="img-fluid" style="margin-left: -0.75rem;" width="300"></p>
-<div class="section-description">
-<p>An engineer’s notebook.</p>
-</div>
-</div>
-<section id="latest-posts" class="level2">
-<h2 class="anchored" data-anchor-id="latest-posts">Latest Posts</h2>
-<div id="listing-recent-posts-listing" class="quarto-listing quarto-listing-container-grid">
-<div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-categories="Y2lyY3VpdHMlMkN0b29saW5nJTJDZWR1Y2F0aW9u" data-listing-date-sort="1780462800000" data-listing-file-modified-sort="1780501686421" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1131">
-<a href="./posts/2026-06-03-curriculum-pipeline-diagrams/index.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Curriculum Pipeline Part 2: Diagrams Beyond Circuit Schematics
-</h5>
-<div class="card-text listing-description delink">
-<p>d2 for architecture flows, PlantUML for UML standards, draw.io for domain-specific process diagrams. Three tools, each doing what it’s designed for.</p>
-</div>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Jun 3, 2026
-</div>
-</div>
-</div>
-</div></a>
-</div>
-<div class="g-col-1" data-index="1" data-categories="Y2lyY3VpdHMlMkN0b29saW5nJTJDZWR1Y2F0aW9u" data-listing-date-sort="1780462800000" data-listing-file-modified-sort="1780498107386" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1796">
-<a href="./posts/2026-06-03-programmatic-circuit-schematics/index.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Building a Technical Curriculum Pipeline: From NotebookLM’s Mistakes to Declarative Circuit Definitions
-</h5>
-<div class="card-text listing-description delink">
-<p>AI tools produce beautiful slides with wrong equations. Manual diagramming doesn’t scale. Here’s the pipeline that emerged, where a single circuit definition produces both a…</p>
-</div>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Jun 3, 2026
-</div>
-</div>
-</div>
-</div></a>
-</div>
-<div class="g-col-1" data-index="2" data-categories="bWlzYw==" data-listing-date-sort="1774328400000" data-listing-file-modified-sort="1774373032386" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="659">
-<a href="./posts/2026-03-24-auto-close-fork-prs/index.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Auto-Closing Fork PRs on Public GitHub Repos
-</h5>
-<div class="card-text listing-description delink">
-<p>GitHub has no switch to disable pull requests on public repos — here’s a workflow that auto-closes them from forks while allowing collaborator PRs</p>
-</div>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Mar 24, 2026
-</div>
-</div>
-</div>
-</div></a>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div>
-<p><a href="./posts/index.html" class="explore-link" style="display: block; margin-top: 2rem;">View All Posts →</a></p>
+</header>
+
+
+<p>In <a href="../2026-06-03-programmatic-circuit-schematics/">Part 1</a>, I found netlistsvg for producing autorouted circuit schematics from declarative JSON netlists. That solved the hardest asset type in the curriculum pipeline. But a technical curriculum needs more than circuit diagrams. It needs signal flow diagrams, process flows, UML activity and sequence diagrams, and domain-specific notations like Functional Flow Block Diagrams (FFBDs).</p>
+<p>The question: can one tool handle all of these, or does each diagram type need its own?</p>
+<section id="the-test-cases" class="level2">
+<h2 class="anchored" data-anchor-id="the-test-cases">The Test Cases</h2>
+<p>I pulled diagrams from two sources: the sensor circuit curriculum (a simple signal conditioning chain) and an eCornell Systems Design course I took previously. While taking the course, I built diagrams in Lucidchart, in some cases replicating course examples. I later converted those Lucidchart diagrams to draw.io using a <a href="../2026-03-06-drawio-collaborative-diagramming/">custom Claude Code skill</a> that works by directly editing <code>.drawio</code> XML files and using desktop window screenshots as a visual feedback loop. There is an <a href="https://github.com/jgraph/drawio-mcp">official draw.io MCP</a>, but my skill doesn’t use it. The MCP compresses diagram XML into a URL and opens it in the browser editor, which is effectively one-way. The skill instead writes <code>.drawio</code> files directly, the user opens them in draw.io desktop, and Claude screenshots the window to see the rendered result and iterate. This gives Claude a visual feedback loop that the MCP approach lacks. That process is worth its own discussion (see <a href="../2026-03-06-drawio-collaborative-diagramming/">my earlier post on collaborative diagramming with draw.io</a>), but the key point is that Claude can produce these diagrams, with the caveat that a human needs to review and adjust the layout. The AI generates correct topology and mostly reasonable positioning, but fine-tuning spatial organization is still a manual step.</p>
+<p>The resulting diagrams cover the range from simple architecture overviews to standards-compliant engineering notation: FFBDs, context diagrams, activity diagrams with swimlanes, and sequence diagrams.</p>
 </section>
-<section id="featured-topics" class="level2">
-<h2 class="anchored" data-anchor-id="featured-topics">Featured Topics</h2>
-<div class="card-grid">
-<div class="card math-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <text x="6" y="20" font-size="24" font-weight="bold">∑</text> </svg></p>
+<section id="simple-flow-diagrams-d2-vs-mermaid-vs-netlistsvg" class="level2">
+<h2 class="anchored" data-anchor-id="simple-flow-diagrams-d2-vs-mermaid-vs-netlistsvg">Simple Flow Diagrams: d2 vs Mermaid vs netlistsvg</h2>
+<p>The first test was a straightforward signal conditioning chain: Sensor → Excitation → Buffer → ADC → Digital Processing. Five blocks in a line with labeled arrows.</p>
+<p>I tried all three in parallel.</p>
+<p><strong>netlistsvg</strong> (using generic components):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="block_netlistsvg.png" class="img-fluid figure-img" style="width:80.0%" alt="netlistsvg output showing five generic unnamed rectangles in a row"></p>
+<figcaption>netlistsvg renders generic blocks without names</figcaption>
+</figure>
 </div>
-<h1 class="card-title">
-Mathematical Foundations
-</h1>
+<p>The generic component doesn’t render block names from the <code>ref</code> attribute. netlistsvg is designed for circuits, not labeled block diagrams. The ELK autorouter placed the boxes correctly, but without labels the output is useless.</p>
+<p><strong>d2:</strong></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="block_d2.png" class="img-fluid figure-img" style="width:100.0%" alt="d2 output showing five colored blocks connected by labeled arrows: R(T), V_exc, Analog, SPI/I²C"></p>
+<figcaption>d2 signal conditioning chain with color-coded blocks and labeled arrows</figcaption>
+</figure>
 </div>
-<p>Advanced mathematics for engineering applications, including calculus, linear algebra, and differential equations.</p>
-<div class="tag-container">
-<p><span class="tag">Vector Calculus</span> <span class="tag">Linear Algebra</span> <span class="tag">Differential Equations</span></p>
+<p>Clean left-to-right flow, color-coded blocks with fills, labeled arrows between stages. 30 lines of readable markup, rendered in 37ms.</p>
+<p><strong>Mermaid:</strong></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="block_mermaid.png" class="img-fluid figure-img" alt="Mermaid output showing the same signal conditioning chain with colored blocks"></p>
+<figcaption>Mermaid produces a similar result with slightly more compact layout</figcaption>
+</figure>
 </div>
-<p><a href="./math" class="explore-link">Explore Math →</a></p>
+<p>Very similar to d2. Slightly more compact. The syntax is more widely known (GitHub renders it inline, Obsidian supports it natively). But for a pipeline where we control the rendering, d2’s styling is more flexible.</p>
+<p>For simple flow diagrams, both d2 and Mermaid work. d2 edges ahead on styling control.</p>
+</section>
+<section id="complex-process-diagrams-ffbds" class="level2">
+<h2 class="anchored" data-anchor-id="complex-process-diagrams-ffbds">Complex Process Diagrams: FFBDs</h2>
+<p>The real test is domain-specific standards. A Functional Flow Block Diagram has specific conventions: OR/AND/IT gate symbols (circles with labels), function blocks with numbered header bars, reference blocks with notched corners, iteration loops with counts, bypass paths, and a containing function boundary.</p>
+<p>Here’s an FFBD from the eCornell course, produced in draw.io:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="ffbd_original.png" class="img-fluid figure-img" style="width:100.0%" alt="Functional Flow Block Diagram showing F3 Food Input Inspection with OR/AND/IT gates, parallel function blocks, iteration loop marked '2 times', and a bypass path from premium supplier"></p>
+<figcaption>FFBD with OR/AND/IT gates, parallel paths, iteration loop, and bypass</figcaption>
+</figure>
 </div>
-<div class="card circuit-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M6 3v12"></path> <path d="M18 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path> <path d="M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path> </svg></p>
+<p>I tried reproducing the simpler FFBD (Process Media) in d2:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="block_ffbd_d2.png" class="img-fluid figure-img" style="width:100.0%" alt="d2 diagram showing the Process Media flow with circles for AND gates and a containing boundary, but missing standard FFBD notation"></p>
+<figcaption>d2 approximation of an FFBD. Correct topology, wrong notation.</figcaption>
+</figure>
 </div>
-<h1 class="card-title">
-Circuit Design
-</h1>
+<p>d2 gets the topology right. The parallel AND fork/join, the containing boundary, the page shapes for reference blocks. But it doesn’t know FFBD conventions. The AND gates should be specific symbols, not generic circles. The function blocks should have the characteristic numbered header bar. The IT (iteration) gate is absent entirely. It’s a reasonable-looking diagram but not suitable for systems engineering where standard notation matters.</p>
+<p>No scriptable tool I’ve found understands INCOSE/MIL-STD FFBD conventions. This is a gap.</p>
+</section>
+<section id="uml-diagrams-plantuml" class="level2">
+<h2 class="anchored" data-anchor-id="uml-diagrams-plantuml">UML Diagrams: PlantUML</h2>
+<p>PlantUML knows UML standards. It produces correct notation for activity diagrams, sequence diagrams, use case diagrams, and state machines from declarative text markup.</p>
+<p>Here’s an activity diagram with swimlanes from the eCornell course (draw.io original):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="activity_original.png" class="img-fluid figure-img" style="width:60.0%" alt="UML activity diagram showing an ATM transaction flow across Customer, ATM Machine, and Bank swimlanes with decision diamonds and fork/join bars"></p>
+<figcaption>Activity diagram with three swimlanes, decision diamonds, fork/join bars</figcaption>
+</figure>
 </div>
-<p>Comprehensive guides on electronic circuit design, simulation tools, and practical implementations.</p>
-<div class="tag-container">
-<p><span class="tag">Digital Logic</span> <span class="tag">Analog Circuits</span> <span class="tag">PCB Design</span></p>
+<p>And PlantUML’s version of the same diagram:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="block_activity_plantuml.png" class="img-fluid figure-img" style="width:60.0%" alt="PlantUML activity diagram with the same ATM flow, correct UML elements but activities positioned differently within swimlanes"></p>
+<figcaption>PlantUML produces correct UML notation but looser spatial organization</figcaption>
+</figure>
 </div>
-<p><span class="explore-link">Explore Circuits →</span></p>
+<p>The UML elements are all correct: rounded activity boxes, decision diamonds with guard conditions, fork/join bars, initial and final nodes, labeled swimlanes. But the spatial organization is looser than the hand-laid-out original. Activities drift horizontally within their swimlanes rather than maintaining consistent alignment. PlantUML’s Graphviz-based layout engine doesn’t give you control over positioning within lanes.</p>
+<p>PlantUML also handles process flows with swimlanes and decision logic:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="plantuml_process.png" class="img-fluid figure-img" style="width:50.0%" alt="PlantUML process diagram showing sensor measurement flow through four colored swimlanes with a decision branch"></p>
+<figcaption>PlantUML process diagram with colored swimlanes</figcaption>
+</figure>
 </div>
-<div class="card code-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <polyline points="16 18 22 12 16 6"></polyline> <polyline points="8 6 2 12 8 18"></polyline> </svg></p>
-</div>
-<h1 class="card-title">
-Code Notebooks
-</h1>
-</div>
-<p>Interactive Python notebooks for solving real-world engineering problems and data analysis.</p>
-<div class="tag-container">
-<p><span class="tag">Python</span> <span class="tag">MATLAB</span> <span class="tag">Simulation</span></p>
-</div>
-<p><span class="explore-link">Explore Notebooks →</span></p>
-</div>
-<div class="card code-explore-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path> </svg></p>
-</div>
-<h1 class="card-title">
-Code Explorations
-</h1>
-</div>
-<p>Deep dives into programming concepts, algorithms, and software design patterns.</p>
-<div class="tag-container">
-<p><span class="tag">Algorithms</span> <span class="tag">Design Patterns</span> <span class="tag">System Design</span></p>
-</div>
-<p><a href="./code-explorations" class="explore-link">Explore Code →</a></p>
-</div>
-<div class="card eng-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path> </svg></p>
-</div>
-<h1 class="card-title">
-Engineering Fundamentals
-</h1>
-</div>
-<p>Core engineering principles, from mechanics to thermodynamics and control systems.</p>
-<div class="tag-container">
-<p><span class="tag">Mechanics</span> <span class="tag">Control Systems</span> <span class="tag">Thermodynamics</span></p>
-</div>
-<p><span class="explore-link">Explore Engineering →</span></p>
-</div>
-<div class="card cs-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path> <polyline points="15 3 21 3 21 9"></polyline> <line x1="10" y1="14" x2="21" y2="3"></line> </svg></p>
-</div>
-<h1 class="card-title">
-Computer Science
-</h1>
-</div>
-<p>Fundamental computer science concepts, from data structures to operating systems.</p>
-<div class="tag-container">
-<p><span class="tag">Data Structures</span> <span class="tag">Operating Systems</span> <span class="tag">Networks</span></p>
-</div>
-<p><span class="explore-link">Explore CS →</span></p>
-</div>
-<div class="card data-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <line x1="18" y1="20" x2="18" y2="10"></line> <line x1="12" y1="20" x2="12" y2="4"></line> <line x1="6" y1="20" x2="6" y2="14"></line> <line x1="3" y1="20" x2="21" y2="20"></line> </svg></p>
-</div>
-<h1 class="card-title">
-Data Science
-</h1>
-</div>
-<p>Statistical analysis, machine learning, and data visualization techniques.</p>
-<div class="tag-container">
-<p><span class="tag">Statistics</span> <span class="tag">Machine Learning</span> <span class="tag">Visualization</span></p>
-</div>
-<p><span class="explore-link">Explore Data →</span></p>
-</div>
-<div class="card complexity-card">
-<div class="card-header">
-<div class="icon-container">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="12" cy="12" r="3"></circle> <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path> </svg></p>
-</div>
-<h1 class="card-title">
-Complexity Science
-</h1>
-</div>
-<p>Study of complex systems, emergence, and network science.</p>
-<div class="tag-container">
-<p><span class="tag">Complex Systems</span> <span class="tag">Network Theory</span> <span class="tag">Emergence</span></p>
-</div>
-<p><span class="explore-link">Explore Complexity →</span></p>
-</div>
-</div>
-
+<p>For standard UML diagram types, PlantUML is the right tool. The notation is correct, the syntax is declarative, and the rendering is automatic. The layout isn’t perfect, but it’s good enough for most uses.</p>
+</section>
+<section id="the-assessment" class="level2">
+<h2 class="anchored" data-anchor-id="the-assessment">The Assessment</h2>
+<p>Three tools, each covering a different category:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Diagram type</th>
+<th>Tool</th>
+<th>Scriptable</th>
+<th>Standards-compliant</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Simple flow/architecture</td>
+<td><strong>d2</strong></td>
+<td>Yes</td>
+<td>No (but clean)</td>
+</tr>
+<tr class="even">
+<td>UML (activity, sequence, use case, state)</td>
+<td><strong>PlantUML</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="odd">
+<td>Domain-specific SE (FFBD, context, N²)</td>
+<td><strong>draw.io</strong></td>
+<td>Semi (manual layout)</td>
+<td>Yes (with effort)</td>
+</tr>
+</tbody>
+</table>
+<p>The gap is domain-specific systems engineering notation. FFBDs, context diagrams, and N² charts have conventions that no scriptable tool understands. draw.io is the best option for these, and Claude can generate the initial diagram via the draw.io skill. The workflow is collaborative rather than fully automated: Claude produces the XML with correct topology and standard shapes, you open it in draw.io, adjust positions and fine-tune the layout, and export. It’s not a one-command pipeline like netlistsvg, but it’s considerably faster than building the diagram from scratch.</p>
+<p>This is different from the circuit schematic story in Part 1, where netlistsvg solved the problem completely. For diagrams, the answer is a toolbox, not a single tool. The pipeline uses whichever tool matches the diagram type.</p>
+</section>
+<section id="tools-and-versions" class="level2">
+<h2 class="anchored" data-anchor-id="tools-and-versions">Tools and Versions</h2>
+<ul>
+<li><strong>d2</strong> (brew): declarative diagrams with ELK layout</li>
+<li><strong>PlantUML 1.2026.5</strong> (brew): UML diagram generation</li>
+<li><strong>Mermaid CLI</strong> (npm): evaluated, similar to d2 but less styling control</li>
+<li><strong>draw.io</strong>: manual layout for domain-specific standards</li>
+</ul>
+<p>Combined with Part 1:</p>
+<ul>
+<li><strong>netlistsvg</strong> (npm): circuit schematics</li>
+<li><strong>ngspice 44.2</strong>: circuit simulation</li>
+<li><strong>matplotlib</strong> (Python): data plots</li>
+</ul>
 
 
 </section>
