@@ -155,23 +155,48 @@ Circuit definition (canonical)
 
 One circuit definition. Three outputs. If R_prec changes from 10kΩ to 100kΩ, the schematic updates, the simulation re-runs, and the plots reflect the new operating point. The lecture slide schematic, the homework simulation, and the lab reference all derive from the same source. No divergence.
 
+## Update: netlistsvg's Limits and SKiDL
+
+After publishing this article, I tested netlistsvg on more complex circuits. A 3-stage common-emitter amplifier exposed a fundamental limitation: ELK is a general-purpose graph layout engine that doesn't understand EE spatial conventions. It scattered the three amplifier stages across the diagram instead of arranging them in the conventional left-to-right column layout that any textbook would use.
+
+[SKiDL](https://github.com/devbisme/skidl) solved this. It's a Python library that defines circuits programmatically (like netlistsvg's JSON but in Python), uses KiCad's professional symbol library, and has a layout engine specifically designed for circuit schematics. The same 3-stage amplifier that ELK mangled, SKiDL arranged with transistors in a row, collector resistors above, coupling capacitors between stages, exactly as you'd draw it by hand.
+
+SKiDL required one bug fix for KiCad 10 compatibility: a `KeyError: 'bottom'` in `gen_svg.py` where the justify value dict was missing `"bottom"` and `"top"` entries. A one-line patch.
+
+The revised pipeline uses both tools:
+
+- **netlistsvg** for simple circuits where the JSON format is convenient and ELK's layout is adequate (voltage dividers, basic measurement circuits)
+- **SKiDL** for complex circuits where EE spatial conventions matter (multi-stage amplifiers, bridges, anything with repeating structural patterns)
+
+Both define real circuit connectivity that maps to SPICE simulation. Both produce SVG. The single-source-of-truth architecture holds.
+
+## Progressive Annotations for Teaching
+
+For lecture slides, static schematics aren't enough. You need to build up a diagram step by step: show the circuit first, then reveal node labels, then current direction, then voltage polarities, then the governing equation.
+
+The approach that works: inline the SVG in a Quarto Reveal.js slide, wrap annotation groups in `class="fragment"` attributes, and Reveal.js handles the progressive reveal on each arrow-key press. Annotations are SVG elements (text labels, elliptical current arrows, polarity marks, colored node dots) placed at coordinates parsed from the base schematic. Equations go in a Quarto column beside the diagram using proper LaTeX rendering.
+
+This requires the SVG to be inline in the HTML (not an external file reference) because Reveal.js fragment classes only work on elements in the DOM. A Python script parses the netlistsvg or SKiDL output, extracts component positions, computes annotation placements, and generates the `.qmd` slide.
+
 ## The Pipeline So Far
 
-Circuit schematics, the hardest asset type, are solved. The remaining pieces:
+```
+Circuit definition (netlistsvg JSON or SKiDL Python)
+  ├── SVG schematic (autorouted)
+  ├── SPICE netlist (same connectivity)
+  ├── Annotation script → inline SVG with Reveal.js fragments
+  └── matplotlib → styled plots from simulation
+```
 
-- **Block diagrams**: TBD. Mermaid, Graphviz, d2 all have autorouting by design.
-- **Equations**: TBD. LaTeX standalone or KaTeX.
-- **Technical illustrations**: TBD.
-- **Conceptual images**: TBD. Gemini API or similar.
-- **Presentation framework**: TBD. Must composite SVG assets into slides, PDFs, and web content.
-
-The lesson from this survey applies broadly: for any diagramming task in a pipeline, the layout algorithm matters more than the rendering engine. If a tool requires manual coordinate placement, it's not a pipeline tool. It's a drawing tool.
+The remaining pieces of the curriculum engine (covered in subsequent posts): block diagrams (d2, PlantUML), presentation framework (Quarto), interactive exercises (quarto-live with Pyodide), and graded assignments (GitHub Actions).
 
 ## Tools and Versions
 
-- **netlistsvg** (npm): JSON netlist to autorouted SVG via ELK
+- **netlistsvg** (npm): JSON netlist to autorouted SVG via ELK (simple circuits)
+- **SKiDL 2.2.3** (pip): Python circuit definition to SVG via KiCad symbols (complex circuits)
 - **ngspice 44.2**: open-source SPICE simulation
 - **matplotlib** (Python): styled data visualization
+- **Quarto 1.8**: presentation framework (Reveal.js slides, PDF, web)
 - **rsvg-convert**: SVG to PNG (use instead of ImageMagick for netlistsvg output)
 
 Evaluated and rejected: CircuiTikZ (TeX Live 2025), Schemdraw 0.23, Typst 0.14.2 + Zap 0.5.0, KiCad 10.0.3 + kicad-sch-api 0.5.6, MATLAB R2026a + Simscape Electrical, 2Slides API (Gemini/Nano Banana image gen), NotebookLM.
