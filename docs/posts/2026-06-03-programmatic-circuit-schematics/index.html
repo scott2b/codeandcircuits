@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-06-03">
+<meta name="description" content="AI tools produce beautiful slides with wrong equations. Manual diagramming doesn’t scale. Here’s the pipeline that emerged, where a single circuit definition produces both a presentation schematic and a verified simulation.">
+
+<title>Building a Technical Curriculum Pipeline: From NotebookLM’s Mistakes to Declarative Circuit Definitions – Code &amp; Circuits</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/images/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ac1a48248070c8bfbae4244efd7728e4.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f4dc91966684f5d181cee8f2cc90d529.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo light-content">
+    <img src="../../assets/images/header-logo-fixed.png" alt="Site logo" class="navbar-logo dark-content">
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../posts/index.html"> 
+<span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../notebooks/index.html"> 
+<span class="menu-text">Notebooks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about/index.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Building a Technical Curriculum Pipeline: From NotebookLM’s Mistakes to Declarative Circuit Definitions</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">circuits</div>
+    <div class="quarto-category">tooling</div>
+    <div class="quarto-category">education</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    AI tools produce beautiful slides with wrong equations. Manual diagramming doesn’t scale. Here’s the pipeline that emerged, where a single circuit definition produces both a presentation schematic and a verified simulation.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 3, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>If you’re building technical curriculum with circuit schematics, equations, simulation plots, and precise engineering content, you have a tooling problem. The AI-powered tools that produce polished visual output can’t be trusted with technical accuracy. The engineering tools that guarantee correctness produce output that looks like engineering documentation, not lecture material. And nothing connects the schematic on your slide to the simulation in your homework.</p>
+<p>This is the story of building a pipeline where a single circuit definition produces an autorouted schematic, a SPICE simulation, and styled presentation plots, all from the same source of truth. It started with NotebookLM generating beautiful slides with wrong equations.</p>
+<section id="notebooklm-beautiful-and-wrong" class="level2">
+<h2 class="anchored" data-anchor-id="notebooklm-beautiful-and-wrong">NotebookLM: Beautiful and Wrong</h2>
+<p>Google’s NotebookLM can take lecture transcripts and produce a polished slide deck in minutes. I fed it ten transcripts from UC Boulder’s <a href="https://www.coursera.org/learn/sensors-circuit-interface">Sensors and Sensor Circuit Interface Design</a> course on Coursera, specifically the thermal sensors module, and got back 14 slides.</p>
+<p>The design quality is high. This is what NotebookLM produces from raw transcripts, with no design input:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="notebooklm_slide_06.png" class="img-fluid figure-img" alt="NotebookLM-generated slide showing wire-wound and thin-film RTD construction with detailed labels and clean layout"></p>
+<figcaption>NotebookLM’s RTD slide: excellent visual quality</figcaption>
+</figure>
+</div>
+<p>The problem is accuracy. Five of the fourteen slides contained errors, including incorrect Callendar-Van Dusen equation coefficients and this:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="notebooklm_slide_08.png" class="img-fluid figure-img" alt="NotebookLM slide claiming RTD accuracy of ±4.3°C, which is actually a tolerance class specification from IEC 60751, not a general accuracy claim"></p>
+<figcaption>NotebookLM claims RTDs have “accuracy of ±4.3°C.” This is a misrepresentation.</figcaption>
+</figure>
+</div>
+<p>“Excellent long-term repeatability with an accuracy of ±4.3°C.” That ±4.3°C figure is actually the Class B tolerance at the extremes of the -200°C to 800°C range per IEC 60751. It’s not “the accuracy of RTDs.” A Class A Pt100 at 0°C has a tolerance of ±0.15°C. Presenting ±4.3°C as the headline accuracy number would give students a wrong understanding of why RTDs are valued for precision measurement.</p>
+<p>These aren’t formatting issues. They’re the kind of mistakes that would teach students the wrong thing. The core tension: the tool that produces the best-looking slides can’t be trusted with the content.</p>
+</section>
+<section id="the-ai-slide-api-detour" class="level2">
+<h2 class="anchored" data-anchor-id="the-ai-slide-api-detour">The AI Slide API Detour</h2>
+<p>The next thought was to find an AI slide service with an API, feed it vetted content, and control accuracy from the source side. I evaluated four services: <a href="https://gamma.app">Gamma</a>, <a href="https://2slides.com">2Slides</a>, <a href="https://slidesgpt.com">SlidesGPT</a>, and <a href="https://flashdocs.ai">FlashDocs</a>.</p>
+<p>2Slides has two generation modes. “Fast PPT” produces template-based PowerPoint for ~20 credits. Uninspiring. The interesting mode uses Nano Banana, Google’s Gemini image generation model, which 2Slides integrates as its AI-designed layout engine. The output was visually competitive:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="2slides_nano_banana.png" class="img-fluid figure-img" style="width:100.0%" alt="AI-generated slide showing thermistor excitation circuit with schematic, equations, and self-heating analysis in a professional layout"></p>
+<figcaption>2Slides Nano Banana output: polished layout, proper equations, one conflation</figcaption>
+</figure>
+</div>
+<p>The content was largely accurate. It even computed self-heating more precisely than my notes (0.156 mW vs.&nbsp;my rounded 0.16 mW). But the schematic conflates the VDAC and the op-amp buffer into a single “Voltage Source” block, losing a key teaching point: the buffer exists because the VDAC has 16 kΩ output impedance and can’t drive the measurement chain directly. And because each slide is a generated raster image, fixing that means regenerating the entire slide and hoping nothing else changes. At ~110 credits per slide with 500 free credits to start, iteration is expensive.</p>
+<p>This clarified the fundamental problem. AI tools can do layout and visual design. They cannot be trusted with technical content. And their outputs aren’t editable. For a curriculum pipeline, you need the opposite: guaranteed technical accuracy with styling applied afterward.</p>
+</section>
+<section id="declaring-circuits-not-drawing-them" class="level2">
+<h2 class="anchored" data-anchor-id="declaring-circuits-not-drawing-them">Declaring Circuits, Not Drawing Them</h2>
+<p>The answer turned out to be declaring circuit topology and letting a layout engine handle the visual arrangement. The same principle behind Graphviz for flowcharts, applied to circuit schematics. But getting there required ruling out every tool that doesn’t have autorouting first.</p>
+<section id="the-test-circuit" class="level3">
+<h3 class="anchored" data-anchor-id="the-test-circuit">The Test Circuit</h3>
+<p>I tested every tool on the same circuit from the UC Boulder course: a precision resistor excitation method for thermistor measurement. The instructor presents it as a cost-optimized design for the PSoC 5LP kit. The PSoC’s VDAC has up to 5% gain error, but by measuring current through a 0.25% precision resistor (5 cents from Stackpole), the measurement accuracy depends on the resistor rather than the DAC. An op-amp buffer provides current drive since the VDAC’s output impedance can reach 16 kΩ. Two ADC channels tap the voltage across each component.</p>
+<p>It’s a real teaching circuit with enough topological complexity to stress-test a schematic tool: voltage source, op-amp buffer with feedback, two resistors in series, two ADC measurement taps, and a ground reference.</p>
+</section>
+<section id="manual-coordinate-placement-the-common-failure-mode" class="level3">
+<h3 class="anchored" data-anchor-id="manual-coordinate-placement-the-common-failure-mode">Manual Coordinate Placement: The Common Failure Mode</h3>
+<p>I tried CircuiTikZ (LaTeX), Schemdraw (Python), Typst+Zap, and KiCad’s Python API. They all failed for the same reason.</p>
+<p>Every one of these tools requires you to specify component positions and wire paths in absolute coordinates. CircuiTikZ took four iterations just to resolve label collisions:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="circuitikz_example.png" class="img-fluid figure-img" style="width:60.0%" alt="CircuiTikZ schematic with correct symbols but awkward label positioning around the op-amp area"></p>
+<figcaption>CircuiTikZ: technically correct symbols, fighting label placement</figcaption>
+</figure>
+</div>
+<p>Typst+Zap had the fastest compile cycle (~100ms) and the best styling system: per-component colors, custom fonts, the works. The measurement chain looked good. But the op-amp routing was a persistent mess:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="typst_zap_example.png" class="img-fluid figure-img" style="width:50.0%" alt="Typst+Zap schematic with color-coded components but awkward routing around the op-amp and voltage source"></p>
+<figcaption>Typst+Zap: good styling, still fighting layout</figcaption>
+</figure>
+</div>
+<p>KiCad’s Python API generates <code>.kicad_sch</code> files with professional symbols, the best rendering of any tool, but the API doesn’t invoke KiCad’s autorouter. Same coordinate problem, different file format.</p>
+<p>I also tried MATLAB’s Simscape Electrical, which does have autorouting. The layout it produced was the cleanest of any tool. But the workflow was untenable: library paths contain literal newline characters, port names must be discovered by trial and error, and an interactive MATLAB session is required. Not a pipeline tool.</p>
+<p>The pattern: every tool without autorouting required pixel-pushing in a different programming language. The layout is the hard part, not the rendering.</p>
+</section>
+<section id="netlistsvg-the-graphviz-of-circuits" class="level3">
+<h3 class="anchored" data-anchor-id="netlistsvg-the-graphviz-of-circuits">netlistsvg: The Graphviz of Circuits</h3>
+<p><a href="https://github.com/nturley/netlistsvg">netlistsvg</a> takes a JSON netlist and produces an SVG schematic with automatic layout via the <a href="https://www.eclipse.org/elk/">ELK</a> graph layout engine. You declare components and connections. No coordinates, no wire paths:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"modules"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"circuit"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"cells"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"V_exc"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"v"</span><span class="fu">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"connections"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"+"</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">2</span><span class="ot">]</span><span class="fu">,</span> <span class="dt">"-"</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">5</span><span class="ot">]</span> <span class="fu">}</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">},</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"Buffer"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"op"</span><span class="fu">,</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"connections"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"+"</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">2</span><span class="ot">]</span><span class="fu">,</span> <span class="dt">"-"</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">3</span><span class="ot">]</span><span class="fu">,</span> <span class="dt">"OUT"</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">3</span><span class="ot">]</span> <span class="fu">}</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">},</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"R_prec"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"r_v"</span><span class="fu">,</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"connections"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"A"</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">3</span><span class="ot">]</span><span class="fu">,</span> <span class="dt">"B"</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">4</span><span class="ot">]</span> <span class="fu">}</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">},</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"R_T"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"r_v"</span><span class="fu">,</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"connections"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"A"</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">4</span><span class="ot">]</span><span class="fu">,</span> <span class="dt">"B"</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">5</span><span class="ot">]</span> <span class="fu">}</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">},</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"GND"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"gnd"</span><span class="fu">,</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"connections"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"A"</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">5</span><span class="ot">]</span> <span class="fu">}</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The Buffer’s output and inverting input both connect to net 3. That’s the feedback path. R_prec and R_T share net 4. That’s the measurement node. ELK figures out where everything goes:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">netlistsvg</span> circuit.json <span class="at">-o</span> output.svg <span class="at">--skin</span> skin_custom.svg</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="netlistsvg_scaled.png" class="img-fluid figure-img" style="width:40.0%" alt="Circuit schematic showing voltage source, op-amp buffer with feedback, precision resistor and NTC thermistor in series, with ground. Components are color-coded: green op-amp, orange precision resistor, red thermistor."></p>
+<figcaption>Precision resistor excitation circuit, autorouted by netlistsvg from the JSON above</figcaption>
+</figure>
+</div>
+<p>A few gotchas: the type names in the JSON must match the skin’s alias definitions (<code>r_v</code> not <code>resistor_v</code>, <code>op</code> not <code>opamp</code>). And ImageMagick can’t correctly render netlistsvg’s SVG output; use <code>rsvg-convert</code> instead.</p>
+<p>The skin file is a single SVG that controls component symbols, CSS styling, ELK layout parameters, and fonts. I replaced the IEC rectangular resistors with IEEE zigzag symbols, added +/− polarity signs, and added per-component colors:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.symbol.cell_R_prec</span> { <span class="kw">stroke</span><span class="ch">:</span> <span class="cn">#E67E22</span><span class="op">;</span> stroke-width<span class="ch">:</span> <span class="dv">2.5</span><span class="op">;</span> }</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">.symbol.cell_R_T</span> { <span class="kw">stroke</span><span class="ch">:</span> <span class="cn">#C0392B</span><span class="op">;</span> stroke-width<span class="ch">:</span> <span class="dv">2.5</span><span class="op">;</span> }</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">.symbol.cell_Buffer</span> { <span class="kw">stroke</span><span class="ch">:</span> <span class="cn">#27AE60</span><span class="op">;</span> <span class="kw">fill</span><span class="ch">:</span> <span class="cn">#E8F5E9</span><span class="op">;</span> }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>One skin file controls the visual language for every schematic in the curriculum. Change the color palette once and every circuit updates.</p>
+</section>
+</section>
+<section id="from-schematic-to-simulation" class="level2">
+<h2 class="anchored" data-anchor-id="from-schematic-to-simulation">From Schematic to Simulation</h2>
+<p>The real payoff came from a property of the netlist format that wasn’t immediately obvious. The shared net numbers aren’t a layout hint. They define actual circuit connectivity. Net 3 connecting the buffer output, the buffer inverting input, and R_prec pin A is a real electrical node.</p>
+<p>The same topology maps directly to a SPICE netlist:</p>
+<pre class="spice"><code>V_exc 2 0 DC 1.0
+E_buf 3 0 2 3 1e6
+R_prec 3 4 10k
+R_T 4 0 10k</code></pre>
+<p>Same nodes, same connections, different format. I ran this through <a href="https://ngspice.sourceforge.io/">ngspice</a>, sweeping NTC resistance across -40°C to 125°C. The simulation verified the expected behavior and produced presentation-ready plots rendered with matplotlib using the same color scheme as the schematic skin:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="sim_voltage_vs_temp.png" class="img-fluid figure-img" alt="Plot of V_T and V_R versus temperature from -40°C to 125°C, crossing at 25°C where both resistances are equal."></p>
+<figcaption>Voltage vs temperature: the classic NTC crossover at 25°C</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="sim_resistance_vs_temp.png" class="img-fluid figure-img" alt="Log-scale plot showing NTC resistance dropping from 380 kΩ at -40°C to 377 Ω at 125°C."></p>
+<figcaption>NTC resistance vs temperature on a log scale</figcaption>
+</figure>
+</div>
+<section id="single-source-of-truth" class="level3">
+<h3 class="anchored" data-anchor-id="single-source-of-truth">Single Source of Truth</h3>
+<p>The architecture:</p>
+<pre><code>Circuit definition (canonical)
+  ├── netlistsvg JSON → autorouted SVG schematic
+  ├── SPICE netlist  → ngspice → numerical verification
+  └── matplotlib     → styled plots from circuit parameters</code></pre>
+<p>One circuit definition. Three outputs. If R_prec changes from 10kΩ to 100kΩ, the schematic updates, the simulation re-runs, and the plots reflect the new operating point. The lecture slide schematic, the homework simulation, and the lab reference all derive from the same source. No divergence.</p>
+</section>
+</section>
+<section id="the-pipeline-so-far" class="level2">
+<h2 class="anchored" data-anchor-id="the-pipeline-so-far">The Pipeline So Far</h2>
+<p>Circuit schematics, the hardest asset type, are solved. The remaining pieces:</p>
+<ul>
+<li><strong>Block diagrams</strong>: TBD. Mermaid, Graphviz, d2 all have autorouting by design.</li>
+<li><strong>Equations</strong>: TBD. LaTeX standalone or KaTeX.</li>
+<li><strong>Technical illustrations</strong>: TBD.</li>
+<li><strong>Conceptual images</strong>: TBD. Gemini API or similar.</li>
+<li><strong>Presentation framework</strong>: TBD. Must composite SVG assets into slides, PDFs, and web content.</li>
+</ul>
+<p>The lesson from this survey applies broadly: for any diagramming task in a pipeline, the layout algorithm matters more than the rendering engine. If a tool requires manual coordinate placement, it’s not a pipeline tool. It’s a drawing tool.</p>
+</section>
+<section id="tools-and-versions" class="level2">
+<h2 class="anchored" data-anchor-id="tools-and-versions">Tools and Versions</h2>
+<ul>
+<li><strong>netlistsvg</strong> (npm): JSON netlist to autorouted SVG via ELK</li>
+<li><strong>ngspice 44.2</strong>: open-source SPICE simulation</li>
+<li><strong>matplotlib</strong> (Python): styled data visualization</li>
+<li><strong>rsvg-convert</strong>: SVG to PNG (use instead of ImageMagick for netlistsvg output)</li>
+</ul>
+<p>Evaluated and rejected: CircuiTikZ (TeX Live 2025), Schemdraw 0.23, Typst 0.14.2 + Zap 0.5.0, KiCad 10.0.3 + kicad-sch-api 0.5.6, MATLAB R2026a + Simscape Electrical, 2Slides API (Gemini/Nano Banana image gen), NotebookLM.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/codeandcircuits\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

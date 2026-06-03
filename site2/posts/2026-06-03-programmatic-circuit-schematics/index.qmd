@@ -1,0 +1,177 @@
+---
+title: "Building a Technical Curriculum Pipeline: From NotebookLM's Mistakes to Declarative Circuit Definitions"
+description: "AI tools produce beautiful slides with wrong equations. Manual diagramming doesn't scale. Here's the pipeline that emerged, where a single circuit definition produces both a presentation schematic and a verified simulation."
+date: 2026-06-03
+categories:
+  - circuits
+  - tooling
+  - education
+---
+
+If you're building technical curriculum with circuit schematics, equations, simulation plots, and precise engineering content, you have a tooling problem. The AI-powered tools that produce polished visual output can't be trusted with technical accuracy. The engineering tools that guarantee correctness produce output that looks like engineering documentation, not lecture material. And nothing connects the schematic on your slide to the simulation in your homework.
+
+This is the story of building a pipeline where a single circuit definition produces an autorouted schematic, a SPICE simulation, and styled presentation plots, all from the same source of truth. It started with NotebookLM generating beautiful slides with wrong equations.
+
+## NotebookLM: Beautiful and Wrong
+
+Google's NotebookLM can take lecture transcripts and produce a polished slide deck in minutes. I fed it ten transcripts from UC Boulder's [Sensors and Sensor Circuit Interface Design](https://www.coursera.org/learn/sensors-circuit-interface) course on Coursera, specifically the thermal sensors module, and got back 14 slides.
+
+The design quality is high. This is what NotebookLM produces from raw transcripts, with no design input:
+
+![NotebookLM's RTD slide: excellent visual quality](notebooklm_slide_06.png){fig-alt="NotebookLM-generated slide showing wire-wound and thin-film RTD construction with detailed labels and clean layout"}
+
+The problem is accuracy. Five of the fourteen slides contained errors, including incorrect Callendar-Van Dusen equation coefficients and this:
+
+![NotebookLM claims RTDs have "accuracy of ±4.3°C." This is a misrepresentation.](notebooklm_slide_08.png){fig-alt="NotebookLM slide claiming RTD accuracy of ±4.3°C, which is actually a tolerance class specification from IEC 60751, not a general accuracy claim"}
+
+"Excellent long-term repeatability with an accuracy of ±4.3°C." That ±4.3°C figure is actually the Class B tolerance at the extremes of the -200°C to 800°C range per IEC 60751. It's not "the accuracy of RTDs." A Class A Pt100 at 0°C has a tolerance of ±0.15°C. Presenting ±4.3°C as the headline accuracy number would give students a wrong understanding of why RTDs are valued for precision measurement.
+
+These aren't formatting issues. They're the kind of mistakes that would teach students the wrong thing. The core tension: the tool that produces the best-looking slides can't be trusted with the content.
+
+## The AI Slide API Detour
+
+The next thought was to find an AI slide service with an API, feed it vetted content, and control accuracy from the source side. I evaluated four services: [Gamma](https://gamma.app), [2Slides](https://2slides.com), [SlidesGPT](https://slidesgpt.com), and [FlashDocs](https://flashdocs.ai).
+
+2Slides has two generation modes. "Fast PPT" produces template-based PowerPoint for ~20 credits. Uninspiring. The interesting mode uses Nano Banana, Google's Gemini image generation model, which 2Slides integrates as its AI-designed layout engine. The output was visually competitive:
+
+![2Slides Nano Banana output: polished layout, proper equations, one conflation](2slides_nano_banana.png){fig-alt="AI-generated slide showing thermistor excitation circuit with schematic, equations, and self-heating analysis in a professional layout" width="100%"}
+
+The content was largely accurate. It even computed self-heating more precisely than my notes (0.156 mW vs. my rounded 0.16 mW). But the schematic conflates the VDAC and the op-amp buffer into a single "Voltage Source" block, losing a key teaching point: the buffer exists because the VDAC has 16 kΩ output impedance and can't drive the measurement chain directly. And because each slide is a generated raster image, fixing that means regenerating the entire slide and hoping nothing else changes. At ~110 credits per slide with 500 free credits to start, iteration is expensive.
+
+This clarified the fundamental problem. AI tools can do layout and visual design. They cannot be trusted with technical content. And their outputs aren't editable. For a curriculum pipeline, you need the opposite: guaranteed technical accuracy with styling applied afterward.
+
+## Declaring Circuits, Not Drawing Them
+
+The answer turned out to be declaring circuit topology and letting a layout engine handle the visual arrangement. The same principle behind Graphviz for flowcharts, applied to circuit schematics. But getting there required ruling out every tool that doesn't have autorouting first.
+
+### The Test Circuit
+
+I tested every tool on the same circuit from the UC Boulder course: a precision resistor excitation method for thermistor measurement. The instructor presents it as a cost-optimized design for the PSoC 5LP kit. The PSoC's VDAC has up to 5% gain error, but by measuring current through a 0.25% precision resistor (5 cents from Stackpole), the measurement accuracy depends on the resistor rather than the DAC. An op-amp buffer provides current drive since the VDAC's output impedance can reach 16 kΩ. Two ADC channels tap the voltage across each component.
+
+It's a real teaching circuit with enough topological complexity to stress-test a schematic tool: voltage source, op-amp buffer with feedback, two resistors in series, two ADC measurement taps, and a ground reference.
+
+### Manual Coordinate Placement: The Common Failure Mode
+
+I tried CircuiTikZ (LaTeX), Schemdraw (Python), Typst+Zap, and KiCad's Python API. They all failed for the same reason.
+
+Every one of these tools requires you to specify component positions and wire paths in absolute coordinates. CircuiTikZ took four iterations just to resolve label collisions:
+
+![CircuiTikZ: technically correct symbols, fighting label placement](circuitikz_example.png){fig-alt="CircuiTikZ schematic with correct symbols but awkward label positioning around the op-amp area" width="60%"}
+
+Typst+Zap had the fastest compile cycle (~100ms) and the best styling system: per-component colors, custom fonts, the works. The measurement chain looked good. But the op-amp routing was a persistent mess:
+
+![Typst+Zap: good styling, still fighting layout](typst_zap_example.png){fig-alt="Typst+Zap schematic with color-coded components but awkward routing around the op-amp and voltage source" width="50%"}
+
+KiCad's Python API generates `.kicad_sch` files with professional symbols, the best rendering of any tool, but the API doesn't invoke KiCad's autorouter. Same coordinate problem, different file format.
+
+I also tried MATLAB's Simscape Electrical, which does have autorouting. The layout it produced was the cleanest of any tool. But the workflow was untenable: library paths contain literal newline characters, port names must be discovered by trial and error, and an interactive MATLAB session is required. Not a pipeline tool.
+
+The pattern: every tool without autorouting required pixel-pushing in a different programming language. The layout is the hard part, not the rendering.
+
+### netlistsvg: The Graphviz of Circuits
+
+[netlistsvg](https://github.com/nturley/netlistsvg) takes a JSON netlist and produces an SVG schematic with automatic layout via the [ELK](https://www.eclipse.org/elk/) graph layout engine. You declare components and connections. No coordinates, no wire paths:
+
+```json
+{
+  "modules": {
+    "circuit": {
+      "cells": {
+        "V_exc": {
+          "type": "v",
+          "connections": { "+": [2], "-": [5] }
+        },
+        "Buffer": {
+          "type": "op",
+          "connections": { "+": [2], "-": [3], "OUT": [3] }
+        },
+        "R_prec": {
+          "type": "r_v",
+          "connections": { "A": [3], "B": [4] }
+        },
+        "R_T": {
+          "type": "r_v",
+          "connections": { "A": [4], "B": [5] }
+        },
+        "GND": {
+          "type": "gnd",
+          "connections": { "A": [5] }
+        }
+      }
+    }
+  }
+}
+```
+
+The Buffer's output and inverting input both connect to net 3. That's the feedback path. R_prec and R_T share net 4. That's the measurement node. ELK figures out where everything goes:
+
+```bash
+netlistsvg circuit.json -o output.svg --skin skin_custom.svg
+```
+
+![Precision resistor excitation circuit, autorouted by netlistsvg from the JSON above](netlistsvg_scaled.png){fig-alt="Circuit schematic showing voltage source, op-amp buffer with feedback, precision resistor and NTC thermistor in series, with ground. Components are color-coded: green op-amp, orange precision resistor, red thermistor." width="40%"}
+
+A few gotchas: the type names in the JSON must match the skin's alias definitions (`r_v` not `resistor_v`, `op` not `opamp`). And ImageMagick can't correctly render netlistsvg's SVG output; use `rsvg-convert` instead.
+
+The skin file is a single SVG that controls component symbols, CSS styling, ELK layout parameters, and fonts. I replaced the IEC rectangular resistors with IEEE zigzag symbols, added +/− polarity signs, and added per-component colors:
+
+```css
+.symbol.cell_R_prec { stroke: #E67E22; stroke-width: 2.5; }
+.symbol.cell_R_T { stroke: #C0392B; stroke-width: 2.5; }
+.symbol.cell_Buffer { stroke: #27AE60; fill: #E8F5E9; }
+```
+
+One skin file controls the visual language for every schematic in the curriculum. Change the color palette once and every circuit updates.
+
+## From Schematic to Simulation
+
+The real payoff came from a property of the netlist format that wasn't immediately obvious. The shared net numbers aren't a layout hint. They define actual circuit connectivity. Net 3 connecting the buffer output, the buffer inverting input, and R_prec pin A is a real electrical node.
+
+The same topology maps directly to a SPICE netlist:
+
+```spice
+V_exc 2 0 DC 1.0
+E_buf 3 0 2 3 1e6
+R_prec 3 4 10k
+R_T 4 0 10k
+```
+
+Same nodes, same connections, different format. I ran this through [ngspice](https://ngspice.sourceforge.io/), sweeping NTC resistance across -40°C to 125°C. The simulation verified the expected behavior and produced presentation-ready plots rendered with matplotlib using the same color scheme as the schematic skin:
+
+![Voltage vs temperature: the classic NTC crossover at 25°C](sim_voltage_vs_temp.png){fig-alt="Plot of V_T and V_R versus temperature from -40°C to 125°C, crossing at 25°C where both resistances are equal."}
+
+![NTC resistance vs temperature on a log scale](sim_resistance_vs_temp.png){fig-alt="Log-scale plot showing NTC resistance dropping from 380 kΩ at -40°C to 377 Ω at 125°C."}
+
+### Single Source of Truth
+
+The architecture:
+
+```
+Circuit definition (canonical)
+  ├── netlistsvg JSON → autorouted SVG schematic
+  ├── SPICE netlist  → ngspice → numerical verification
+  └── matplotlib     → styled plots from circuit parameters
+```
+
+One circuit definition. Three outputs. If R_prec changes from 10kΩ to 100kΩ, the schematic updates, the simulation re-runs, and the plots reflect the new operating point. The lecture slide schematic, the homework simulation, and the lab reference all derive from the same source. No divergence.
+
+## The Pipeline So Far
+
+Circuit schematics, the hardest asset type, are solved. The remaining pieces:
+
+- **Block diagrams**: TBD. Mermaid, Graphviz, d2 all have autorouting by design.
+- **Equations**: TBD. LaTeX standalone or KaTeX.
+- **Technical illustrations**: TBD.
+- **Conceptual images**: TBD. Gemini API or similar.
+- **Presentation framework**: TBD. Must composite SVG assets into slides, PDFs, and web content.
+
+The lesson from this survey applies broadly: for any diagramming task in a pipeline, the layout algorithm matters more than the rendering engine. If a tool requires manual coordinate placement, it's not a pipeline tool. It's a drawing tool.
+
+## Tools and Versions
+
+- **netlistsvg** (npm): JSON netlist to autorouted SVG via ELK
+- **ngspice 44.2**: open-source SPICE simulation
+- **matplotlib** (Python): styled data visualization
+- **rsvg-convert**: SVG to PNG (use instead of ImageMagick for netlistsvg output)
+
+Evaluated and rejected: CircuiTikZ (TeX Live 2025), Schemdraw 0.23, Typst 0.14.2 + Zap 0.5.0, KiCad 10.0.3 + kicad-sch-api 0.5.6, MATLAB R2026a + Simscape Electrical, 2Slides API (Gemini/Nano Banana image gen), NotebookLM.
